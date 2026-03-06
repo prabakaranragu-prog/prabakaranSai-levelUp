@@ -1,0 +1,1296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Docker · AWS · CI/CD – prabakaranSai-levelUp</title>
+  <link rel="stylesheet" href="style.css"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+  <style>
+    /* ===== PAGE-SPECIFIC STYLES ===== */
+    .page-hero{padding:48px 0 32px;text-align:center}
+    .page-hero-tag{font-size:13px;font-weight:600;color:var(--cyan);letter-spacing:2px;text-transform:uppercase;margin-bottom:12px;display:flex;align-items:center;justify-content:center;gap:8px}
+    .page-hero h1{font-size:44px;font-weight:800;line-height:1.15;margin-bottom:14px}
+    .page-hero p{color:var(--text-secondary);font-size:17px;max-width:600px;margin:0 auto 32px}
+    .roadmap-pills{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;margin-bottom:40px}
+    .pill{display:inline-flex;align-items:center;gap:7px;padding:8px 18px;border-radius:999px;font-size:13px;font-weight:600;border:1px solid}
+    .pill-blue{background:rgba(59,130,246,.12);border-color:rgba(59,130,246,.35);color:var(--blue-light)}
+    .pill-cyan{background:rgba(6,182,212,.12);border-color:rgba(6,182,212,.35);color:var(--cyan)}
+    .pill-orange{background:rgba(249,115,22,.12);border-color:rgba(249,115,22,.35);color:var(--orange)}
+    .pill-green{background:rgba(16,185,129,.12);border-color:rgba(16,185,129,.35);color:var(--green-light)}
+    .pill-purple{background:rgba(139,92,246,.12);border-color:rgba(139,92,246,.35);color:var(--purple-light)}
+
+    /* Section Headers */
+    .sec-header{display:flex;align-items:center;gap:14px;margin-bottom:28px;padding-bottom:16px;border-bottom:1px solid var(--border)}
+    .sec-icon{width:52px;height:52px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0}
+    .sec-icon-blue{background:rgba(59,130,246,.15);color:var(--blue-light)}
+    .sec-icon-cyan{background:rgba(6,182,212,.15);color:var(--cyan)}
+    .sec-icon-orange{background:rgba(249,115,22,.15);color:var(--orange)}
+    .sec-icon-green{background:rgba(16,185,129,.15);color:var(--green-light)}
+    .sec-icon-purple{background:rgba(139,92,246,.15);color:var(--purple-light)}
+    .sec-info h2{font-size:26px;font-weight:800;margin-bottom:4px}
+    .sec-info p{color:var(--text-secondary);font-size:14px}
+
+    /* Concept Cards */
+    .concept-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:18px;margin-bottom:32px}
+    .concept-card{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:22px;transition:all .3s;position:relative;overflow:hidden}
+    .concept-card:hover{transform:translateY(-3px);box-shadow:var(--shadow-card)}
+    .concept-card.blue:hover{border-color:rgba(59,130,246,.4);box-shadow:var(--glow-blue)}
+    .concept-card.cyan:hover{border-color:rgba(6,182,212,.4)}
+    .concept-card.orange:hover{border-color:rgba(249,115,22,.4)}
+    .concept-card.green:hover{border-color:rgba(16,185,129,.4)}
+    .concept-card.purple:hover{border-color:rgba(139,92,246,.4);box-shadow:var(--glow-purple)}
+    .concept-num{position:absolute;top:16px;right:18px;font-size:28px;font-weight:800;opacity:.06}
+    .concept-icon{font-size:26px;margin-bottom:12px}
+    .concept-title{font-size:16px;font-weight:700;margin-bottom:8px}
+    .concept-desc{color:var(--text-secondary);font-size:13.5px;line-height:1.75}
+    .concept-card.blue .concept-title{color:var(--blue-light)}
+    .concept-card.cyan .concept-title{color:var(--cyan)}
+    .concept-card.orange .concept-title{color:var(--orange)}
+    .concept-card.green .concept-title{color:var(--green-light)}
+    .concept-card.purple .concept-title{color:var(--purple-light)}
+
+    /* Diagram Box */
+    .diagram-box{background:var(--bg-secondary);border:1px solid var(--border);border-radius:var(--radius);padding:28px;margin:24px 0;overflow-x:auto}
+    .diagram-box pre{font-family:'Fira Code',monospace;font-size:13px;line-height:1.8;white-space:pre}
+    .diag-blue{color:#60a5fa}
+    .diag-cyan{color:#22d3ee}
+    .diag-green{color:#34d399}
+    .diag-orange{color:#fb923c}
+    .diag-purple{color:#a78bfa}
+    .diag-yellow{color:#fbbf24}
+    .diag-white{color:#eeeef8}
+    .diag-muted{color:#5a5a8a}
+
+    /* Code Block */
+    .code-wrap{background:var(--bg-secondary);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;margin:16px 0}
+    .code-header{display:flex;align-items:center;justify-content:space-between;padding:10px 16px;border-bottom:1px solid var(--border);background:rgba(255,255,255,.02)}
+    .code-lang{font-size:12px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;display:flex;align-items:center;gap:8px}
+    .code-dot{width:10px;height:10px;border-radius:50%}
+    .dot-red{background:#ef4444}.dot-yellow{background:#f59e0b}.dot-green{background:#10b981}
+    .code-body{padding:20px;font-family:'Fira Code',monospace;font-size:13px;line-height:1.8;overflow-x:auto;white-space:pre}
+    .c-comment{color:#5a5a8a}.c-key{color:#a78bfa}.c-str{color:#34d399}.c-val{color:#60a5fa}.c-cmd{color:#fb923c}.c-flag{color:#22d3ee}.c-neutral{color:#eeeef8}
+
+    /* Step Timeline */
+    .timeline{position:relative;padding-left:40px;margin:24px 0}
+    .timeline::before{content:'';position:absolute;left:14px;top:0;bottom:0;width:2px;background:linear-gradient(to bottom,var(--purple),var(--blue),var(--cyan))}
+    .t-step{position:relative;margin-bottom:28px}
+    .t-num{position:absolute;left:-40px;width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;background:var(--gradient);color:white;box-shadow:0 0 12px rgba(139,92,246,.4)}
+    .t-title{font-size:15px;font-weight:700;margin-bottom:6px;color:var(--text-primary)}
+    .t-body{color:var(--text-secondary);font-size:13.5px;line-height:1.75}
+    .t-body code{font-family:'Fira Code',monospace;font-size:12px;background:var(--bg-secondary);padding:2px 7px;border-radius:4px;color:var(--green-light)}
+
+    /* Comparison Table */
+    .cmp-table{width:100%;border-collapse:collapse;margin:16px 0}
+    .cmp-table th{background:var(--bg-secondary);padding:12px 16px;text-align:left;font-size:13px;font-weight:700;color:var(--text-secondary);text-transform:uppercase;letter-spacing:.5px;border-bottom:1px solid var(--border)}
+    .cmp-table td{padding:12px 16px;font-size:13.5px;color:var(--text-secondary);border-bottom:1px solid var(--border)}
+    .cmp-table tr:hover td{background:rgba(255,255,255,.02);color:var(--text-primary)}
+    .cmp-table td strong{color:var(--text-primary)}
+    .cmp-table .badge-green{background:rgba(16,185,129,.15);color:var(--green-light);padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600}
+    .cmp-table .badge-blue{background:rgba(59,130,246,.15);color:var(--blue-light);padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600}
+
+    /* Highlight Banner */
+    .highlight-banner{border-radius:var(--radius);padding:20px 24px;margin:20px 0;display:flex;align-items:flex-start;gap:14px}
+    .hb-blue{background:rgba(59,130,246,.08);border:1px solid rgba(59,130,246,.25)}
+    .hb-cyan{background:rgba(6,182,212,.08);border:1px solid rgba(6,182,212,.25)}
+    .hb-orange{background:rgba(249,115,22,.08);border:1px solid rgba(249,115,22,.25)}
+    .hb-green{background:rgba(16,185,129,.08);border:1px solid rgba(16,185,129,.25)}
+    .hb-purple{background:rgba(139,92,246,.08);border:1px solid rgba(139,92,246,.25)}
+    .hb-icon{font-size:20px;flex-shrink:0;margin-top:2px}
+    .hb-blue .hb-icon{color:var(--blue-light)}
+    .hb-cyan .hb-icon{color:var(--cyan)}
+    .hb-orange .hb-icon{color:var(--orange)}
+    .hb-green .hb-icon{color:var(--green-light)}
+    .hb-purple .hb-icon{color:var(--purple-light)}
+    .hb-content strong{display:block;font-size:14px;font-weight:700;margin-bottom:4px}
+    .hb-content p{font-size:13.5px;color:var(--text-secondary);line-height:1.7}
+
+    /* AWS Service Grid */
+    .aws-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px;margin:20px 0}
+    .aws-card{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius);padding:18px;transition:all .3s;cursor:default}
+    .aws-card:hover{transform:translateY(-2px);box-shadow:var(--shadow-card)}
+    .aws-card-icon{font-size:28px;margin-bottom:10px}
+    .aws-card-name{font-size:14px;font-weight:700;margin-bottom:6px}
+    .aws-card-desc{font-size:12.5px;color:var(--text-secondary);line-height:1.65}
+    .aws-card-tag{display:inline-flex;align-items:center;gap:4px;margin-top:10px;padding:3px 9px;border-radius:12px;font-size:11px;font-weight:600}
+
+    /* CI/CD Pipeline Visual */
+    .pipeline{display:flex;align-items:center;flex-wrap:wrap;gap:0;margin:24px 0;overflow-x:auto;padding:4px 0}
+    .pipe-stage{display:flex;align-items:center;flex-shrink:0}
+    .pipe-box{background:var(--bg-card);border:1px solid var(--border);border-radius:var(--radius-sm);padding:14px 18px;text-align:center;min-width:100px;transition:all .3s}
+    .pipe-box:hover{transform:translateY(-2px)}
+    .pipe-box-icon{font-size:20px;margin-bottom:6px;display:block}
+    .pipe-box-label{font-size:12px;font-weight:600;color:var(--text-secondary)}
+    .pipe-box.dev{border-color:rgba(139,92,246,.4);background:rgba(139,92,246,.06)}.pipe-box.dev .pipe-box-icon{color:var(--purple-light)}
+    .pipe-box.build{border-color:rgba(6,182,212,.4);background:rgba(6,182,212,.06)}.pipe-box.build .pipe-box-icon{color:var(--cyan)}
+    .pipe-box.test{border-color:rgba(245,158,11,.4);background:rgba(245,158,11,.06)}.pipe-box.test .pipe-box-icon{color:var(--yellow)}
+    .pipe-box.scan{border-color:rgba(239,68,68,.4);background:rgba(239,68,68,.06)}.pipe-box.scan .pipe-box-icon{color:var(--red)}
+    .pipe-box.docker{border-color:rgba(59,130,246,.4);background:rgba(59,130,246,.06)}.pipe-box.docker .pipe-box-icon{color:var(--blue-light)}
+    .pipe-box.push{border-color:rgba(236,72,153,.4);background:rgba(236,72,153,.06)}.pipe-box.push .pipe-box-icon{color:var(--pink)}
+    .pipe-box.deploy{border-color:rgba(16,185,129,.4);background:rgba(16,185,129,.06)}.pipe-box.deploy .pipe-box-icon{color:var(--green-light)}
+    .pipe-box.monitor{border-color:rgba(249,115,22,.4);background:rgba(249,115,22,.06)}.pipe-box.monitor .pipe-box-icon{color:var(--orange)}
+    .pipe-arrow{color:var(--text-muted);font-size:16px;margin:0 4px;flex-shrink:0}
+
+    /* Big section separator */
+    .section-block{margin-bottom:72px}
+
+    /* Sticky TOC */
+    .toc-bar{background:var(--bg-secondary);border:1px solid var(--border);border-radius:var(--radius);padding:14px 20px;margin-bottom:32px;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+    .toc-label{font-size:12px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:1px;white-space:nowrap}
+    .toc-link{font-size:13px;font-weight:600;color:var(--text-secondary);text-decoration:none;padding:5px 12px;border-radius:var(--radius-sm);transition:all .2s;border:1px solid transparent}
+    .toc-link:hover{color:var(--text-primary);background:var(--bg-hover);border-color:var(--border)}
+    .toc-link.t-docker{color:var(--blue-light)}.toc-link.t-aws{color:var(--orange)}.toc-link.t-cicd{color:var(--green-light)}.toc-link.t-springboot{color:var(--purple-light)}
+
+    /* Print */
+    @media print{
+      .navbar,.toc-bar{display:none!important}
+      .section-block{page-break-before:always}
+      .section-block:first-of-type{page-break-before:auto}
+      *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+    }
+    @media(max-width:768px){
+      .page-hero h1{font-size:28px}
+      .pipeline{flex-direction:column;align-items:flex-start}
+      .pipe-arrow{transform:rotate(90deg)}
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+  <a href="index.html" class="nav-brand">
+    <div class="nav-logo">P</div>
+    <span class="nav-title">prabakaranSai-levelUp</span>
+  </a>
+  <ul class="nav-links">
+    <li><a href="index.html"><i class="fas fa-home"></i><span>Home</span></a></li>
+    <li><a href="playground.html"><i class="fas fa-code"></i><span>Playground</span></a></li>
+    <li><a href="notes.html"><i class="fas fa-sticky-note"></i><span>Notes</span></a></li>
+    <li><a href="interview.html"><i class="fas fa-brain"></i><span>Interview Prep</span></a></li>
+    <li><a href="docker-aws-cicd.html" class="active"><i class="fab fa-docker"></i><span>Docker·AWS</span></a></li>
+  </ul>
+</nav>
+
+<div class="container">
+
+  <!-- HERO -->
+  <div class="page-hero fade-up">
+    <div class="page-hero-tag"><i class="fab fa-docker"></i> DevOps Mastery Guide</div>
+    <h1>Docker <span style="background:var(--gradient);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">+</span> AWS <span style="background:var(--gradient-cool);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">+</span> CI/CD 🚀</h1>
+    <p>Complete beginner-to-production guide for Java Spring Boot developers. Every concept explained with real examples, diagrams, and code.</p>
+    <div class="roadmap-pills">
+      <span class="pill pill-blue"><i class="fab fa-docker"></i> Docker Basics</span>
+      <span class="pill pill-cyan"><i class="fas fa-cubes"></i> Images &amp; Containers</span>
+      <span class="pill pill-orange"><i class="fab fa-aws"></i> AWS Core Services</span>
+      <span class="pill pill-green"><i class="fas fa-infinity"></i> CI/CD Pipeline</span>
+      <span class="pill pill-purple"><i class="fas fa-leaf"></i> Spring Boot Deploy</span>
+    </div>
+  </div>
+
+  <!-- TABLE OF CONTENTS -->
+  <div class="toc-bar fade-up">
+    <span class="toc-label"><i class="fas fa-list"></i> Jump To</span>
+    <a href="#docker" class="toc-link t-docker"><i class="fab fa-docker"></i> Docker</a>
+    <a href="#dockerfile" class="toc-link t-docker"><i class="fas fa-file-code"></i> Dockerfile</a>
+    <a href="#compose" class="toc-link t-docker"><i class="fas fa-layer-group"></i> Docker Compose</a>
+    <a href="#aws" class="toc-link t-aws"><i class="fab fa-aws"></i> AWS Services</a>
+    <a href="#ec2" class="toc-link t-aws"><i class="fas fa-server"></i> EC2</a>
+    <a href="#ecs" class="toc-link t-aws"><i class="fas fa-ship"></i> ECS/ECR</a>
+    <a href="#cicd" class="toc-link t-cicd"><i class="fas fa-infinity"></i> CI/CD</a>
+    <a href="#github-actions" class="toc-link t-cicd"><i class="fab fa-github"></i> GitHub Actions</a>
+    <a href="#springboot-deploy" class="toc-link t-springboot"><i class="fas fa-leaf"></i> Spring Boot E2E</a>
+  </div>
+
+
+  <!-- ============================================================
+       SECTION 1: DOCKER
+  ============================================================ -->
+  <div class="section-block" id="docker">
+    <div class="sec-header">
+      <div class="sec-icon sec-icon-blue"><i class="fab fa-docker"></i></div>
+      <div class="sec-info">
+        <h2>What is Docker?</h2>
+        <p>Package your Spring Boot app once — run it anywhere, without "works on my machine" problems</p>
+      </div>
+    </div>
+
+    <!-- Real-World Analogy -->
+    <div class="highlight-banner hb-blue">
+      <div class="hb-icon"><i class="fas fa-box"></i></div>
+      <div class="hb-content">
+        <strong>Real World Analogy — Shipping Container</strong>
+        <p>Before Docker: Dev says "it works on my machine!" → Prod server crashes because Java version different, configs missing.
+        Docker = a <strong>shipping container</strong> — pack your app + all its dependencies (Java 21, Spring Boot JARs, configs) into one container box. Ship it to any server — it runs exactly the same. No surprises!</p>
+      </div>
+    </div>
+
+    <!-- Architecture Diagram -->
+    <div class="diagram-box">
+      <p style="font-size:12px;color:var(--text-muted);margin-bottom:16px;font-family:'Fira Code',monospace;">
+        <i class="fas fa-sitemap"></i> &nbsp;DOCKER ARCHITECTURE DIAGRAM
+      </p>
+      <pre>
+<span class="diag-muted">┌─────────────────────────────────────────────────────────────────┐</span>
+<span class="diag-muted">│                      YOUR LAPTOP / SERVER                       │</span>
+<span class="diag-muted">│                                                                 │</span>
+<span class="diag-muted">│   ┌──────────────────────────────────────────────────────────┐  │</span>
+<span class="diag-muted">│   │                     DOCKER ENGINE                        │  │</span>
+<span class="diag-muted">│   │                                                          │  │</span>
+<span class="diag-muted">│   │   ┌─────────────┐  ┌─────────────┐  ┌─────────────┐    │  │</span>
+<span class="diag-blue">│   │   │  Container  │  │  Container  │  │  Container  │    │  │</span>
+<span class="diag-blue">│   │   │  Spring API │  │  MySQL DB   │  │  Redis      │    │  │</span>
+<span class="diag-blue">│   │   │  Port:8080  │  │  Port:3306  │  │  Port:6379  │    │  │</span>
+<span class="diag-muted">│   │   └──────┬──────┘  └──────┬──────┘  └──────┬──────┘    │  │</span>
+<span class="diag-muted">│   │          │                │                │            │  │</span>
+<span class="diag-cyan">│   │   ┌──────▼────────────────▼────────────────▼──────┐    │  │</span>
+<span class="diag-cyan">│   │   │              Docker Network Bridge             │    │  │</span>
+<span class="diag-cyan">│   │   └───────────────────────────────────────────────┘    │  │</span>
+<span class="diag-muted">│   │                                                          │  │</span>
+<span class="diag-green">│   │   ┌─────────────────────────────────────────────────┐   │  │</span>
+<span class="diag-green">│   │   │              HOST OS (Linux / Mac / Windows)    │   │  │</span>
+<span class="diag-green">│   │   └─────────────────────────────────────────────────┘   │  │</span>
+<span class="diag-muted">│   └──────────────────────────────────────────────────────────┘  │</span>
+<span class="diag-muted">└─────────────────────────────────────────────────────────────────┘</span>
+      </pre>
+    </div>
+
+    <!-- VM vs Docker Comparison -->
+    <h3 class="section-title" style="margin-top:32px"><i class="fas fa-balance-scale"></i> Docker vs Virtual Machine</h3>
+    <table class="cmp-table">
+      <thead><tr><th>Feature</th><th>Virtual Machine (VM)</th><th>Docker Container</th></tr></thead>
+      <tbody>
+        <tr><td><strong>Startup Time</strong></td><td>Minutes (boots full OS)</td><td><span class="badge-green">Seconds (shares host OS)</span></td></tr>
+        <tr><td><strong>Size</strong></td><td>GBs (full OS + app)</td><td><span class="badge-green">MBs (only app + libs)</span></td></tr>
+        <tr><td><strong>Isolation</strong></td><td>Full hardware isolation</td><td>Process-level isolation</td></tr>
+        <tr><td><strong>Performance</strong></td><td>Heavy overhead</td><td><span class="badge-green">Near-native speed</span></td></tr>
+        <tr><td><strong>Portability</strong></td><td>Hard to share (large images)</td><td><span class="badge-green">Push to registry — pull anywhere</span></td></tr>
+        <tr><td><strong>Use Case</strong></td><td>Full OS needed</td><td><span class="badge-green">Microservices, CI/CD, Cloud</span></td></tr>
+      </tbody>
+    </table>
+
+    <!-- Core Concepts -->
+    <h3 class="section-title" style="margin-top:32px"><i class="fas fa-cubes"></i> 5 Core Docker Concepts</h3>
+    <div class="concept-grid">
+      <div class="concept-card blue">
+        <span class="concept-num">01</span>
+        <div class="concept-icon">🖼️</div>
+        <div class="concept-title">Docker Image</div>
+        <div class="concept-desc">A <strong>read-only blueprint/template</strong> of your app. Like a class in Java — you define it once. Contains: OS layer + Java runtime + your JAR file + configs.<br><br><em>Built from a Dockerfile. Stored in Docker Registry (Docker Hub / AWS ECR).</em></div>
+      </div>
+      <div class="concept-card cyan">
+        <span class="concept-num">02</span>
+        <div class="concept-icon">📦</div>
+        <div class="concept-title">Docker Container</div>
+        <div class="concept-desc">A <strong>running instance of an Image</strong>. Like an object created from a class.<br>You can run 10 containers from the same image — they run independently.<br><br><em>Analogy: Image = class definition. Container = new MyApp() running in memory.</em></div>
+      </div>
+      <div class="concept-card orange">
+        <span class="concept-num">03</span>
+        <div class="concept-icon">📄</div>
+        <div class="concept-title">Dockerfile</div>
+        <div class="concept-desc">A <strong>text recipe file</strong> that tells Docker how to build your Image. Step by step instructions — which base image to use, copy your JAR, set port, run command.<br><br><em>Think: like a pom.xml — you define, Docker builds.</em></div>
+      </div>
+      <div class="concept-card green">
+        <span class="concept-num">04</span>
+        <div class="concept-icon">🏪</div>
+        <div class="concept-title">Docker Registry</div>
+        <div class="concept-desc">A <strong>storage hub for Docker Images</strong>. Push your built image here, pull from anywhere.<br>• <strong>Docker Hub</strong> — Public registry (free)<br>• <strong>AWS ECR</strong> — Private registry for AWS deployments<br><br><em>Like Maven Central but for Docker images.</em></div>
+      </div>
+      <div class="concept-card purple">
+        <span class="concept-num">05</span>
+        <div class="concept-icon">🎵</div>
+        <div class="concept-title">Docker Compose</div>
+        <div class="concept-desc">A <strong>YAML file to run multiple containers together</strong>. Your Spring Boot app needs MySQL + Redis? Define all 3 in one docker-compose.yml — run with one command.<br><br><em>docker compose up → spins everything up automatically.</em></div>
+      </div>
+      <div class="concept-card blue">
+        <span class="concept-num">06</span>
+        <div class="concept-icon">💾</div>
+        <div class="concept-title">Docker Volume</div>
+        <div class="concept-desc">Containers are <strong>stateless by default</strong> — data is lost when container stops. Volumes = persistent storage mounted into containers.<br>MySQL data → save to volume → restart container → data still there!<br><br><em>Like a USB drive attached to your container.</em></div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ============================================================
+       SECTION 2: DOCKERFILE
+  ============================================================ -->
+  <div class="section-block" id="dockerfile">
+    <div class="sec-header">
+      <div class="sec-icon sec-icon-cyan"><i class="fas fa-file-code"></i></div>
+      <div class="sec-info">
+        <h2>Writing a Dockerfile</h2>
+        <p>Turn your Spring Boot JAR into a Docker Image — step by step recipe</p>
+      </div>
+    </div>
+
+    <!-- Basic Dockerfile -->
+    <h3 class="section-title"><i class="fas fa-star"></i> Basic Dockerfile for Spring Boot</h3>
+    <div class="code-wrap">
+      <div class="code-header">
+        <span class="code-lang"><span class="code-dot dot-red"></span><span class="code-dot dot-yellow"></span><span class="code-dot dot-green"></span>&nbsp; Dockerfile</span>
+      </div>
+      <div class="code-body"><span class="c-comment"># ─────────────────────────────────────────────────────────────</span>
+<span class="c-comment"># STEP 1: Base Image — Start from official Java 21 image</span>
+<span class="c-comment"># Think: "I want a server that already has Java 21 installed"</span>
+<span class="c-comment"># ─────────────────────────────────────────────────────────────</span>
+<span class="c-key">FROM</span> <span class="c-val">eclipse-temurin:21-jre-alpine</span>
+
+<span class="c-comment"># STEP 2: Set working directory inside the container</span>
+<span class="c-comment"># Like: cd /app inside the container</span>
+<span class="c-key">WORKDIR</span> <span class="c-val">/app</span>
+
+<span class="c-comment"># STEP 3: Copy your compiled JAR into the container</span>
+<span class="c-comment"># target/myapp.jar → /app/app.jar</span>
+<span class="c-key">COPY</span> <span class="c-val">target/sonata-app.jar app.jar</span>
+
+<span class="c-comment"># STEP 4: Tell Docker which port your Spring Boot app uses</span>
+<span class="c-comment"># (Documentation only — doesn't actually open the port)</span>
+<span class="c-key">EXPOSE</span> <span class="c-val">8080</span>
+
+<span class="c-comment"># STEP 5: Command to run when container starts</span>
+<span class="c-comment"># Same as: java -jar app.jar in terminal</span>
+<span class="c-key">ENTRYPOINT</span> [<span class="c-str">"java"</span>, <span class="c-str">"-jar"</span>, <span class="c-str">"app.jar"</span>]</div>
+    </div>
+
+    <!-- Build Commands -->
+    <h3 class="section-title" style="margin-top:28px"><i class="fas fa-terminal"></i> Build &amp; Run Commands</h3>
+    <div class="timeline">
+      <div class="t-step">
+        <div class="t-num">1</div>
+        <div class="t-title">Build your Spring Boot JAR first</div>
+        <div class="t-body">Run Maven to compile and package: <code>mvn clean package -DskipTests</code><br>This creates <code>target/sonata-app.jar</code></div>
+      </div>
+      <div class="t-step">
+        <div class="t-num">2</div>
+        <div class="t-title">Build Docker Image from Dockerfile</div>
+        <div class="t-body"><code>docker build -t sonata-app:1.0 .</code><br>
+        <code>-t</code> = tag (name:version) &nbsp;|&nbsp; <code>.</code> = look for Dockerfile in current directory</div>
+      </div>
+      <div class="t-step">
+        <div class="t-num">3</div>
+        <div class="t-title">Verify the image was created</div>
+        <div class="t-body"><code>docker images</code> → you'll see <code>sonata-app</code> listed with size ~200MB</div>
+      </div>
+      <div class="t-step">
+        <div class="t-num">4</div>
+        <div class="t-title">Run a Container from the Image</div>
+        <div class="t-body"><code>docker run -d -p 8080:8080 --name my-api sonata-app:1.0</code><br>
+        <code>-d</code> = detached (background) &nbsp;|&nbsp; <code>-p 8080:8080</code> = host:container port mapping<br>
+        Now open browser: <code>http://localhost:8080</code> — your Spring Boot app is running!</div>
+      </div>
+      <div class="t-step">
+        <div class="t-num">5</div>
+        <div class="t-title">Useful Commands to manage containers</div>
+        <div class="t-body">
+          <code>docker ps</code> → list running containers<br>
+          <code>docker logs my-api</code> → see Spring Boot logs<br>
+          <code>docker stop my-api</code> → stop container<br>
+          <code>docker rm my-api</code> → remove container<br>
+          <code>docker exec -it my-api bash</code> → get shell inside container
+        </div>
+      </div>
+    </div>
+
+    <!-- Multi-Stage Dockerfile (Production Grade) -->
+    <h3 class="section-title" style="margin-top:28px"><i class="fas fa-layer-group"></i> Production-Grade: Multi-Stage Dockerfile</h3>
+    <div class="highlight-banner hb-purple">
+      <div class="hb-icon"><i class="fas fa-lightbulb"></i></div>
+      <div class="hb-content">
+        <strong>Why Multi-Stage?</strong>
+        <p>Stage 1: Use a big JDK image to compile/build your JAR. Stage 2: Use a tiny JRE image to just run the JAR.
+        Result: Final image is much smaller (200MB vs 600MB) — faster to push/pull in production!</p>
+      </div>
+    </div>
+    <div class="code-wrap">
+      <div class="code-header">
+        <span class="code-lang"><span class="code-dot dot-red"></span><span class="code-dot dot-yellow"></span><span class="code-dot dot-green"></span>&nbsp; Dockerfile (Multi-Stage — Production Ready)</span>
+      </div>
+      <div class="code-body"><span class="c-comment"># ── STAGE 1: Build Stage ─────────────────────────────────────</span>
+<span class="c-comment"># Use full JDK to compile the Maven project</span>
+<span class="c-key">FROM</span> <span class="c-val">maven:3.9-eclipse-temurin-21</span> <span class="c-key">AS</span> <span class="c-val">builder</span>
+
+<span class="c-key">WORKDIR</span> <span class="c-val">/build</span>
+
+<span class="c-comment"># Copy pom.xml first (Docker caches this layer if unchanged → faster rebuilds!)</span>
+<span class="c-key">COPY</span> <span class="c-val">pom.xml .</span>
+<span class="c-key">RUN</span> <span class="c-val">mvn dependency:go-offline -q</span>
+
+<span class="c-comment"># Copy source code and build</span>
+<span class="c-key">COPY</span> <span class="c-val">src ./src</span>
+<span class="c-key">RUN</span> <span class="c-val">mvn clean package -DskipTests -q</span>
+
+<span class="c-comment"># ── STAGE 2: Runtime Stage ───────────────────────────────────</span>
+<span class="c-comment"># Use tiny JRE Alpine (only ~50MB!) to run the app</span>
+<span class="c-key">FROM</span> <span class="c-val">eclipse-temurin:21-jre-alpine</span>
+
+<span class="c-key">WORKDIR</span> <span class="c-val">/app</span>
+
+<span class="c-comment"># Create non-root user for security (never run as root in prod!)</span>
+<span class="c-key">RUN</span> <span class="c-val">addgroup -S appgroup &amp;&amp; adduser -S appuser -G appgroup</span>
+<span class="c-key">USER</span> <span class="c-val">appuser</span>
+
+<span class="c-comment"># Copy ONLY the built JAR from Stage 1 (not the whole Maven/JDK!)</span>
+<span class="c-key">COPY</span> <span class="c-val">--from=builder /build/target/*.jar app.jar</span>
+
+<span class="c-comment"># JVM tuning for containers — tell JVM to respect container memory limits</span>
+<span class="c-key">ENV</span> <span class="c-val">JAVA_OPTS="-XX:+UseContainerSupport -XX:MaxRAMPercentage=75.0"</span>
+
+<span class="c-key">EXPOSE</span> <span class="c-val">8080</span>
+
+<span class="c-key">ENTRYPOINT</span> [<span class="c-str">"sh"</span>, <span class="c-str">"-c"</span>, <span class="c-str">"java $JAVA_OPTS -jar app.jar"</span>]</div>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       SECTION 3: DOCKER COMPOSE
+  ============================================================ -->
+  <div class="section-block" id="compose">
+    <div class="sec-header">
+      <div class="sec-icon sec-icon-blue"><i class="fas fa-layer-group"></i></div>
+      <div class="sec-info">
+        <h2>Docker Compose</h2>
+        <p>Run Spring Boot + MySQL + Redis all together with one command</p>
+      </div>
+    </div>
+
+    <div class="highlight-banner hb-cyan">
+      <div class="hb-icon"><i class="fas fa-info-circle"></i></div>
+      <div class="hb-content">
+        <strong>When do you use Docker Compose?</strong>
+        <p>Your Spring Boot app depends on MySQL, Redis, and Kafka. Instead of running 4 separate <code>docker run</code> commands and manually connecting them — write ONE docker-compose.yml and run <code>docker compose up</code>. All services start together, on the same network, talking to each other!</p>
+      </div>
+    </div>
+
+    <div class="code-wrap">
+      <div class="code-header">
+        <span class="code-lang"><span class="code-dot dot-red"></span><span class="code-dot dot-yellow"></span><span class="code-dot dot-green"></span>&nbsp; docker-compose.yml — Spring Boot + MySQL + Redis</span>
+      </div>
+      <div class="code-body"><span class="c-comment"># Docker Compose version</span>
+<span class="c-key">version:</span> <span class="c-str">'3.9'</span>
+
+<span class="c-key">services:</span>
+
+  <span class="c-comment"># ── 1. Your Spring Boot Application ──────────────────────────</span>
+  <span class="c-flag">sonata-api:</span>
+    <span class="c-key">build:</span> <span class="c-val">.</span>                    <span class="c-comment"># Build image from local Dockerfile</span>
+    <span class="c-key">container_name:</span> <span class="c-val">sonata-api</span>
+    <span class="c-key">ports:</span>
+      - <span class="c-str">"8080:8080"</span>              <span class="c-comment"># localhost:8080 → container:8080</span>
+    <span class="c-key">environment:</span>
+      <span class="c-comment"># Pass DB connection as env vars (not hardcoded in app!)</span>
+      - <span class="c-val">SPRING_DATASOURCE_URL=jdbc:mysql://mysql-db:3306/sonatadb</span>
+      - <span class="c-val">SPRING_DATASOURCE_USERNAME=root</span>
+      - <span class="c-val">SPRING_DATASOURCE_PASSWORD=secret123</span>
+      - <span class="c-val">SPRING_REDIS_HOST=redis-cache</span>
+      - <span class="c-val">SPRING_REDIS_PORT=6379</span>
+    <span class="c-key">depends_on:</span>
+      <span class="c-flag">mysql-db:</span>
+        <span class="c-key">condition:</span> <span class="c-val">service_healthy</span>   <span class="c-comment"># Wait for MySQL to be ready!</span>
+      <span class="c-flag">redis-cache:</span>
+        <span class="c-key">condition:</span> <span class="c-val">service_started</span>
+    <span class="c-key">networks:</span>
+      - <span class="c-val">sonata-network</span>
+    <span class="c-key">restart:</span> <span class="c-val">on-failure</span>
+
+  <span class="c-comment"># ── 2. MySQL Database ─────────────────────────────────────────</span>
+  <span class="c-flag">mysql-db:</span>
+    <span class="c-key">image:</span> <span class="c-val">mysql:8.0</span>             <span class="c-comment"># Pull official MySQL image</span>
+    <span class="c-key">container_name:</span> <span class="c-val">mysql-db</span>
+    <span class="c-key">environment:</span>
+      - <span class="c-val">MYSQL_ROOT_PASSWORD=secret123</span>
+      - <span class="c-val">MYSQL_DATABASE=sonatadb</span>
+    <span class="c-key">ports:</span>
+      - <span class="c-str">"3306:3306"</span>              <span class="c-comment"># Connect from local DB tools like DBeaver</span>
+    <span class="c-key">volumes:</span>
+      - <span class="c-val">mysql-data:/var/lib/mysql</span>  <span class="c-comment"># Persist data even after container restart!</span>
+    <span class="c-key">healthcheck:</span>                   <span class="c-comment"># Check if MySQL is actually ready</span>
+      <span class="c-key">test:</span> [<span class="c-str">"CMD"</span>, <span class="c-str">"mysqladmin"</span>, <span class="c-str">"ping"</span>, <span class="c-str">"-h"</span>, <span class="c-str">"localhost"</span>]
+      <span class="c-key">interval:</span> <span class="c-val">10s</span>
+      <span class="c-key">timeout:</span> <span class="c-val">5s</span>
+      <span class="c-key">retries:</span> <span class="c-val">5</span>
+    <span class="c-key">networks:</span>
+      - <span class="c-val">sonata-network</span>
+
+  <span class="c-comment"># ── 3. Redis Cache ────────────────────────────────────────────</span>
+  <span class="c-flag">redis-cache:</span>
+    <span class="c-key">image:</span> <span class="c-val">redis:7-alpine</span>
+    <span class="c-key">container_name:</span> <span class="c-val">redis-cache</span>
+    <span class="c-key">ports:</span>
+      - <span class="c-str">"6379:6379"</span>
+    <span class="c-key">networks:</span>
+      - <span class="c-val">sonata-network</span>
+
+<span class="c-comment"># Named volumes — data stored by Docker, survives container restarts</span>
+<span class="c-key">volumes:</span>
+  <span class="c-flag">mysql-data:</span>
+
+<span class="c-comment"># Custom network — all services can talk to each other by service name</span>
+<span class="c-key">networks:</span>
+  <span class="c-flag">sonata-network:</span>
+    <span class="c-key">driver:</span> <span class="c-val">bridge</span></div>
+    </div>
+
+    <!-- Compose Commands -->
+    <div class="concept-grid" style="margin-top:24px">
+      <div class="concept-card cyan">
+        <div class="concept-icon">▶️</div>
+        <div class="concept-title">Start Everything</div>
+        <div class="concept-desc"><code style="font-family:'Fira Code',monospace;font-size:12px;background:var(--bg-secondary);padding:4px 8px;border-radius:4px;color:var(--green-light)">docker compose up -d</code><br><br>Starts all 3 services (API + MySQL + Redis) in background. Spring Boot automatically connects to MySQL!</div>
+      </div>
+      <div class="concept-card blue">
+        <div class="concept-icon">📋</div>
+        <div class="concept-title">View Logs</div>
+        <div class="concept-desc"><code style="font-family:'Fira Code',monospace;font-size:12px;background:var(--bg-secondary);padding:4px 8px;border-radius:4px;color:var(--green-light)">docker compose logs -f sonata-api</code><br><br>Follow live logs of your Spring Boot app. Great for debugging startup issues!</div>
+      </div>
+      <div class="concept-card orange">
+        <div class="concept-icon">🔄</div>
+        <div class="concept-title">Rebuild After Code Change</div>
+        <div class="concept-desc"><code style="font-family:'Fira Code',monospace;font-size:12px;background:var(--bg-secondary);padding:4px 8px;border-radius:4px;color:var(--green-light)">docker compose up -d --build</code><br><br>Rebuilds the image with your latest code changes and restarts the container.</div>
+      </div>
+      <div class="concept-card green">
+        <div class="concept-icon">⏹️</div>
+        <div class="concept-title">Stop &amp; Clean Up</div>
+        <div class="concept-desc"><code style="font-family:'Fira Code',monospace;font-size:12px;background:var(--bg-secondary);padding:4px 8px;border-radius:4px;color:var(--green-light)">docker compose down -v</code><br><br>Stops all containers and removes volumes. <strong>Warning:</strong> <code>-v</code> deletes data too!</div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ============================================================
+       SECTION 4: AWS SERVICES
+  ============================================================ -->
+  <div class="section-block" id="aws">
+    <div class="sec-header">
+      <div class="sec-icon sec-icon-orange"><i class="fab fa-aws"></i></div>
+      <div class="sec-info">
+        <h2>AWS — Amazon Web Services</h2>
+        <p>The cloud platform where you deploy your Dockerized Spring Boot app to the world</p>
+      </div>
+    </div>
+
+    <div class="highlight-banner hb-orange">
+      <div class="hb-icon"><i class="fas fa-cloud"></i></div>
+      <div class="hb-content">
+        <strong>What is AWS? Simple Explanation</strong>
+        <p>Imagine you need a server to host your Spring Boot app. Instead of buying a physical server (expensive!), you rent compute power, storage, and networking from Amazon. AWS has 200+ services — but as a backend developer you only need to know ~10 of them to deploy production-grade apps.</p>
+      </div>
+    </div>
+
+    <!-- AWS Global Architecture -->
+    <div class="diagram-box">
+      <p style="font-size:12px;color:var(--text-muted);margin-bottom:16px;font-family:'Fira Code',monospace;">
+        <i class="fab fa-aws"></i> &nbsp;AWS GLOBAL INFRASTRUCTURE
+      </p>
+      <pre>
+<span class="diag-orange">AWS Cloud</span>
+<span class="diag-muted">├──</span> <span class="diag-yellow">Region</span> <span class="diag-white">(e.g., ap-south-1 Mumbai)</span>
+<span class="diag-muted">│   ├──</span> <span class="diag-cyan">Availability Zone 1</span> <span class="diag-white">(AZ-1a)  — Physical Data Center</span>
+<span class="diag-muted">│   ├──</span> <span class="diag-cyan">Availability Zone 2</span> <span class="diag-white">(AZ-1b)  — Different building</span>
+<span class="diag-muted">│   └──</span> <span class="diag-cyan">Availability Zone 3</span> <span class="diag-white">(AZ-1c)  — Yet another building</span>
+<span class="diag-muted">│</span>
+<span class="diag-muted">├──</span> <span class="diag-yellow">Region</span> <span class="diag-white">(us-east-1 N.Virginia)</span>
+<span class="diag-muted">│   └──</span> <span class="diag-white">...more AZs</span>
+<span class="diag-muted">│</span>
+<span class="diag-muted">└──</span> <span class="diag-white">33+ Regions globally</span>
+
+<span class="diag-muted">Why multiple AZs?</span> <span class="diag-green">High Availability!</span>
+<span class="diag-white">If AZ-1a data center has fire → AZ-1b still serves your users!</span>
+      </pre>
+    </div>
+
+    <!-- Core AWS Services Grid -->
+    <h3 class="section-title" style="margin-top:32px"><i class="fas fa-th"></i> Core AWS Services for Backend Developers</h3>
+
+    <div class="aws-grid">
+      <div class="aws-card" style="border-top:3px solid var(--orange)">
+        <div class="aws-card-icon">🖥️</div>
+        <div class="aws-card-name" style="color:var(--orange)">EC2</div>
+        <div class="aws-card-desc">Elastic Compute Cloud. A virtual server in the cloud. Deploy your JAR or Docker container on it. You choose CPU, RAM, OS.</div>
+        <span class="aws-card-tag" style="background:rgba(249,115,22,.12);border:1px solid rgba(249,115,22,.3);color:var(--orange)">Compute</span>
+      </div>
+      <div class="aws-card" style="border-top:3px solid var(--green-light)">
+        <div class="aws-card-icon">🗄️</div>
+        <div class="aws-card-name" style="color:var(--green-light)">S3</div>
+        <div class="aws-card-desc">Simple Storage Service. Store files, images, videos, JAR files, backups. Like Google Drive but for apps. Pay per GB stored.</div>
+        <span class="aws-card-tag" style="background:rgba(16,185,129,.12);border:1px solid rgba(16,185,129,.3);color:var(--green-light)">Storage</span>
+      </div>
+      <div class="aws-card" style="border-top:3px solid var(--blue-light)">
+        <div class="aws-card-icon">🐳</div>
+        <div class="aws-card-name" style="color:var(--blue-light)">ECS</div>
+        <div class="aws-card-desc">Elastic Container Service. Run Docker containers on AWS. You define task (container config), ECS manages scaling, restart, load balancing.</div>
+        <span class="aws-card-tag" style="background:rgba(59,130,246,.12);border:1px solid rgba(59,130,246,.3);color:var(--blue-light)">Containers</span>
+      </div>
+      <div class="aws-card" style="border-top:3px solid var(--pink)">
+        <div class="aws-card-icon">📦</div>
+        <div class="aws-card-name" style="color:var(--pink)">ECR</div>
+        <div class="aws-card-desc">Elastic Container Registry. Private Docker Hub for AWS. Store your Spring Boot Docker images here. ECS pulls from ECR to deploy.</div>
+        <span class="aws-card-tag" style="background:rgba(236,72,153,.12);border:1px solid rgba(236,72,153,.3);color:var(--pink)">Registry</span>
+      </div>
+      <div class="aws-card" style="border-top:3px solid var(--purple-light)">
+        <div class="aws-card-icon">🗃️</div>
+        <div class="aws-card-name" style="color:var(--purple-light)">RDS</div>
+        <div class="aws-card-desc">Relational Database Service. Managed MySQL/PostgreSQL. No need to manage server — AWS handles backups, patches, replication.</div>
+        <span class="aws-card-tag" style="background:rgba(139,92,246,.12);border:1px solid rgba(139,92,246,.3);color:var(--purple-light)">Database</span>
+      </div>
+      <div class="aws-card" style="border-top:3px solid var(--cyan)">
+        <div class="aws-card-icon">⚖️</div>
+        <div class="aws-card-name" style="color:var(--cyan)">ALB</div>
+        <div class="aws-card-desc">Application Load Balancer. Distributes incoming HTTP traffic across multiple EC2/ECS instances. Handles 1M users — auto routes to healthy instances.</div>
+        <span class="aws-card-tag" style="background:rgba(6,182,212,.12);border:1px solid rgba(6,182,212,.3);color:var(--cyan)">Networking</span>
+      </div>
+      <div class="aws-card" style="border-top:3px solid var(--yellow)">
+        <div class="aws-card-icon">🔐</div>
+        <div class="aws-card-name" style="color:var(--yellow)">IAM</div>
+        <div class="aws-card-desc">Identity &amp; Access Management. Control who/what can access your AWS resources. Users, Roles, Policies. Principle of least privilege.</div>
+        <span class="aws-card-tag" style="background:rgba(245,158,11,.12);border:1px solid rgba(245,158,11,.3);color:var(--yellow)">Security</span>
+      </div>
+      <div class="aws-card" style="border-top:3px solid var(--orange)">
+        <div class="aws-card-icon">🌐</div>
+        <div class="aws-card-name" style="color:var(--orange)">VPC</div>
+        <div class="aws-card-desc">Virtual Private Cloud. Your own isolated network in AWS. Public subnets (accessible from internet), Private subnets (only internal access — put DB here!).</div>
+        <span class="aws-card-tag" style="background:rgba(249,115,22,.12);border:1px solid rgba(249,115,22,.3);color:var(--orange)">Networking</span>
+      </div>
+      <div class="aws-card" style="border-top:3px solid var(--green-light)">
+        <div class="aws-card-icon">⚡</div>
+        <div class="aws-card-name" style="color:var(--green-light)">Lambda</div>
+        <div class="aws-card-desc">Serverless functions. Run Java code without a server. Pay per execution. Great for event-driven tasks like S3 file processing, SQS message handling.</div>
+        <span class="aws-card-tag" style="background:rgba(16,185,129,.12);border:1px solid rgba(16,185,129,.3);color:var(--green-light)">Serverless</span>
+      </div>
+      <div class="aws-card" style="border-top:3px solid var(--red)">
+        <div class="aws-card-icon">🔑</div>
+        <div class="aws-card-name" style="color:var(--red)">Secrets Manager</div>
+        <div class="aws-card-desc">Store DB passwords, API keys securely. Your Spring Boot app fetches secrets at runtime — no hardcoded passwords in code!</div>
+        <span class="aws-card-tag" style="background:rgba(239,68,68,.12);border:1px solid rgba(239,68,68,.3);color:var(--red)">Security</span>
+      </div>
+      <div class="aws-card" style="border-top:3px solid var(--blue-light)">
+        <div class="aws-card-icon">📊</div>
+        <div class="aws-card-name" style="color:var(--blue-light)">CloudWatch</div>
+        <div class="aws-card-desc">Monitoring &amp; Logs. View your Spring Boot app logs, set CPU/memory alerts, create dashboards. Like Grafana but built into AWS.</div>
+        <span class="aws-card-tag" style="background:rgba(59,130,246,.12);border:1px solid rgba(59,130,246,.3);color:var(--blue-light)">Monitoring</span>
+      </div>
+      <div class="aws-card" style="border-top:3px solid var(--purple-light)">
+        <div class="aws-card-icon">📨</div>
+        <div class="aws-card-name" style="color:var(--purple-light)">SQS / SNS</div>
+        <div class="aws-card-desc">Message Queue (SQS) and Notification (SNS) services. Decouple microservices. Spring Boot publishes to SQS, another service consumes asynchronously.</div>
+        <span class="aws-card-tag" style="background:rgba(139,92,246,.12);border:1px solid rgba(139,92,246,.3);color:var(--purple-light)">Messaging</span>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ============================================================
+       SECTION 5: EC2 DEEP DIVE
+  ============================================================ -->
+  <div class="section-block" id="ec2">
+    <div class="sec-header">
+      <div class="sec-icon sec-icon-orange"><i class="fas fa-server"></i></div>
+      <div class="sec-info">
+        <h2>EC2 — Deploy Spring Boot on a Virtual Server</h2>
+        <p>Step-by-step: Launch EC2, install Docker, run your containerized Spring Boot app</p>
+      </div>
+    </div>
+
+    <div class="timeline">
+      <div class="t-step">
+        <div class="t-num">1</div>
+        <div class="t-title">Launch EC2 Instance (AWS Console)</div>
+        <div class="t-body">
+          Go to AWS Console → EC2 → Launch Instance<br>
+          • <strong>AMI:</strong> Amazon Linux 2023 (free tier eligible)<br>
+          • <strong>Instance Type:</strong> t2.micro (free tier) or t3.small for production<br>
+          • <strong>Key Pair:</strong> Create a .pem file — this is your SSH login key (save it safely!)<br>
+          • <strong>Security Group:</strong> Allow port 22 (SSH) and 8080 (your app)
+        </div>
+      </div>
+      <div class="t-step">
+        <div class="t-num">2</div>
+        <div class="t-title">SSH into your EC2 Instance</div>
+        <div class="t-body"><code>chmod 400 my-key.pem</code><br>
+        <code>ssh -i my-key.pem ec2-user@your-ec2-public-ip</code><br>
+        You're now inside the server! It's a fresh Linux machine.</div>
+      </div>
+      <div class="t-step">
+        <div class="t-num">3</div>
+        <div class="t-title">Install Docker on EC2</div>
+        <div class="t-body"><code>sudo yum update -y</code><br>
+        <code>sudo yum install -y docker</code><br>
+        <code>sudo systemctl start docker</code><br>
+        <code>sudo systemctl enable docker</code><br>
+        <code>sudo usermod -aG docker ec2-user</code><br>
+        <code>exit</code> &nbsp;then SSH back in — now you can run docker without sudo</div>
+      </div>
+      <div class="t-step">
+        <div class="t-num">4</div>
+        <div class="t-title">Pull your Docker Image and Run</div>
+        <div class="t-body"><code>docker pull your-dockerhub-username/sonata-app:latest</code><br>
+        <code>docker run -d -p 8080:8080 --name sonata your-dockerhub-username/sonata-app:latest</code><br>
+        Now access: <code>http://your-ec2-public-ip:8080/api/health</code> — Live in production!</div>
+      </div>
+      <div class="t-step">
+        <div class="t-num">5</div>
+        <div class="t-title">View Logs &amp; Monitor</div>
+        <div class="t-body"><code>docker logs -f sonata</code> → Live Spring Boot logs<br>
+        Or check AWS CloudWatch → Log Groups → Your app logs (if configured)</div>
+      </div>
+    </div>
+
+    <!-- EC2 vs ECS vs Lambda Table -->
+    <h3 class="section-title" style="margin-top:28px"><i class="fas fa-balance-scale"></i> EC2 vs ECS (Fargate) vs Lambda</h3>
+    <table class="cmp-table">
+      <thead><tr><th>Feature</th><th>EC2</th><th>ECS Fargate</th><th>Lambda</th></tr></thead>
+      <tbody>
+        <tr><td><strong>What you manage</strong></td><td>Full server (OS, patches)</td><td><span class="badge-blue">Only container config</span></td><td><span class="badge-green">Just the function code</span></td></tr>
+        <tr><td><strong>Scaling</strong></td><td>Manual or Auto Scaling Group</td><td><span class="badge-blue">AWS auto-scales containers</span></td><td><span class="badge-green">Infinite auto-scale</span></td></tr>
+        <tr><td><strong>Cost Model</strong></td><td>Pay per hour (even if idle)</td><td>Pay per vCPU+RAM used</td><td><span class="badge-green">Pay per request (free if 0 traffic)</span></td></tr>
+        <tr><td><strong>Spring Boot</strong></td><td>✅ Full support</td><td>✅ Best choice for APIs</td><td>⚠️ Cold start issues</td></tr>
+        <tr><td><strong>Best for</strong></td><td>Full control, custom setup</td><td><span class="badge-blue">Production microservices</span></td><td>Event-driven, short tasks</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- ============================================================
+       SECTION 6: ECR + ECS DEPLOY
+  ============================================================ -->
+  <div class="section-block" id="ecs">
+    <div class="sec-header">
+      <div class="sec-icon sec-icon-blue"><i class="fas fa-ship"></i></div>
+      <div class="sec-info">
+        <h2>ECR + ECS — Production Container Deployment</h2>
+        <p>The professional way to deploy Docker containers on AWS — no server management!</p>
+      </div>
+    </div>
+
+    <!-- ECS Architecture -->
+    <div class="diagram-box">
+      <p style="font-size:12px;color:var(--text-muted);margin-bottom:16px;font-family:'Fira Code',monospace;">
+        <i class="fas fa-sitemap"></i> &nbsp;ECS FARGATE ARCHITECTURE
+      </p>
+      <pre>
+<span class="diag-white">Internet Traffic</span>
+      <span class="diag-muted">│</span>
+      <span class="diag-muted">▼</span>
+<span class="diag-cyan">┌─────────────────────────────────┐</span>
+<span class="diag-cyan">│  Application Load Balancer (ALB) │</span>  <span class="diag-muted">← Routes HTTP to healthy containers</span>
+<span class="diag-cyan">│  yourdomain.com → :80 / :443    │</span>
+<span class="diag-cyan">└────────────────┬────────────────┘</span>
+                 <span class="diag-muted">│</span>
+      <span class="diag-muted">┌──────────┴──────────┐</span>
+      <span class="diag-muted">▼</span>                    <span class="diag-muted">▼</span>
+<span class="diag-blue">┌──────────────┐  ┌──────────────┐</span>
+<span class="diag-blue">│ ECS Task     │  │ ECS Task     │</span>  <span class="diag-muted">← Each Task = 1 Container</span>
+<span class="diag-blue">│ Spring Boot  │  │ Spring Boot  │</span>  <span class="diag-muted">← ECS runs multiple for HA</span>
+<span class="diag-blue">│ Container    │  │ Container    │</span>
+<span class="diag-blue">│  AZ-1a       │  │  AZ-1b       │</span>
+<span class="diag-blue">└──────────────┘  └──────────────┘</span>
+      <span class="diag-muted">│</span>                    <span class="diag-muted">│</span>
+      <span class="diag-muted">└──────────┬──────────┘</span>
+                 <span class="diag-muted">▼</span>
+<span class="diag-purple">┌─────────────────────────────────┐</span>
+<span class="diag-purple">│  Amazon RDS MySQL (Private Subnet)│</span>  <span class="diag-muted">← DB not exposed to internet!</span>
+<span class="diag-purple">└─────────────────────────────────┘</span>
+      </pre>
+    </div>
+
+    <!-- Push to ECR Commands -->
+    <h3 class="section-title" style="margin-top:28px"><i class="fas fa-upload"></i> Push Docker Image to AWS ECR</h3>
+    <div class="code-wrap">
+      <div class="code-header">
+        <span class="code-lang"><span class="code-dot dot-red"></span><span class="code-dot dot-yellow"></span><span class="code-dot dot-green"></span>&nbsp; Push to ECR — Terminal Commands</span>
+      </div>
+      <div class="code-body"><span class="c-comment"># Step 1: Authenticate Docker to your ECR registry</span>
+<span class="c-comment"># Replace ACCOUNT_ID and REGION with your values</span>
+<span class="c-cmd">aws</span> <span class="c-flag">ecr get-login-password</span> <span class="c-flag">--region</span> <span class="c-val">ap-south-1</span> | <span class="c-cmd">docker</span> <span class="c-flag">login</span> <span class="c-flag">--username</span> <span class="c-val">AWS</span> <span class="c-flag">--password-stdin</span>   <span class="c-val">123456789.dkr.ecr.ap-south-1.amazonaws.com</span>
+
+<span class="c-comment"># Step 2: Create ECR Repository (one time only)</span>
+<span class="c-cmd">aws</span> <span class="c-flag">ecr create-repository</span> <span class="c-flag">--repository-name</span> <span class="c-val">sonata-app</span> <span class="c-flag">--region</span> <span class="c-val">ap-south-1</span>
+
+<span class="c-comment"># Step 3: Build your Docker image</span>
+<span class="c-cmd">docker</span> <span class="c-flag">build</span> <span class="c-flag">-t</span> <span class="c-val">sonata-app:latest</span> <span class="c-val">.</span>
+
+<span class="c-comment"># Step 4: Tag image with ECR URL</span>
+<span class="c-cmd">docker</span> <span class="c-flag">tag</span> <span class="c-val">sonata-app:latest</span>   <span class="c-val">123456789.dkr.ecr.ap-south-1.amazonaws.com/sonata-app:latest</span>
+
+<span class="c-comment"># Step 5: Push image to ECR</span>
+<span class="c-cmd">docker</span> <span class="c-flag">push</span> <span class="c-val">123456789.dkr.ecr.ap-south-1.amazonaws.com/sonata-app:latest</span>
+
+<span class="c-comment"># Now your image is in ECR! ECS can pull it to deploy containers.</span></div>
+    </div>
+  </div>
+
+
+  <!-- ============================================================
+       SECTION 7: CI/CD CONCEPTS
+  ============================================================ -->
+  <div class="section-block" id="cicd">
+    <div class="sec-header">
+      <div class="sec-icon sec-icon-green"><i class="fas fa-infinity"></i></div>
+      <div class="sec-info">
+        <h2>CI/CD — Continuous Integration &amp; Continuous Delivery</h2>
+        <p>Automate everything — from code commit to production deployment, zero manual steps</p>
+      </div>
+    </div>
+
+    <!-- What is CI/CD -->
+    <div class="concept-grid">
+      <div class="concept-card green">
+        <span class="concept-num">CI</span>
+        <div class="concept-icon">🔄</div>
+        <div class="concept-title">Continuous Integration</div>
+        <div class="concept-desc">
+          <strong>Every code push → automatically:</strong><br>
+          1. Pull latest code from Git<br>
+          2. Compile the project<br>
+          3. Run all unit tests<br>
+          4. Run code quality checks<br>
+          5. Report: ✅ Pass or ❌ Fail<br><br>
+          <em>Goal: Catch bugs early, before they reach production!</em>
+        </div>
+      </div>
+      <div class="concept-card blue">
+        <span class="concept-num">CD</span>
+        <div class="concept-icon">🚀</div>
+        <div class="concept-title">Continuous Delivery/Deploy</div>
+        <div class="concept-desc">
+          <strong>After CI passes → automatically:</strong><br>
+          1. Build Docker image<br>
+          2. Push to ECR<br>
+          3. Deploy to staging/prod<br>
+          4. Run smoke tests<br>
+          5. Notify team (Slack/Email)<br><br>
+          <em>Goal: Ship code to production in minutes, not days!</em>
+        </div>
+      </div>
+      <div class="concept-card purple">
+        <span class="concept-num">CD*</span>
+        <div class="concept-icon">⚡</div>
+        <div class="concept-title">Continuous Deployment</div>
+        <div class="concept-desc">
+          <strong>No human approval needed!</strong><br>
+          Every passing commit automatically goes to production.<br><br>
+          • <strong>Delivery</strong> = manual approval before prod<br>
+          • <strong>Deployment</strong> = fully automatic to prod<br><br>
+          <em>Companies like Netflix deploy 100s of times per day!</em>
+        </div>
+      </div>
+    </div>
+
+    <!-- CI/CD Pipeline Visual -->
+    <h3 class="section-title" style="margin-top:32px"><i class="fas fa-stream"></i> Full CI/CD Pipeline Flow</h3>
+    <div class="pipeline">
+      <div class="pipe-stage">
+        <div class="pipe-box dev">
+          <span class="pipe-box-icon">💻</span>
+          <div class="pipe-box-label">Code Push<br/>(git push)</div>
+        </div>
+      </div>
+      <div class="pipe-arrow"><i class="fas fa-chevron-right"></i></div>
+      <div class="pipe-stage">
+        <div class="pipe-box build">
+          <span class="pipe-box-icon">🔨</span>
+          <div class="pipe-box-label">Build<br/>(mvn package)</div>
+        </div>
+      </div>
+      <div class="pipe-arrow"><i class="fas fa-chevron-right"></i></div>
+      <div class="pipe-stage">
+        <div class="pipe-box test">
+          <span class="pipe-box-icon">🧪</span>
+          <div class="pipe-box-label">Test<br/>(JUnit/Mockito)</div>
+        </div>
+      </div>
+      <div class="pipe-arrow"><i class="fas fa-chevron-right"></i></div>
+      <div class="pipe-stage">
+        <div class="pipe-box scan">
+          <span class="pipe-box-icon">🔍</span>
+          <div class="pipe-box-label">Code Scan<br/>(SonarQube)</div>
+        </div>
+      </div>
+      <div class="pipe-arrow"><i class="fas fa-chevron-right"></i></div>
+      <div class="pipe-stage">
+        <div class="pipe-box docker">
+          <span class="pipe-box-icon">🐳</span>
+          <div class="pipe-box-label">Docker Build<br/>Image</div>
+        </div>
+      </div>
+      <div class="pipe-arrow"><i class="fas fa-chevron-right"></i></div>
+      <div class="pipe-stage">
+        <div class="pipe-box push">
+          <span class="pipe-box-icon">📤</span>
+          <div class="pipe-box-label">Push to<br/>ECR/Docker Hub</div>
+        </div>
+      </div>
+      <div class="pipe-arrow"><i class="fas fa-chevron-right"></i></div>
+      <div class="pipe-stage">
+        <div class="pipe-box deploy">
+          <span class="pipe-box-icon">🚀</span>
+          <div class="pipe-box-label">Deploy to<br/>ECS/EC2</div>
+        </div>
+      </div>
+      <div class="pipe-arrow"><i class="fas fa-chevron-right"></i></div>
+      <div class="pipe-stage">
+        <div class="pipe-box monitor">
+          <span class="pipe-box-icon">📊</span>
+          <div class="pipe-box-label">Monitor<br/>CloudWatch</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CI/CD Tools Comparison -->
+    <h3 class="section-title" style="margin-top:32px"><i class="fas fa-tools"></i> Popular CI/CD Tools</h3>
+    <table class="cmp-table">
+      <thead><tr><th>Tool</th><th>Type</th><th>Best For</th><th>Spring Boot Integration</th></tr></thead>
+      <tbody>
+        <tr><td><strong>🐙 GitHub Actions</strong></td><td>Cloud-native CI/CD</td><td>GitHub repos — free tier available</td><td><span class="badge-green">Excellent — YAML workflows</span></td></tr>
+        <tr><td><strong>🔵 Jenkins</strong></td><td>Self-hosted</td><td>Enterprise, complex pipelines</td><td><span class="badge-blue">Good — Maven/Gradle plugins</span></td></tr>
+        <tr><td><strong>🦊 GitLab CI</strong></td><td>Integrated with GitLab</td><td>GitLab repos, built-in registry</td><td>Excellent</td></tr>
+        <tr><td><strong>🏗️ AWS CodePipeline</strong></td><td>AWS native CI/CD</td><td>Full AWS ecosystem</td><td>Good with CodeBuild</td></tr>
+        <tr><td><strong>🔵 CircleCI</strong></td><td>Cloud CI/CD</td><td>Fast builds, Docker-first</td><td>Good</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+
+  <!-- ============================================================
+       SECTION 8: GITHUB ACTIONS
+  ============================================================ -->
+  <div class="section-block" id="github-actions">
+    <div class="sec-header">
+      <div class="sec-icon sec-icon-purple"><i class="fab fa-github"></i></div>
+      <div class="sec-info">
+        <h2>GitHub Actions — CI/CD for Your Spring Boot App</h2>
+        <p>Automate build → test → Docker build → push to ECR → deploy on every git push</p>
+      </div>
+    </div>
+
+    <div class="highlight-banner hb-purple">
+      <div class="hb-icon"><i class="fas fa-folder-open"></i></div>
+      <div class="hb-content">
+        <strong>Where does this file go?</strong>
+        <p>Create file: <code>.github/workflows/deploy.yml</code> in your Spring Boot project root. GitHub automatically detects and runs it on every push!</p>
+      </div>
+    </div>
+
+    <div class="code-wrap">
+      <div class="code-header">
+        <span class="code-lang"><span class="code-dot dot-red"></span><span class="code-dot dot-yellow"></span><span class="code-dot dot-green"></span>&nbsp; .github/workflows/deploy.yml — Full CI/CD Pipeline</span>
+      </div>
+      <div class="code-body"><span class="c-comment"># ──────────────────────────────────────────────────────────────</span>
+<span class="c-comment"># GitHub Actions CI/CD Pipeline for Spring Boot + Docker + AWS ECS</span>
+<span class="c-comment"># Trigger: Every push to 'main' branch</span>
+<span class="c-comment"># ──────────────────────────────────────────────────────────────</span>
+
+<span class="c-key">name:</span> <span class="c-str">Spring Boot CI/CD → AWS ECS</span>
+
+<span class="c-key">on:</span>
+  <span class="c-flag">push:</span>
+    <span class="c-key">branches:</span> [<span class="c-str">main</span>]             <span class="c-comment"># Runs on every push to main</span>
+  <span class="c-flag">pull_request:</span>
+    <span class="c-key">branches:</span> [<span class="c-str">main</span>]             <span class="c-comment"># Also runs on PRs (CI only, not deploy)</span>
+
+<span class="c-key">env:</span>
+  <span class="c-comment"># AWS configuration — these come from GitHub Secrets</span>
+  <span class="c-flag">AWS_REGION:</span> <span class="c-val">ap-south-1</span>
+  <span class="c-flag">ECR_REGISTRY:</span> <span class="c-val">123456789.dkr.ecr.ap-south-1.amazonaws.com</span>
+  <span class="c-flag">ECR_REPOSITORY:</span> <span class="c-val">sonata-app</span>
+  <span class="c-flag">ECS_SERVICE:</span> <span class="c-val">sonata-service</span>
+  <span class="c-flag">ECS_CLUSTER:</span> <span class="c-val">sonata-cluster</span>
+
+<span class="c-key">jobs:</span>
+
+  <span class="c-comment"># ── JOB 1: CI — Build &amp; Test ──────────────────────────────</span>
+  <span class="c-flag">ci:</span>
+    <span class="c-key">name:</span> <span class="c-str">Build &amp; Test</span>
+    <span class="c-key">runs-on:</span> <span class="c-val">ubuntu-latest</span>       <span class="c-comment"># GitHub gives you a free Ubuntu VM</span>
+
+    <span class="c-key">steps:</span>
+      <span class="c-comment"># Step 1: Checkout your code</span>
+      - <span class="c-key">name:</span> <span class="c-str">Checkout Code</span>
+        <span class="c-key">uses:</span> <span class="c-val">actions/checkout@v4</span>
+
+      <span class="c-comment"># Step 2: Set up Java 21</span>
+      - <span class="c-key">name:</span> <span class="c-str">Set up Java 21</span>
+        <span class="c-key">uses:</span> <span class="c-val">actions/setup-java@v4</span>
+        <span class="c-key">with:</span>
+          <span class="c-key">java-version:</span> <span class="c-str">'21'</span>
+          <span class="c-key">distribution:</span> <span class="c-str">'temurin'</span>
+
+      <span class="c-comment"># Step 3: Cache Maven dependencies (speeds up builds!)</span>
+      - <span class="c-key">name:</span> <span class="c-str">Cache Maven packages</span>
+        <span class="c-key">uses:</span> <span class="c-val">actions/cache@v3</span>
+        <span class="c-key">with:</span>
+          <span class="c-key">path:</span> <span class="c-val">~/.m2</span>
+          <span class="c-key">key:</span> <span class="c-val">${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}</span>
+
+      <span class="c-comment"># Step 4: Build and Run Tests</span>
+      - <span class="c-key">name:</span> <span class="c-str">Build and Test</span>
+        <span class="c-key">run:</span> <span class="c-val">mvn clean verify</span>     <span class="c-comment"># Compiles + runs JUnit tests</span>
+
+      <span class="c-comment"># Step 5: Upload test results as artifact</span>
+      - <span class="c-key">name:</span> <span class="c-str">Upload Test Results</span>
+        <span class="c-key">uses:</span> <span class="c-val">actions/upload-artifact@v3</span>
+        <span class="c-key">if:</span> <span class="c-val">always()</span>             <span class="c-comment"># Upload even if tests fail</span>
+        <span class="c-key">with:</span>
+          <span class="c-key">name:</span> <span class="c-str">test-results</span>
+          <span class="c-key">path:</span> <span class="c-val">target/surefire-reports/</span>
+
+  <span class="c-comment"># ── JOB 2: CD — Docker Build + ECR Push + ECS Deploy ─────</span>
+  <span class="c-flag">cd:</span>
+    <span class="c-key">name:</span> <span class="c-str">Build Docker + Deploy to ECS</span>
+    <span class="c-key">runs-on:</span> <span class="c-val">ubuntu-latest</span>
+    <span class="c-key">needs:</span> <span class="c-val">ci</span>                   <span class="c-comment"># Only runs if CI job passes!</span>
+    <span class="c-key">if:</span> <span class="c-val">github.ref == 'refs/heads/main'</span>  <span class="c-comment"># Only on main branch</span>
+
+    <span class="c-key">steps:</span>
+      - <span class="c-key">name:</span> <span class="c-str">Checkout Code</span>
+        <span class="c-key">uses:</span> <span class="c-val">actions/checkout@v4</span>
+
+      - <span class="c-key">name:</span> <span class="c-str">Set up Java 21</span>
+        <span class="c-key">uses:</span> <span class="c-val">actions/setup-java@v4</span>
+        <span class="c-key">with:</span>
+          <span class="c-key">java-version:</span> <span class="c-str">'21'</span>
+          <span class="c-key">distribution:</span> <span class="c-str">'temurin'</span>
+
+      <span class="c-comment"># Build JAR for Docker image</span>
+      - <span class="c-key">name:</span> <span class="c-str">Build JAR</span>
+        <span class="c-key">run:</span> <span class="c-val">mvn clean package -DskipTests</span>
+
+      <span class="c-comment"># Authenticate to AWS using GitHub Secrets</span>
+      - <span class="c-key">name:</span> <span class="c-str">Configure AWS Credentials</span>
+        <span class="c-key">uses:</span> <span class="c-val">aws-actions/configure-aws-credentials@v4</span>
+        <span class="c-key">with:</span>
+          <span class="c-key">aws-access-key-id:</span> <span class="c-val">${{ secrets.AWS_ACCESS_KEY_ID }}</span>
+          <span class="c-key">aws-secret-access-key:</span> <span class="c-val">${{ secrets.AWS_SECRET_ACCESS_KEY }}</span>
+          <span class="c-key">aws-region:</span> <span class="c-val">${{ env.AWS_REGION }}</span>
+
+      <span class="c-comment"># Login to ECR</span>
+      - <span class="c-key">name:</span> <span class="c-str">Login to Amazon ECR</span>
+        <span class="c-key">id:</span> <span class="c-val">login-ecr</span>
+        <span class="c-key">uses:</span> <span class="c-val">aws-actions/amazon-ecr-login@v2</span>
+
+      <span class="c-comment"># Build Docker image and push to ECR</span>
+      - <span class="c-key">name:</span> <span class="c-str">Build, Tag &amp; Push Docker Image to ECR</span>
+        <span class="c-key">id:</span> <span class="c-val">build-image</span>
+        <span class="c-key">env:</span>
+          <span class="c-flag">IMAGE_TAG:</span> <span class="c-val">${{ github.sha }}</span>    <span class="c-comment"># Use git commit SHA as tag</span>
+        <span class="c-key">run:</span> |
+          <span class="c-comment"># Build Docker image</span>
+          <span class="c-val">docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .</span>
+          <span class="c-val">docker tag $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG $ECR_REGISTRY/$ECR_REPOSITORY:latest</span>
+          <span class="c-comment"># Push to ECR</span>
+          <span class="c-val">docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG</span>
+          <span class="c-val">docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest</span>
+          <span class="c-comment"># Output image URI for next step</span>
+          <span class="c-val">echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_OUTPUT</span>
+
+      <span class="c-comment"># Update ECS Service to deploy new container</span>
+      - <span class="c-key">name:</span> <span class="c-str">Deploy to Amazon ECS</span>
+        <span class="c-key">run:</span> |
+          <span class="c-val">aws ecs update-service \</span>
+            <span class="c-val">--cluster $ECS_CLUSTER \</span>
+            <span class="c-val">--service $ECS_SERVICE \</span>
+            <span class="c-val">--force-new-deployment</span>
+          <span class="c-comment"># ECS pulls new image from ECR and replaces old containers!</span></div>
+    </div>
+
+    <!-- GitHub Secrets Setup -->
+    <div class="highlight-banner hb-orange" style="margin-top:24px">
+      <div class="hb-icon"><i class="fas fa-key"></i></div>
+      <div class="hb-content">
+        <strong>Setting GitHub Secrets (Required for AWS)</strong>
+        <p>Go to GitHub repo → Settings → Secrets and Variables → Actions → New Repository Secret<br>
+        Add: <code>AWS_ACCESS_KEY_ID</code> and <code>AWS_SECRET_ACCESS_KEY</code> (from your AWS IAM user with ECS permissions). Never hardcode credentials in YAML!</p>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ============================================================
+       SECTION 9: END-TO-END SPRING BOOT DEPLOY
+  ============================================================ -->
+  <div class="section-block" id="springboot-deploy">
+    <div class="sec-header">
+      <div class="sec-icon sec-icon-purple"><i class="fas fa-leaf"></i></div>
+      <div class="sec-info">
+        <h2>End-to-End: Spring Boot App Live on AWS</h2>
+        <p>Complete checklist from local dev to production — every step you need</p>
+      </div>
+    </div>
+
+    <!-- End to End Flow Diagram -->
+    <div class="diagram-box">
+      <p style="font-size:12px;color:var(--text-muted);margin-bottom:16px;font-family:'Fira Code',monospace;">
+        <i class="fas fa-road"></i> &nbsp;COMPLETE DEPLOY JOURNEY
+      </p>
+      <pre>
+<span class="diag-purple">You write code</span>
+      <span class="diag-muted">│ git push origin main</span>
+      <span class="diag-muted">▼</span>
+<span class="diag-cyan">GitHub Actions triggered</span>
+      <span class="diag-muted">│</span>
+      <span class="diag-muted">├── mvn clean verify       </span><span class="diag-green">(Compile + run tests)</span>
+      <span class="diag-muted">├── docker build           </span><span class="diag-green">(Create Docker image)</span>
+      <span class="diag-muted">├── docker push to ECR     </span><span class="diag-green">(Upload image to AWS)</span>
+      <span class="diag-muted">└── aws ecs update-service </span><span class="diag-green">(Deploy new container)</span>
+      <span class="diag-muted">▼</span>
+<span class="diag-orange">AWS ECS Fargate</span>
+      <span class="diag-muted">│</span>
+      <span class="diag-muted">├── Pulls new image from ECR</span>
+      <span class="diag-muted">├── Starts new container (Spring Boot starts)</span>
+      <span class="diag-muted">├── Health check passes (/actuator/health)</span>
+      <span class="diag-muted">├── ALB routes traffic to new container</span>
+      <span class="diag-muted">└── Old container stopped (zero-downtime!)</span>
+      <span class="diag-muted">▼</span>
+<span class="diag-green">Users hit yourdomain.com → Spring Boot API responds!</span>
+      </pre>
+    </div>
+
+    <!-- Application.properties for Production -->
+    <h3 class="section-title" style="margin-top:28px"><i class="fas fa-cog"></i> Spring Boot application.properties for Docker/AWS</h3>
+    <div class="code-wrap">
+      <div class="code-header">
+        <span class="code-lang"><span class="code-dot dot-red"></span><span class="code-dot dot-yellow"></span><span class="code-dot dot-green"></span>&nbsp; application.properties — Docker &amp; AWS Ready</span>
+      </div>
+      <div class="code-body"><span class="c-comment"># ── Spring Boot: Read config from Environment Variables ──────</span>
+<span class="c-comment"># In Docker: pass as -e flag or docker-compose environment:</span>
+<span class="c-comment"># In AWS ECS: pass as Task Definition environment variables</span>
+
+<span class="c-key">spring.datasource.url</span>=<span class="c-val">${DB_URL:jdbc:mysql://localhost:3306/sonatadb}</span>
+<span class="c-key">spring.datasource.username</span>=<span class="c-val">${DB_USERNAME:root}</span>
+<span class="c-key">spring.datasource.password</span>=<span class="c-val">${DB_PASSWORD:password}</span>
+
+<span class="c-comment"># ${ENV_VAR:default_value} — uses env var if set, else fallback</span>
+<span class="c-comment"># Perfect for Docker! No hardcoded secrets in code!</span>
+
+<span class="c-key">spring.redis.host</span>=<span class="c-val">${REDIS_HOST:localhost}</span>
+<span class="c-key">spring.redis.port</span>=<span class="c-val">${REDIS_PORT:6379}</span>
+
+<span class="c-comment"># Spring Boot Actuator — ECS uses /actuator/health for health checks!</span>
+<span class="c-key">management.endpoints.web.exposure.include</span>=<span class="c-val">health,info,metrics</span>
+<span class="c-key">management.endpoint.health.show-details</span>=<span class="c-val">always</span>
+
+<span class="c-comment"># Logging — structured JSON logs for CloudWatch</span>
+<span class="c-key">logging.pattern.console</span>=<span class="c-val">{"time":"%d","level":"%p","msg":"%m"}%n</span>
+
+<span class="c-comment"># Server port</span>
+<span class="c-key">server.port</span>=<span class="c-val">${PORT:8080}</span></div>
+    </div>
+
+    <!-- Production Checklist -->
+    <h3 class="section-title" style="margin-top:28px"><i class="fas fa-clipboard-check"></i> Production Deployment Checklist</h3>
+    <div class="concept-grid">
+      <div class="concept-card green">
+        <div class="concept-icon">🔐</div>
+        <div class="concept-title">Security</div>
+        <div class="concept-desc">
+          ✅ No hardcoded passwords in code<br>
+          ✅ Use AWS Secrets Manager or env vars<br>
+          ✅ Non-root user in Dockerfile<br>
+          ✅ Private subnets for RDS<br>
+          ✅ Security Groups — restrict ports<br>
+          ✅ IAM roles with least privilege
+        </div>
+      </div>
+      <div class="concept-card blue">
+        <div class="concept-icon">⚡</div>
+        <div class="concept-title">Performance</div>
+        <div class="concept-desc">
+          ✅ Multi-stage Dockerfile (small images)<br>
+          ✅ JVM container flags set<br>
+          ✅ Maven dependency layer caching<br>
+          ✅ Health check endpoint configured<br>
+          ✅ ALB for load balancing<br>
+          ✅ Auto-scaling policy in ECS
+        </div>
+      </div>
+      <div class="concept-card orange">
+        <div class="concept-icon">📊</div>
+        <div class="concept-title">Observability</div>
+        <div class="concept-desc">
+          ✅ CloudWatch logs configured<br>
+          ✅ Spring Actuator exposed<br>
+          ✅ Structured JSON logging<br>
+          ✅ CloudWatch alarms for CPU/errors<br>
+          ✅ Application metrics (Micrometer)<br>
+          ✅ Distributed tracing (X-Ray / Zipkin)
+        </div>
+      </div>
+      <div class="concept-card purple">
+        <div class="concept-icon">🔄</div>
+        <div class="concept-title">CI/CD</div>
+        <div class="concept-desc">
+          ✅ GitHub Actions workflow set up<br>
+          ✅ Tests run on every PR<br>
+          ✅ Docker image tagged with git SHA<br>
+          ✅ Secrets in GitHub Secrets (not YAML)<br>
+          ✅ Zero-downtime rolling deploy<br>
+          ✅ Rollback strategy defined
+        </div>
+      </div>
+    </div>
+
+    <!-- Quick Reference Commands -->
+    <h3 class="section-title" style="margin-top:32px"><i class="fas fa-terminal"></i> Quick Reference — All Commands You Need</h3>
+    <div class="code-wrap">
+      <div class="code-header">
+        <span class="code-lang"><span class="code-dot dot-red"></span><span class="code-dot dot-yellow"></span><span class="code-dot dot-green"></span>&nbsp; Docker + AWS CLI Cheatsheet</span>
+      </div>
+      <div class="code-body"><span class="c-comment"># ── DOCKER COMMANDS ─────────────────────────────────────────</span>
+<span class="c-cmd">docker build</span> <span class="c-flag">-t</span> <span class="c-val">myapp:1.0 .</span>              <span class="c-comment"># Build image</span>
+<span class="c-cmd">docker images</span>                              <span class="c-comment"># List images</span>
+<span class="c-cmd">docker run</span> <span class="c-flag">-d -p</span> <span class="c-val">8080:8080 myapp:1.0</span>     <span class="c-comment"># Run container</span>
+<span class="c-cmd">docker ps</span>                                  <span class="c-comment"># List running containers</span>
+<span class="c-cmd">docker ps -a</span>                               <span class="c-comment"># All containers (including stopped)</span>
+<span class="c-cmd">docker logs</span> <span class="c-flag">-f</span> <span class="c-val">container-name</span>            <span class="c-comment"># Follow logs</span>
+<span class="c-cmd">docker exec</span> <span class="c-flag">-it</span> <span class="c-val">container-name bash</span>      <span class="c-comment"># Shell into container</span>
+<span class="c-cmd">docker stop</span> <span class="c-val">container-name</span>               <span class="c-comment"># Stop container</span>
+<span class="c-cmd">docker rm</span> <span class="c-val">container-name</span>                 <span class="c-comment"># Remove container</span>
+<span class="c-cmd">docker rmi</span> <span class="c-val">myapp:1.0</span>                      <span class="c-comment"># Remove image</span>
+<span class="c-cmd">docker system prune</span> <span class="c-flag">-a</span>                   <span class="c-comment"># Clean up all unused images/containers</span>
+
+<span class="c-comment"># ── DOCKER COMPOSE COMMANDS ─────────────────────────────────</span>
+<span class="c-cmd">docker compose up</span> <span class="c-flag">-d</span>                      <span class="c-comment"># Start all services in background</span>
+<span class="c-cmd">docker compose up</span> <span class="c-flag">-d --build</span>             <span class="c-comment"># Rebuild and start</span>
+<span class="c-cmd">docker compose down</span>                       <span class="c-comment"># Stop all services</span>
+<span class="c-cmd">docker compose down</span> <span class="c-flag">-v</span>                   <span class="c-comment"># Stop + delete volumes (data!)</span>
+<span class="c-cmd">docker compose logs</span> <span class="c-flag">-f</span> <span class="c-val">service-name</span>     <span class="c-comment"># Follow service logs</span>
+<span class="c-cmd">docker compose ps</span>                         <span class="c-comment"># Status of all services</span>
+<span class="c-cmd">docker compose restart</span> <span class="c-val">service-name</span>      <span class="c-comment"># Restart specific service</span>
+
+<span class="c-comment"># ── AWS CLI COMMANDS ────────────────────────────────────────</span>
+<span class="c-cmd">aws configure</span>                             <span class="c-comment"># Set up AWS credentials locally</span>
+<span class="c-cmd">aws ecr describe-repositories</span>             <span class="c-comment"># List ECR repositories</span>
+<span class="c-cmd">aws ecs list-clusters</span>                     <span class="c-comment"># List ECS clusters</span>
+<span class="c-cmd">aws ecs list-services</span> <span class="c-flag">--cluster</span> <span class="c-val">my-cluster</span> <span class="c-comment"># List services in cluster</span>
+<span class="c-cmd">aws ecs describe-services</span> <span class="c-flag">--cluster</span> <span class="c-val">c</span> <span class="c-flag">--services</span> <span class="c-val">s</span>  <span class="c-comment"># Service details</span>
+<span class="c-cmd">aws logs tail</span> <span class="c-val">/ecs/sonata-app</span> <span class="c-flag">--follow</span>   <span class="c-comment"># CloudWatch logs live</span></div>
+    </div>
+  </div>
+
+  <!-- ============================================================
+       FOOTER
+  ============================================================ -->
+  <div style="margin-bottom:60px">
+    <div class="quote-card" style="background:linear-gradient(135deg,rgba(6,182,212,.08),rgba(16,185,129,.08));border:1px solid rgba(6,182,212,.2);border-radius:var(--radius);padding:28px 32px;text-align:center">
+      <div style="font-size:18px;font-style:italic;color:var(--text-primary);line-height:1.7;margin-bottom:10px">"The best way to learn Docker and AWS is to build something, Dockerize it, and deploy it to AWS. Theory is 20%, hands-on is 80%."</div>
+      <div style="font-size:13px;color:var(--text-muted)">— Prabakaran's DevOps Journey 2026 🚀</div>
+    </div>
+  </div>
+
+</div><!-- /container -->
+
+<footer style="border-top:1px solid var(--border);padding:24px;text-align:center;color:var(--text-muted);font-size:13px">
+  Built for <span style="color:var(--purple-light);font-weight:600">Prabakaran Sai</span> · Docker + AWS + CI/CD Guide · 2026 🐳
+</footer>
+
+<script>
+  // Smooth scroll for TOC links
+  document.querySelectorAll('a[href^="#"]').forEach(a => {
+    a.addEventListener('click', e => {
+      e.preventDefault();
+      const el = document.querySelector(a.getAttribute('href'));
+      if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+  });
+</script>
+</body>
+</html>
