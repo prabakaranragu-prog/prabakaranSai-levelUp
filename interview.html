@@ -77,6 +77,62 @@
       border-radius: 3px;
       color: var(--green-light);
     }
+
+    /* ===== PRINT / PDF STYLES ===== */
+    .print-fab {
+      position: fixed;
+      bottom: 28px;
+      right: 28px;
+      z-index: 999;
+      width: 54px;
+      height: 54px;
+      border-radius: 50%;
+      background: var(--gradient);
+      color: white;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      box-shadow: 0 6px 24px rgba(139,92,246,0.5);
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .print-fab:hover { transform: scale(1.12); box-shadow: 0 8px 32px rgba(139,92,246,0.7); }
+    .print-fab-label {
+      position: fixed;
+      bottom: 34px;
+      right: 92px;
+      z-index: 999;
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 6px 14px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      white-space: nowrap;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s;
+    }
+    .print-fab:hover + .print-fab-label { opacity: 1; }
+
+    @media print {
+      * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+      body { background: #0a0a12 !important; color: #eeeef8 !important; }
+      .navbar, .print-fab, .print-fab-label, .btn:not(.review-btn) { display: none !important; }
+      .tabs { display: none !important; }
+      .tab-content { display: block !important; page-break-before: always; }
+      .tab-content:first-of-type { page-break-before: auto; }
+      .accordion-body { display: block !important; }
+      .accordion-item { page-break-inside: avoid; margin-bottom: 16px; }
+      .accordion-header { background: #16162a !important; }
+      .code-block { background: #10101e !important; border: 1px solid #2a2a50 !important; white-space: pre-wrap !important; word-break: break-all; }
+      .section-title { page-break-after: avoid; }
+      .progress-section { display: none; }
+      .cheatsheet-grid { grid-template-columns: repeat(3, 1fr) !important; }
+    }
   </style>
 </head>
 <body>
@@ -92,6 +148,7 @@
       <li><a href="playground.html"><i class="fas fa-code"></i> <span>Playground</span></a></li>
       <li><a href="notes.html"><i class="fas fa-sticky-note"></i> <span>Notes</span></a></li>
       <li><a href="interview.html" class="active"><i class="fas fa-brain"></i> <span>Interview Prep</span></a></li>
+      <li><a href="docker-aws-cicd.html"><i class="fab fa-docker"></i> <span>Docker·AWS</span></a></li>
     </ul>
   </nav>
 
@@ -100,12 +157,13 @@
     <div class="prep-header">
       <div>
         <h1 class="prep-title">Interview Prep <span style="background:var(--gradient);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">🎯</span></h1>
-        <p class="prep-meta">Java + Spring Boot · Curated for 4-Year Experienced Developers · 50+ Questions</p>
+        <p class="prep-meta">Java + Spring Boot + Docker + AWS + CI/CD · Curated for 4-Year Experienced Developers · 65+ Questions · 12 Topics · Print-to-PDF Ready</p>
       </div>
       <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
         <button class="btn btn-secondary btn-sm" onclick="expandAll()"><i class="fas fa-expand-alt"></i> Expand All</button>
         <button class="btn btn-secondary btn-sm" onclick="collapseAll()"><i class="fas fa-compress-alt"></i> Collapse All</button>
         <button class="btn btn-secondary btn-sm" onclick="resetProgress()"><i class="fas fa-redo"></i> Reset</button>
+        <button class="btn btn-primary btn-sm" onclick="window.print()"><i class="fas fa-file-pdf"></i> Save PDF</button>
       </div>
     </div>
 
@@ -126,7 +184,12 @@
       <button class="tab-btn" onclick="switchTab('spring-core')"><i class="fas fa-leaf"></i> Spring Boot Core</button>
       <button class="tab-btn" onclick="switchTab('spring-adv')"><i class="fas fa-shield-alt"></i> Spring Security & JPA</button>
       <button class="tab-btn" onclick="switchTab('microservices')"><i class="fas fa-network-wired"></i> Microservices</button>
+      <button class="tab-btn" onclick="switchTab('streams')"><i class="fas fa-water"></i> Streams &amp; Collections</button>
+      <button class="tab-btn" onclick="switchTab('testing')"><i class="fas fa-vial"></i> Testing</button>
+      <button class="tab-btn" onclick="switchTab('patterns')"><i class="fas fa-puzzle-piece"></i> Design Patterns</button>
+      <button class="tab-btn" onclick="switchTab('scenarios')"><i class="fas fa-lightbulb"></i> Scenarios</button>
       <button class="tab-btn" onclick="switchTab('cheatsheet')"><i class="fas fa-bolt"></i> Cheatsheet</button>
+      <button class="tab-btn" onclick="switchTab('docker-aws')" style="color:var(--cyan)"><i class="fab fa-docker"></i> Docker·AWS·CI/CD</button>
     </div>
 
     <!-- ===================== TAB: JAVA CORE ===================== -->
@@ -1387,8 +1450,1402 @@ class OrderServiceTest { ... }</div>
       </div>
     </div>
 
+    <!-- ===================== TAB: STREAMS & COLLECTIONS ===================== -->
+    <div class="tab-content" id="tab-streams">
+      <h2 class="section-title"><i class="fas fa-water"></i> Streams &amp; Collections — Deep Dive</h2>
+
+      <!-- Q31 -->
+      <div class="accordion-item" data-id="st1">
+        <div class="accordion-header" onclick="toggle('st1')">
+          <span class="accordion-question">31. Stream API — All Intermediate &amp; Terminal Operations with examples</span>
+          <div class="accordion-meta">
+            <span class="badge badge-hard">Hard</span>
+            <span class="badge badge-java">Important</span>
+            <button class="btn btn-sm btn-secondary review-btn" data-id="st1" onclick="markReviewed(event,'st1')">Mark Reviewed</button>
+            <i class="fas fa-chevron-down accordion-icon"></i>
+          </div>
+        </div>
+        <div class="accordion-body">
+          <p><strong>Intermediate Operations</strong> — Lazy; return a Stream. Chain as many as needed.</p>
+          <ul>
+            <li><code>filter(Predicate)</code> — Keep elements matching condition</li>
+            <li><code>map(Function)</code> — Transform each element (1-to-1)</li>
+            <li><code>flatMap(Function)</code> — Transform and flatten (1-to-many)</li>
+            <li><code>distinct()</code> — Remove duplicates (uses equals/hashCode)</li>
+            <li><code>sorted()</code> / <code>sorted(Comparator)</code> — Natural or custom order</li>
+            <li><code>peek(Consumer)</code> — Debug/log without modifying (intermediate)</li>
+            <li><code>limit(n)</code> — Take first n elements</li>
+            <li><code>skip(n)</code> — Skip first n elements</li>
+            <li><code>mapToInt / mapToLong / mapToDouble</code> — Specialized primitive streams</li>
+          </ul>
+          <p><strong>Terminal Operations</strong> — Trigger the pipeline; return a result.</p>
+          <ul>
+            <li><code>collect(Collector)</code> — Gather into collection/map/string</li>
+            <li><code>forEach(Consumer)</code> — Iterate (no result)</li>
+            <li><code>reduce(identity, BinaryOperator)</code> — Fold to single value</li>
+            <li><code>count()</code> — Count elements (long)</li>
+            <li><code>findFirst() / findAny()</code> — Return Optional (first or any)</li>
+            <li><code>anyMatch / allMatch / noneMatch(Predicate)</code> — Boolean checks</li>
+            <li><code>min / max(Comparator)</code> — Return Optional min/max</li>
+            <li><code>toArray()</code> — Convert to array</li>
+          </ul>
+          <div class="code-block">List&lt;Employee&gt; employees = List.of(
+    new Employee("Alice", "IT",  85000),
+    new Employee("Bob",   "HR",  55000),
+    new Employee("Carol", "IT",  92000),
+    new Employee("Dave",  "HR",  61000),
+    new Employee("Eve",   "IT",  78000)
+);
+
+// filter + map + collect
+List&lt;String&gt; itNames = employees.stream()
+    .filter(e -&gt; e.getDept().equals("IT"))
+    .map(Employee::getName)
+    .sorted()
+    .collect(Collectors.toList());
+// [Alice, Carol, Eve]
+
+// reduce - sum salaries
+double totalSalary = employees.stream()
+    .mapToDouble(Employee::getSalary)
+    .sum(); // or .reduce(0, Double::sum)
+
+// peek - debug
+List&lt;String&gt; result = employees.stream()
+    .filter(e -&gt; e.getSalary() &gt; 60000)
+    .peek(e -&gt; System.out.println("After filter: " + e.getName()))
+    .map(Employee::getName)
+    .peek(n -&gt; System.out.println("After map: " + n))
+    .collect(Collectors.toList());
+
+// findFirst with Optional
+Optional&lt;Employee&gt; topEarner = employees.stream()
+    .max(Comparator.comparingDouble(Employee::getSalary));
+topEarner.ifPresent(e -&gt; System.out.println("Top: " + e.getName())); // Carol
+
+// count + anyMatch
+long itCount = employees.stream().filter(e -&gt; "IT".equals(e.getDept())).count(); // 3
+boolean anyHighEarner = employees.stream().anyMatch(e -&gt; e.getSalary() &gt; 90000); // true</div>
+          <div class="tip"><strong>Key Rule:</strong> Streams are lazy — intermediate ops only run when terminal op is called. A stream can only be used ONCE. Reuse by calling .stream() again on the source collection.</div>
+        </div>
+      </div>
+
+      <!-- Q32 -->
+      <div class="accordion-item" data-id="st2">
+        <div class="accordion-header" onclick="toggle('st2')">
+          <span class="accordion-question">32. Collectors in detail — groupingBy, partitioningBy, joining, toMap, summarizingInt</span>
+          <div class="accordion-meta">
+            <span class="badge badge-hard">Hard</span>
+            <span class="badge badge-java">Most Asked</span>
+            <button class="btn btn-sm btn-secondary review-btn" data-id="st2" onclick="markReviewed(event,'st2')">Mark Reviewed</button>
+            <i class="fas fa-chevron-down accordion-icon"></i>
+          </div>
+        </div>
+        <div class="accordion-body">
+          <p>Collectors are the most powerful and frequently asked topic in Stream interviews. Master all of these.</p>
+          <div class="code-block">List&lt;Employee&gt; employees = ...; // same list as above
+
+// 1. groupingBy — group into Map&lt;Key, List&lt;Value&gt;&gt;
+Map&lt;String, List&lt;Employee&gt;&gt; byDept = employees.stream()
+    .collect(Collectors.groupingBy(Employee::getDept));
+// {IT=[Alice,Carol,Eve], HR=[Bob,Dave]}
+
+// groupingBy with downstream collector — count per dept
+Map&lt;String, Long&gt; countByDept = employees.stream()
+    .collect(Collectors.groupingBy(Employee::getDept, Collectors.counting()));
+// {IT=3, HR=2}
+
+// groupingBy with downstream — average salary per dept
+Map&lt;String, Double&gt; avgSalaryByDept = employees.stream()
+    .collect(Collectors.groupingBy(Employee::getDept,
+             Collectors.averagingDouble(Employee::getSalary)));
+
+// groupingBy with downstream — names per dept (toList)
+Map&lt;String, List&lt;String&gt;&gt; namesByDept = employees.stream()
+    .collect(Collectors.groupingBy(Employee::getDept,
+             Collectors.mapping(Employee::getName, Collectors.toList())));
+
+// 2. partitioningBy — split into Map&lt;Boolean, List&gt;
+Map&lt;Boolean, List&lt;Employee&gt;&gt; partition = employees.stream()
+    .collect(Collectors.partitioningBy(e -&gt; e.getSalary() &gt; 70000));
+// {true=[Alice,Carol,Eve], false=[Bob,Dave]}
+
+// 3. joining — concatenate strings
+String names = employees.stream()
+    .map(Employee::getName)
+    .collect(Collectors.joining(", ", "[", "]"));
+// [Alice, Bob, Carol, Dave, Eve]
+
+// 4. toMap — stream to Map
+Map&lt;String, Double&gt; nameToSalary = employees.stream()
+    .collect(Collectors.toMap(
+        Employee::getName,
+        Employee::getSalary,
+        (existing, duplicate) -&gt; existing // merge function for duplicate keys
+    ));
+
+// 5. summarizingInt/Double — statistics
+IntSummaryStatistics stats = employees.stream()
+    .collect(Collectors.summarizingInt(e -&gt; (int)e.getSalary()));
+System.out.println(stats.getAverage()); // avg
+System.out.println(stats.getMax());     // max
+System.out.println(stats.getSum());     // sum
+
+// 6. Word frequency count — VERY common interview question!
+List&lt;String&gt; words = List.of("apple","banana","apple","cherry","banana","apple");
+Map&lt;String, Long&gt; wordCount = words.stream()
+    .collect(Collectors.groupingBy(w -&gt; w, Collectors.counting()));
+// {apple=3, banana=2, cherry=1}
+
+// Find most frequent word
+String mostFrequent = wordCount.entrySet().stream()
+    .max(Map.Entry.comparingByValue())
+    .map(Map.Entry::getKey)
+    .orElse("none"); // "apple"</div>
+          <div class="tip"><strong>Interview trick:</strong> groupingBy with downstream = counting/mapping/joining is the most asked. Practice: "Group employees by dept and find highest earner in each dept" → groupingBy + maxBy downstream.</div>
+        </div>
+      </div>
+
+      <!-- Q33 -->
+      <div class="accordion-item" data-id="st3">
+        <div class="accordion-header" onclick="toggle('st3')">
+          <span class="accordion-question">33. flatMap vs map — Difference with real examples (String split, nested lists)</span>
+          <div class="accordion-meta">
+            <span class="badge badge-medium">Medium</span>
+            <span class="badge badge-java">Important</span>
+            <button class="btn btn-sm btn-secondary review-btn" data-id="st3" onclick="markReviewed(event,'st3')">Mark Reviewed</button>
+            <i class="fas fa-chevron-down accordion-icon"></i>
+          </div>
+        </div>
+        <div class="accordion-body">
+          <p><strong>map()</strong> — 1-to-1 transform. Each element maps to exactly ONE output. Returns <code>Stream&lt;Stream&lt;T&gt;&gt;</code> if function returns a Stream.</p>
+          <p><strong>flatMap()</strong> — 1-to-many transform. Each element maps to a STREAM of outputs, then all streams are FLATTENED into one. Returns <code>Stream&lt;T&gt;</code>.</p>
+          <div class="code-block">// PROBLEM: Split sentences into individual words
+List&lt;String&gt; sentences = List.of("Hello World", "Java Stream API", "FlatMap is powerful");
+
+// map() - gives Stream&lt;String[]&gt; - WRONG for most use cases
+Stream&lt;String[]&gt; wrong = sentences.stream().map(s -&gt; s.split(" "));
+// result: [["Hello","World"], ["Java","Stream","API"], ...]  ← nested!
+
+// flatMap() - gives Stream&lt;String&gt; - CORRECT, flattened
+List&lt;String&gt; words = sentences.stream()
+    .flatMap(s -&gt; Arrays.stream(s.split(" ")))
+    .distinct()
+    .sorted()
+    .collect(Collectors.toList());
+// [API, FlatMap, Hello, Java, Stream, World, is, powerful]
+
+// ====================================================
+// NESTED LISTS example
+List&lt;List&lt;Integer&gt;&gt; nested = List.of(
+    List.of(1, 2, 3),
+    List.of(4, 5),
+    List.of(6, 7, 8, 9)
+);
+
+// map - gives Stream&lt;List&lt;Integer&gt;&gt;
+List&lt;List&lt;Integer&gt;&gt; mapResult = nested.stream()
+    .map(list -&gt; list)
+    .collect(Collectors.toList()); // [[1,2,3],[4,5],[6,7,8,9]]
+
+// flatMap - flattens to Stream&lt;Integer&gt;
+List&lt;Integer&gt; flatResult = nested.stream()
+    .flatMap(Collection::stream)
+    .collect(Collectors.toList()); // [1,2,3,4,5,6,7,8,9]
+
+// ====================================================
+// Optional flatMap - avoid nested Optional&lt;Optional&lt;T&gt;&gt;
+Optional&lt;String&gt; opt = Optional.of("  hello  ");
+Optional&lt;String&gt; trimmed = opt.map(String::trim);         // Optional&lt;String&gt;
+Optional&lt;Optional&lt;String&gt;&gt; bad = opt.map(s -&gt; Optional.of(s.trim())); // nested!
+Optional&lt;String&gt; good = opt.flatMap(s -&gt; Optional.of(s.trim()));      // flat Optional</div>
+          <div class="tip"><strong>Rule of thumb:</strong> If your map() lambda returns a Stream or Optional, use flatMap() instead to avoid nesting. FlatMap = map + flatten in one operation.</div>
+        </div>
+      </div>
+
+      <!-- Q34 -->
+      <div class="accordion-item" data-id="st4">
+        <div class="accordion-header" onclick="toggle('st4')">
+          <span class="accordion-question">34. Stream — Top Interview Coding Problems (Word count, Top-N, Salary stats)</span>
+          <div class="accordion-meta">
+            <span class="badge badge-hard">Hard</span>
+            <span class="badge badge-java">Coding Round</span>
+            <button class="btn btn-sm btn-secondary review-btn" data-id="st4" onclick="markReviewed(event,'st4')">Mark Reviewed</button>
+            <i class="fas fa-chevron-down accordion-icon"></i>
+          </div>
+        </div>
+        <div class="accordion-body">
+          <p>These are actual coding questions asked in interviews for Java developers with 3-5 years experience:</p>
+          <div class="code-block">List&lt;Employee&gt; employees = ...; // name, dept, salary
+
+// ---- Q: Find 2nd highest salary ----
+Optional&lt;Double&gt; secondHighest = employees.stream()
+    .map(Employee::getSalary)
+    .distinct()
+    .sorted(Comparator.reverseOrder())
+    .skip(1)
+    .findFirst();
+
+// ---- Q: Top 3 highest paid employees ----
+List&lt;Employee&gt; top3 = employees.stream()
+    .sorted(Comparator.comparingDouble(Employee::getSalary).reversed())
+    .limit(3)
+    .collect(Collectors.toList());
+
+// ---- Q: Employees with salary above dept average ----
+Map&lt;String, Double&gt; avgByDept = employees.stream()
+    .collect(Collectors.groupingBy(Employee::getDept,
+             Collectors.averagingDouble(Employee::getSalary)));
+
+List&lt;Employee&gt; aboveAvg = employees.stream()
+    .filter(e -&gt; e.getSalary() &gt; avgByDept.get(e.getDept()))
+    .collect(Collectors.toList());
+
+// ---- Q: Highest earner per department ----
+Map&lt;String, Optional&lt;Employee&gt;&gt; topPerDept = employees.stream()
+    .collect(Collectors.groupingBy(Employee::getDept,
+             Collectors.maxBy(Comparator.comparingDouble(Employee::getSalary))));
+
+// ---- Q: Count duplicate elements in a list ----
+List&lt;Integer&gt; numbers = List.of(1, 2, 2, 3, 3, 3, 4);
+Map&lt;Integer, Long&gt; freq = numbers.stream()
+    .collect(Collectors.groupingBy(n -&gt; n, Collectors.counting()));
+List&lt;Integer&gt; duplicates = freq.entrySet().stream()
+    .filter(e -&gt; e.getValue() &gt; 1)
+    .map(Map.Entry::getKey)
+    .collect(Collectors.toList()); // [2, 3]
+
+// ---- Q: Reverse words in a sentence using streams ----
+String sentence = "Hello World Java";
+String reversed = Arrays.stream(sentence.split(" "))
+    .map(w -&gt; new StringBuilder(w).reverse().toString())
+    .collect(Collectors.joining(" "));
+// "olleH dlroW avaJ"
+
+// ---- Q: Find first non-repeating character ----
+String str = "aabbcde";
+Optional&lt;Character&gt; firstUnique = str.chars()
+    .mapToObj(c -&gt; (char) c)
+    .collect(Collectors.groupingBy(c -&gt; c, LinkedHashMap::new, Collectors.counting()))
+    .entrySet().stream()
+    .filter(e -&gt; e.getValue() == 1)
+    .map(Map.Entry::getKey)
+    .findFirst(); // 'c'</div>
+          <div class="tip"><strong>Practice tip:</strong> For every coding problem, think: filter → map → collect. If grouping needed → groupingBy. If reducing → reduce() or summarizing. Write it out loud in interview.</div>
+        </div>
+      </div>
+
+      <!-- Q35 -->
+      <div class="accordion-item" data-id="st5">
+        <div class="accordion-header" onclick="toggle('st5')">
+          <span class="accordion-question">35. parallelStream() — When to use, pitfalls, and thread safety</span>
+          <div class="accordion-meta">
+            <span class="badge badge-medium">Medium</span>
+            <button class="btn btn-sm btn-secondary review-btn" data-id="st5" onclick="markReviewed(event,'st5')">Mark Reviewed</button>
+            <i class="fas fa-chevron-down accordion-icon"></i>
+          </div>
+        </div>
+        <div class="accordion-body">
+          <p><strong>parallelStream()</strong> uses ForkJoinPool (common pool, default = CPU cores - 1) to process elements in parallel.</p>
+          <p><strong>Use when:</strong> Large data set (&gt;10k elements), CPU-intensive operations (no I/O), order doesn't matter, elements are independent.</p>
+          <p><strong>Avoid when:</strong> Small collections (overhead &gt; benefit), I/O operations, shared mutable state, ordered output required.</p>
+          <div class="code-block">// ✅ Good use case: CPU-intensive on large collection
+List&lt;Double&gt; result = largeList.parallelStream()
+    .map(n -&gt; expensiveCalculation(n)) // CPU-bound
+    .filter(n -&gt; n &gt; 0)
+    .collect(Collectors.toList());
+
+// ❌ WRONG: Shared mutable state - race condition!
+List&lt;Integer&gt; unsafeList = new ArrayList&lt;&gt;();
+numbers.parallelStream()
+    .forEach(n -&gt; unsafeList.add(n)); // ArrayList NOT thread-safe! Data loss!
+
+// ✅ CORRECT: Use thread-safe collection or collect()
+List&lt;Integer&gt; safeResult = numbers.parallelStream()
+    .filter(n -&gt; n &gt; 0)
+    .collect(Collectors.toList()); // collect() is thread-safe
+
+// ❌ WRONG: parallelStream with I/O (blocks ForkJoinPool threads)
+employees.parallelStream()
+    .forEach(e -&gt; emailService.sendEmail(e)); // Bad! I/O in ForkJoin
+
+// ✅ CORRECT: Use CompletableFuture for I/O tasks
+List&lt;CompletableFuture&lt;Void&gt;&gt; futures = employees.stream()
+    .map(e -&gt; CompletableFuture.runAsync(() -&gt; emailService.sendEmail(e), customExecutor))
+    .collect(Collectors.toList());
+CompletableFuture.allOf(futures.toArray(new CompletableFuture[0])).join();
+
+// Custom thread pool for parallelStream (avoid using common pool)
+ForkJoinPool customPool = new ForkJoinPool(4);
+List&lt;Integer&gt; customResult = customPool.submit(() -&gt;
+    numbers.parallelStream()
+           .filter(n -&gt; n % 2 == 0)
+           .collect(Collectors.toList())
+).get();</div>
+          <div class="tip"><strong>Interview answer:</strong> "parallelStream() is not always faster. For small collections, sequential stream wins. I benchmark with JMH before switching. I use it only for CPU-bound, stateless, order-independent operations on large datasets."</div>
+        </div>
+      </div>
+
+      <!-- Q36 -->
+      <div class="accordion-item" data-id="st6">
+        <div class="accordion-header" onclick="toggle('st6')">
+          <span class="accordion-question">36. Optional — Complete Guide: orElse vs orElseGet, map, flatMap, filter, ifPresent</span>
+          <div class="accordion-meta">
+            <span class="badge badge-medium">Medium</span>
+            <span class="badge badge-java">Important</span>
+            <button class="btn btn-sm btn-secondary review-btn" data-id="st6" onclick="markReviewed(event,'st6')">Mark Reviewed</button>
+            <i class="fas fa-chevron-down accordion-icon"></i>
+          </div>
+        </div>
+        <div class="accordion-body">
+          <p><strong>Optional</strong> is a container that may or may not contain a value. Eliminates null checks and NullPointerException.</p>
+          <div class="code-block">// Creating Optionals
+Optional&lt;String&gt; empty    = Optional.empty();
+Optional&lt;String&gt; present  = Optional.of("hello");      // throws NPE if null
+Optional&lt;String&gt; nullable = Optional.ofNullable(null);  // safe with null
+
+// ---- orElse vs orElseGet ----
+// orElse - ALWAYS evaluates the argument (even if value present!)
+String val1 = present.orElse(expensiveDefaultMethod()); // method ALWAYS called
+
+// orElseGet - LAZY, only evaluated if empty
+String val2 = present.orElseGet(() -&gt; expensiveDefaultMethod()); // method NOT called if present
+// ✅ PREFER orElseGet for expensive defaults!
+
+// orElseThrow
+String val3 = present.orElseThrow(() -&gt; new ResourceNotFoundException("not found"));
+
+// ---- map vs flatMap ----
+Optional&lt;String&gt; name = Optional.of("  Prabakaran  ");
+Optional&lt;String&gt; upper = name.map(String::trim).map(String::toUpperCase); // "PRABAKARAN"
+
+// flatMap - when function returns Optional (avoid Optional&lt;Optional&lt;&gt;&gt;)
+Optional&lt;User&gt; user = findUser(1L);
+Optional&lt;Address&gt; address = user.flatMap(User::getAddress); // not user.map(u -&gt; u.getAddress())
+
+// ---- filter ----
+Optional&lt;Integer&gt; evenNumber = Optional.of(42)
+    .filter(n -&gt; n % 2 == 0); // Optional[42]
+Optional&lt;Integer&gt; filteredOut = Optional.of(41)
+    .filter(n -&gt; n % 2 == 0); // Optional.empty
+
+// ---- ifPresent vs ifPresentOrElse (Java 9) ----
+user.ifPresent(u -&gt; System.out.println("Found: " + u.getName()));
+user.ifPresentOrElse(
+    u -&gt; System.out.println("Found: " + u.getName()),
+    () -&gt; System.out.println("User not found")
+);
+
+// ---- Chaining multiple nullable calls (avoids NPE chain) ----
+// Old way (NPE-prone)
+// String city = user.getAddress().getCity().getName(); // 3 potential NPEs
+
+// New way with Optional
+String city = Optional.ofNullable(user)
+    .map(User::getAddress)
+    .map(Address::getCity)
+    .map(City::getName)
+    .orElse("Unknown");</div>
+          <div class="tip"><strong>Don't:</strong> Never use Optional for method parameters or fields — it's meant for return types only. Don't call .get() without isPresent() check. Prefer orElseGet() over orElse() for costly defaults.</div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ===================== TAB: TESTING ===================== -->
+    <div class="tab-content" id="tab-testing">
+      <h2 class="section-title"><i class="fas fa-vial"></i> Testing — JUnit 5, Mockito &amp; Spring Boot Test</h2>
+
+      <!-- Q37 -->
+      <div class="accordion-item" data-id="t1">
+        <div class="accordion-header" onclick="toggle('t1')">
+          <span class="accordion-question">37. JUnit 5 — Annotations, Lifecycle, Assertions, Parameterized Tests</span>
+          <div class="accordion-meta">
+            <span class="badge badge-medium">Medium</span>
+            <span class="badge badge-spring">Testing</span>
+            <button class="btn btn-sm btn-secondary review-btn" data-id="t1" onclick="markReviewed(event,'t1')">Mark Reviewed</button>
+            <i class="fas fa-chevron-down accordion-icon"></i>
+          </div>
+        </div>
+        <div class="accordion-body">
+          <p><strong>JUnit 5 = JUnit Platform + JUnit Jupiter + JUnit Vintage</strong></p>
+          <ul>
+            <li><code>@Test</code> — Mark test method</li>
+            <li><code>@BeforeEach / @AfterEach</code> — Run before/after EACH test</li>
+            <li><code>@BeforeAll / @AfterAll</code> — Run once for ALL tests (must be static)</li>
+            <li><code>@Disabled("reason")</code> — Skip test</li>
+            <li><code>@DisplayName("...")</code> — Human-readable test name</li>
+            <li><code>@Nested</code> — Group related tests in inner class</li>
+            <li><code>@ParameterizedTest</code> — Run test multiple times with different data</li>
+            <li><code>@ValueSource / @CsvSource / @MethodSource</code> — Data for parameterized tests</li>
+            <li><code>@RepeatedTest(n)</code> — Run test n times</li>
+            <li><code>@Timeout(value=2, unit=SECONDS)</code> — Fail if test exceeds timeout</li>
+          </ul>
+          <div class="code-block">import org.junit.jupiter.api.*;
+import static org.junit.jupiter.api.Assertions.*;
+
+class CalculatorTest {
+
+    private Calculator calculator;
+
+    @BeforeEach
+    void setUp() {
+        calculator = new Calculator(); // fresh instance per test
+    }
+
+    @Test
+    @DisplayName("Addition should return correct sum")
+    void testAdd() {
+        int result = calculator.add(3, 4);
+        assertEquals(7, result, "3 + 4 should equal 7");
+    }
+
+    @Test
+    void testDivideByZero() {
+        // assertThrows - verify exception is thrown
+        ArithmeticException ex = assertThrows(
+            ArithmeticException.class,
+            () -&gt; calculator.divide(10, 0)
+        );
+        assertEquals("Cannot divide by zero", ex.getMessage());
+    }
+
+    @Test
+    void testMultipleAssertions() {
+        // assertAll - ALL assertions run even if one fails
+        assertAll("calculator",
+            () -&gt; assertEquals(10, calculator.add(3, 7)),
+            () -&gt; assertEquals(4, calculator.subtract(9, 5)),
+            () -&gt; assertTrue(calculator.isPositive(5))
+        );
+    }
+
+    // Parameterized test - run with multiple inputs
+    @ParameterizedTest
+    @CsvSource({"1,1,2", "2,3,5", "0,0,0", "-1,1,0"})
+    @DisplayName("Addition parameterized")
+    void testAddParameterized(int a, int b, int expected) {
+        assertEquals(expected, calculator.add(a, b));
+    }
+
+    @ParameterizedTest
+    @ValueSource(ints = {2, 4, 6, 8})
+    void testIsEven(int number) {
+        assertTrue(number % 2 == 0);
+    }
+
+    @Nested
+    @DisplayName("Division tests")
+    class DivisionTests {
+        @Test void testValidDivision()     { assertEquals(5, calculator.divide(10, 2)); }
+        @Test void testIntegerDivision()   { assertEquals(3, calculator.divide(7, 2)); }
+    }
+}</div>
+          <div class="tip">assertAll() is better than multiple assertEquals() — it runs ALL assertions and reports ALL failures instead of stopping at first failure.</div>
+        </div>
+      </div>
+
+      <!-- Q38 -->
+      <div class="accordion-item" data-id="t2">
+        <div class="accordion-header" onclick="toggle('t2')">
+          <span class="accordion-question">38. Mockito — @Mock, @InjectMocks, when/thenReturn, verify, ArgumentCaptor</span>
+          <div class="accordion-meta">
+            <span class="badge badge-hard">Hard</span>
+            <span class="badge badge-spring">Testing</span>
+            <button class="btn btn-sm btn-secondary review-btn" data-id="t2" onclick="markReviewed(event,'t2')">Mark Reviewed</button>
+            <i class="fas fa-chevron-down accordion-icon"></i>
+          </div>
+        </div>
+        <div class="accordion-body">
+          <p><strong>Mockito</strong> creates fake (mock) objects so you can test a class in isolation, without needing real databases, APIs, etc.</p>
+          <ul>
+            <li><code>@Mock</code> — Create a mock object (all methods return default: null/0/false)</li>
+            <li><code>@InjectMocks</code> — Create instance and inject @Mock fields into it</li>
+            <li><code>@Spy</code> — Partial mock: real methods unless stubbed</li>
+            <li><code>@Captor</code> — Capture arguments passed to mock methods</li>
+            <li><code>@ExtendWith(MockitoExtension.class)</code> — Required JUnit 5 setup</li>
+          </ul>
+          <div class="code-block">@ExtendWith(MockitoExtension.class)
+class OrderServiceTest {
+
+    @Mock private OrderRepository orderRepository;
+    @Mock private PaymentService paymentService;
+    @Mock private EmailService emailService;
+
+    @InjectMocks private OrderService orderService; // gets above mocks injected
+
+    // ---- Basic stubbing ----
+    @Test
+    void testCreateOrder_Success() {
+        // GIVEN (Arrange)
+        Order mockOrder = new Order(1L, "PENDING", 100.0);
+        when(orderRepository.save(any(Order.class))).thenReturn(mockOrder);
+        when(paymentService.charge(anyDouble())).thenReturn(true);
+
+        // WHEN (Act)
+        Order result = orderService.createOrder(new OrderRequest(100.0, "Alice"));
+
+        // THEN (Assert)
+        assertNotNull(result);
+        assertEquals("PENDING", result.getStatus());
+
+        // Verify interactions
+        verify(orderRepository, times(1)).save(any(Order.class));
+        verify(emailService, times(1)).sendConfirmation(anyString());
+        verify(paymentService, never()).refund(anyDouble()); // should NOT be called
+    }
+
+    // ---- Exception stubbing ----
+    @Test
+    void testCreateOrder_PaymentFails() {
+        when(paymentService.charge(anyDouble()))
+            .thenThrow(new PaymentException("Insufficient funds"));
+
+        assertThrows(PaymentException.class,
+            () -&gt; orderService.createOrder(new OrderRequest(100.0, "Bob")));
+
+        verify(orderRepository, never()).save(any()); // should not save if payment fails
+    }
+
+    // ---- ArgumentCaptor — capture what was passed to mock ----
+    @Test
+    void testEmailSentWithCorrectContent() {
+        ArgumentCaptor&lt;String&gt; emailCaptor = ArgumentCaptor.forClass(String.class);
+        when(orderRepository.save(any())).thenReturn(new Order(1L, "CREATED", 50.0));
+
+        orderService.createOrder(new OrderRequest(50.0, "Carol"));
+
+        verify(emailService).sendConfirmation(emailCaptor.capture());
+        String sentEmail = emailCaptor.getValue();
+        assertTrue(sentEmail.contains("Carol"));
+        assertTrue(sentEmail.contains("50.0"));
+    }
+
+    // ---- Spy — partial mock (calls real method unless stubbed) ----
+    @Spy private List&lt;String&gt; spyList = new ArrayList&lt;&gt;();
+
+    @Test void testSpy() {
+        spyList.add("real add"); // calls real ArrayList.add()
+        assertEquals(1, spyList.size()); // real size = 1
+
+        doReturn(100).when(spyList).size(); // override one method
+        assertEquals(100, spyList.size()); // stubbed
+    }
+}</div>
+          <div class="tip"><strong>AAA Pattern:</strong> Always write tests as Arrange → Act → Assert. Use <code>// GIVEN / WHEN / THEN</code> comments. Interviewers love this structure. @Mock = fully fake. @Spy = real + selective override.</div>
+        </div>
+      </div>
+
+      <!-- Q39 -->
+      <div class="accordion-item" data-id="t3">
+        <div class="accordion-header" onclick="toggle('t3')">
+          <span class="accordion-question">39. @WebMvcTest — Test REST Controllers with MockMvc</span>
+          <div class="accordion-meta">
+            <span class="badge badge-hard">Hard</span>
+            <span class="badge badge-spring">Testing</span>
+            <button class="btn btn-sm btn-secondary review-btn" data-id="t3" onclick="markReviewed(event,'t3')">Mark Reviewed</button>
+            <i class="fas fa-chevron-down accordion-icon"></i>
+          </div>
+        </div>
+        <div class="accordion-body">
+          <p><strong>@WebMvcTest</strong> — Loads ONLY the web layer (Controller, filters, MockMvc). Does NOT load Service/Repository. Use @MockBean for dependencies. Faster than @SpringBootTest.</p>
+          <div class="code-block">@WebMvcTest(EmployeeController.class)
+class EmployeeControllerTest {
+
+    @Autowired private MockMvc mockMvc;
+    @Autowired private ObjectMapper objectMapper; // Jackson
+
+    @MockBean private EmployeeService employeeService; // mock the service
+
+    // ---- Test GET endpoint ----
+    @Test
+    @DisplayName("GET /api/employees/{id} returns employee when found")
+    void testGetById_Success() throws Exception {
+        Employee emp = new Employee(1L, "Alice", "IT", 85000.0);
+        when(employeeService.getById(1L)).thenReturn(emp);
+
+        mockMvc.perform(get("/api/employees/1")
+                .contentType(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.id").value(1))
+            .andExpect(jsonPath("$.name").value("Alice"))
+            .andExpect(jsonPath("$.department").value("IT"));
+    }
+
+    // ---- Test 404 ----
+    @Test
+    void testGetById_NotFound() throws Exception {
+        when(employeeService.getById(99L))
+            .thenThrow(new ResourceNotFoundException("Employee not found: 99"));
+
+        mockMvc.perform(get("/api/employees/99"))
+            .andExpect(status().isNotFound())
+            .andExpect(jsonPath("$.message").value("Employee not found: 99"));
+    }
+
+    // ---- Test POST with validation ----
+    @Test
+    void testCreate_Success() throws Exception {
+        Employee input  = new Employee(null, "Bob", "HR", 60000.0);
+        Employee saved  = new Employee(2L, "Bob", "HR", 60000.0);
+        when(employeeService.createEmployee(any(Employee.class))).thenReturn(saved);
+
+        mockMvc.perform(post("/api/employees")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(input)))
+            .andExpect(status().isCreated())
+            .andExpect(jsonPath("$.id").value(2))
+            .andExpect(jsonPath("$.name").value("Bob"));
+
+        verify(employeeService, times(1)).createEmployee(any(Employee.class));
+    }
+
+    // ---- Test validation error (400) ----
+    @Test
+    void testCreate_ValidationFails() throws Exception {
+        Employee invalid = new Employee(null, "", "IT", -100.0); // blank name!
+
+        mockMvc.perform(post("/api/employees")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(invalid)))
+            .andExpect(status().isBadRequest())
+            .andExpect(jsonPath("$.name").value("Name is required"));
+    }
+
+    // ---- Test DELETE ----
+    @Test
+    void testDelete_Success() throws Exception {
+        doNothing().when(employeeService).deleteEmployee(1L);
+
+        mockMvc.perform(delete("/api/employees/1"))
+            .andExpect(status().isNoContent());
+
+        verify(employeeService).deleteEmployee(1L);
+    }
+}</div>
+          <div class="tip">Use andDo(print()) during development to see the full request/response. @WebMvcTest is faster than @SpringBootTest because it loads only the web layer. @MockBean creates a Mockito mock in Spring context.</div>
+        </div>
+      </div>
+
+      <!-- Q40 -->
+      <div class="accordion-item" data-id="t4">
+        <div class="accordion-header" onclick="toggle('t4')">
+          <span class="accordion-question">40. @SpringBootTest vs @WebMvcTest vs @DataJpaTest — When to use each?</span>
+          <div class="accordion-meta">
+            <span class="badge badge-medium">Medium</span>
+            <span class="badge badge-spring">Testing</span>
+            <button class="btn btn-sm btn-secondary review-btn" data-id="t4" onclick="markReviewed(event,'t4')">Mark Reviewed</button>
+            <i class="fas fa-chevron-down accordion-icon"></i>
+          </div>
+        </div>
+        <div class="accordion-body">
+          <ul>
+            <li><strong>@SpringBootTest</strong> — Full integration test. Loads entire ApplicationContext. Slow. Use for end-to-end tests. Combine with TestContainers for real DB.</li>
+            <li><strong>@WebMvcTest</strong> — Only web layer (controllers, filters, security). Fast. Use for REST controller tests. Services need @MockBean.</li>
+            <li><strong>@DataJpaTest</strong> — Only JPA layer (entities, repositories). Uses H2 in-memory by default. Rolls back transactions after each test. Fast.</li>
+            <li><strong>@RestClientTest</strong> — Test HTTP clients (RestTemplate, Feign).</li>
+            <li><strong>@JsonTest</strong> — Test JSON serialization/deserialization.</li>
+          </ul>
+          <div class="code-block">// ---- @DataJpaTest ----
+@DataJpaTest
+class EmployeeRepositoryTest {
+
+    @Autowired private TestEntityManager entityManager;
+    @Autowired private EmployeeRepository employeeRepository;
+
+    @Test
+    void testFindByDepartment() {
+        // GIVEN: persist test data
+        entityManager.persist(new Employee(null, "Alice", "IT", 85000.0));
+        entityManager.persist(new Employee(null, "Bob", "IT", 70000.0));
+        entityManager.persist(new Employee(null, "Carol", "HR", 60000.0));
+        entityManager.flush();
+
+        // WHEN
+        List&lt;Employee&gt; itEmployees = employeeRepository.findByDepartment("IT");
+
+        // THEN
+        assertEquals(2, itEmployees.size());
+        assertTrue(itEmployees.stream().allMatch(e -&gt; "IT".equals(e.getDepartment())));
+    }
+
+    @Test
+    void testCustomQuery() {
+        entityManager.persist(new Employee(null, "Dave", "IT", 95000.0));
+        entityManager.flush();
+
+        Optional&lt;Employee&gt; result = employeeRepository.findTopByDeptOrderBySalaryDesc("IT");
+        assertTrue(result.isPresent());
+        assertEquals("Dave", result.get().getName());
+    }
+}
+
+// ---- @SpringBootTest (full context) ----
+@SpringBootTest(webEnvironment = WebEnvironment.RANDOM_PORT)
+class OrderIntegrationTest {
+    @Autowired private TestRestTemplate restTemplate;
+
+    @Test
+    void testCreateAndGetOrder() {
+        // create
+        ResponseEntity&lt;Order&gt; created = restTemplate.postForEntity(
+            "/api/orders", new OrderRequest(100.0, "Alice"), Order.class);
+        assertEquals(HttpStatus.CREATED, created.getStatusCode());
+
+        Long id = created.getBody().getId();
+
+        // fetch
+        ResponseEntity&lt;Order&gt; fetched = restTemplate.getForEntity(
+            "/api/orders/" + id, Order.class);
+        assertEquals(HttpStatus.OK, fetched.getStatusCode());
+        assertEquals(100.0, fetched.getBody().getAmount());
+    }
+}</div>
+          <div class="tip"><strong>Testing pyramid:</strong> Many unit tests (fast, cheap) → fewer integration tests → very few E2E tests. Use @DataJpaTest for repo layer, @WebMvcTest for controller, @SpringBootTest only for critical integration flows.</div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ===================== TAB: DESIGN PATTERNS ===================== -->
+    <div class="tab-content" id="tab-patterns">
+      <h2 class="section-title"><i class="fas fa-puzzle-piece"></i> Design Patterns — Creational, Structural, Behavioral</h2>
+
+      <!-- Q41 -->
+      <div class="accordion-item" data-id="dp1">
+        <div class="accordion-header" onclick="toggle('dp1')">
+          <span class="accordion-question">41. Singleton Pattern — All thread-safe implementations explained</span>
+          <div class="accordion-meta">
+            <span class="badge badge-hard">Hard</span>
+            <span class="badge badge-java">Most Asked</span>
+            <button class="btn btn-sm btn-secondary review-btn" data-id="dp1" onclick="markReviewed(event,'dp1')">Mark Reviewed</button>
+            <i class="fas fa-chevron-down accordion-icon"></i>
+          </div>
+        </div>
+        <div class="accordion-body">
+          <p>Singleton ensures only ONE instance exists in the entire application. Spring beans are Singleton by default!</p>
+          <div class="code-block">// ❌ NOT thread-safe (classic)
+public class Singleton {
+    private static Singleton instance;
+    private Singleton() {}
+    public static Singleton getInstance() {
+        if (instance == null) {           // Two threads can pass this check simultaneously!
+            instance = new Singleton();
+        }
+        return instance;
+    }
+}
+
+// ✅ Thread-safe: Synchronized (slow - lock on every call)
+public class SynchronizedSingleton {
+    private static SynchronizedSingleton instance;
+    private SynchronizedSingleton() {}
+    public static synchronized SynchronizedSingleton getInstance() {
+        if (instance == null) instance = new SynchronizedSingleton();
+        return instance;
+    }
+}
+
+// ✅ Thread-safe: Double-Checked Locking (recommended for lazy init)
+public class DCLSingleton {
+    private static volatile DCLSingleton instance; // volatile is CRITICAL!
+    private DCLSingleton() {}
+    public static DCLSingleton getInstance() {
+        if (instance == null) {                     // 1st check (no lock) - performance
+            synchronized (DCLSingleton.class) {
+                if (instance == null) {             // 2nd check (with lock) - safety
+                    instance = new DCLSingleton();
+                }
+            }
+        }
+        return instance;
+    }
+}
+
+// ✅ Thread-safe: Bill Pugh / Inner static class (BEST - lazy, no sync overhead!)
+public class BillPughSingleton {
+    private BillPughSingleton() {}
+    // Inner class loaded only when getInstance() is called
+    private static class SingletonHolder {
+        private static final BillPughSingleton INSTANCE = new BillPughSingleton();
+    }
+    public static BillPughSingleton getInstance() { return SingletonHolder.INSTANCE; }
+}
+
+// ✅ Thread-safe: Enum (BEST for preventing reflection/serialization attacks!)
+public enum EnumSingleton {
+    INSTANCE;
+    public void doSomething() { System.out.println("Enum singleton!"); }
+}
+// Usage: EnumSingleton.INSTANCE.doSomething();
+
+// ✅ Spring way (managed by IoC container)
+@Service // or @Component — Spring handles singleton lifecycle
+public class SpringSingleton {
+    // Spring creates ONE instance per ApplicationContext
+}</div>
+          <div class="tip"><strong>Interview ranking:</strong> Enum &gt; Bill Pugh &gt; DCL &gt; Synchronized. Enum prevents reflection attacks and serialization issues. Spring beans ARE singletons managed by Spring — mention this! volatile in DCL prevents instruction reordering/partial construction.</div>
+        </div>
+      </div>
+
+      <!-- Q42 -->
+      <div class="accordion-item" data-id="dp2">
+        <div class="accordion-header" onclick="toggle('dp2')">
+          <span class="accordion-question">42. Builder Pattern — Manual vs Lombok @Builder with real Spring Boot example</span>
+          <div class="accordion-meta">
+            <span class="badge badge-medium">Medium</span>
+            <span class="badge badge-java">Important</span>
+            <button class="btn btn-sm btn-secondary review-btn" data-id="dp2" onclick="markReviewed(event,'dp2')">Mark Reviewed</button>
+            <i class="fas fa-chevron-down accordion-icon"></i>
+          </div>
+        </div>
+        <div class="accordion-body">
+          <p><strong>Builder</strong> — Constructs complex objects step-by-step. Avoids telescoping constructors. Makes object creation readable.</p>
+          <p><strong>Use when:</strong> Object has many optional fields, want immutable objects, constructor has many parameters.</p>
+          <div class="code-block">// ---- Manual Builder ----
+public class EmailMessage {
+    // All fields final = immutable
+    private final String to;
+    private final String from;
+    private final String subject;
+    private final String body;
+    private final String cc;
+    private final List&lt;String&gt; attachments;
+
+    private EmailMessage(Builder builder) {
+        this.to          = builder.to;
+        this.from        = builder.from;
+        this.subject     = builder.subject;
+        this.body        = builder.body;
+        this.cc          = builder.cc;
+        this.attachments = builder.attachments;
+    }
+
+    public static class Builder {
+        private final String to;   // required
+        private final String from; // required
+        private String subject = "";
+        private String body    = "";
+        private String cc;
+        private List&lt;String&gt; attachments = new ArrayList&lt;&gt;();
+
+        public Builder(String to, String from) { // required fields in constructor
+            this.to = to; this.from = from;
+        }
+        public Builder subject(String s)         { this.subject = s; return this; }
+        public Builder body(String b)            { this.body = b; return this; }
+        public Builder cc(String cc)             { this.cc = cc; return this; }
+        public Builder attach(String file)       { attachments.add(file); return this; }
+        public EmailMessage build()              { return new EmailMessage(this); }
+    }
+}
+
+// Usage - readable, no null parameters!
+EmailMessage email = new EmailMessage.Builder("alice@example.com", "system@app.com")
+    .subject("Welcome!")
+    .body("Hello Alice, welcome to our platform.")
+    .cc("admin@app.com")
+    .attach("welcome.pdf")
+    .build();
+
+// ---- Lombok @Builder (recommended in Spring Boot) ----
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+public class ApiResponse&lt;T&gt; {
+    private boolean success;
+    private String message;
+    private T data;
+    private LocalDateTime timestamp;
+    private int statusCode;
+    private List&lt;String&gt; errors;
+}
+
+// Usage in controller
+return ResponseEntity.ok(
+    ApiResponse.&lt;Employee&gt;builder()
+        .success(true)
+        .message("Employee created")
+        .data(savedEmployee)
+        .timestamp(LocalDateTime.now())
+        .statusCode(201)
+        .build()
+);</div>
+          <div class="tip">In Spring Boot projects, @Builder + @Data from Lombok eliminates 90% of boilerplate. Manual Builder is asked in interviews to test your understanding. Know both.</div>
+        </div>
+      </div>
+
+      <!-- Q43 -->
+      <div class="accordion-item" data-id="dp3">
+        <div class="accordion-header" onclick="toggle('dp3')">
+          <span class="accordion-question">43. Strategy Pattern — Eliminate if-else with Spring DI injection</span>
+          <div class="accordion-meta">
+            <span class="badge badge-hard">Hard</span>
+            <span class="badge badge-spring">Spring + Pattern</span>
+            <button class="btn btn-sm btn-secondary review-btn" data-id="dp3" onclick="markReviewed(event,'dp3')">Mark Reviewed</button>
+            <i class="fas fa-chevron-down accordion-icon"></i>
+          </div>
+        </div>
+        <div class="accordion-body">
+          <p><strong>Strategy</strong> — Define a family of algorithms, encapsulate each, and make them interchangeable. Eliminates if-else/switch chains. Follows Open/Closed principle.</p>
+          <div class="code-block">// ---- Without Strategy (BAD - violates OCP) ----
+class PaymentService {
+    void pay(String type, double amount) {
+        if (type.equals("CREDIT_CARD"))   { /* credit card logic */ }
+        else if (type.equals("PAYPAL"))   { /* paypal logic */ }
+        else if (type.equals("UPI"))      { /* UPI logic */ }
+        // Every new payment method = modify this class!
+    }
+}
+
+// ---- With Strategy Pattern + Spring DI (GOOD) ----
+// 1. Define strategy interface
+public interface PaymentStrategy {
+    void pay(double amount);
+    String getPaymentType(); // for registry lookup
+}
+
+// 2. Concrete strategies - each is a Spring bean
+@Service("CREDIT_CARD")
+public class CreditCardPayment implements PaymentStrategy {
+    @Override public void pay(double amount) {
+        System.out.println("Charging $" + amount + " via Credit Card");
+        // credit card processing logic
+    }
+    @Override public String getPaymentType() { return "CREDIT_CARD"; }
+}
+
+@Service("PAYPAL")
+public class PaypalPayment implements PaymentStrategy {
+    @Override public void pay(double amount) {
+        System.out.println("Paying $" + amount + " via PayPal");
+    }
+    @Override public String getPaymentType() { return "PAYPAL"; }
+}
+
+@Service("UPI")
+public class UpiPayment implements PaymentStrategy {
+    @Override public void pay(double amount) {
+        System.out.println("Paying $" + amount + " via UPI");
+    }
+    @Override public String getPaymentType() { return "UPI"; }
+}
+
+// 3. Context class - Spring injects ALL strategies automatically!
+@Service
+public class PaymentContext {
+    private final Map&lt;String, PaymentStrategy&gt; strategies;
+
+    // Spring injects all PaymentStrategy beans as a Map (key = bean name)
+    public PaymentContext(Map&lt;String, PaymentStrategy&gt; strategies) {
+        this.strategies = strategies;
+    }
+
+    public void processPayment(String type, double amount) {
+        PaymentStrategy strategy = strategies.get(type);
+        if (strategy == null) throw new IllegalArgumentException("Unknown payment: " + type);
+        strategy.pay(amount);
+    }
+}
+
+// Usage in controller
+@PostMapping("/pay")
+public ResponseEntity&lt;?&gt; pay(@RequestParam String type, @RequestParam double amount) {
+    paymentContext.processPayment(type, amount); // no if-else!
+    return ResponseEntity.ok("Payment processed");
+}
+// Adding new payment = just add @Service class. Zero changes to existing code!</div>
+          <div class="tip"><strong>This is the most impressive design pattern answer for a 4-year developer.</strong> Mention: "I use Spring's @Service with Map injection to implement Strategy Pattern — adding a new strategy requires zero changes to existing code (Open/Closed Principle)."</div>
+        </div>
+      </div>
+
+      <!-- Q44 -->
+      <div class="accordion-item" data-id="dp4">
+        <div class="accordion-header" onclick="toggle('dp4')">
+          <span class="accordion-question">44. Factory Pattern, Observer Pattern (ApplicationEvent) in Spring</span>
+          <div class="accordion-meta">
+            <span class="badge badge-medium">Medium</span>
+            <span class="badge badge-java">Design Patterns</span>
+            <button class="btn btn-sm btn-secondary review-btn" data-id="dp4" onclick="markReviewed(event,'dp4')">Mark Reviewed</button>
+            <i class="fas fa-chevron-down accordion-icon"></i>
+          </div>
+        </div>
+        <div class="accordion-body">
+          <div class="code-block">// ============================================================
+// FACTORY METHOD PATTERN
+// ============================================================
+// Creates objects without specifying exact class
+interface Notification {
+    void send(String message, String recipient);
+}
+class EmailNotification implements Notification {
+    public void send(String msg, String to) { /* send email */ }
+}
+class SmsNotification implements Notification {
+    public void send(String msg, String to) { /* send SMS */ }
+}
+class PushNotification implements Notification {
+    public void send(String msg, String to) { /* push notification */ }
+}
+
+// Factory - creates the right Notification based on type
+@Component
+public class NotificationFactory {
+    public Notification create(String type) {
+        return switch (type.toUpperCase()) {
+            case "EMAIL" -&gt; new EmailNotification();
+            case "SMS"   -&gt; new SmsNotification();
+            case "PUSH"  -&gt; new PushNotification();
+            default -&gt; throw new IllegalArgumentException("Unknown type: " + type);
+        };
+    }
+}
+
+// Usage
+Notification notif = notificationFactory.create("EMAIL");
+notif.send("Welcome!", "alice@example.com");
+
+// ============================================================
+// OBSERVER PATTERN — Spring ApplicationEvent (production-ready)
+// ============================================================
+
+// 1. Event class (what happened)
+public class OrderCreatedEvent extends ApplicationEvent {
+    private final Order order;
+    public OrderCreatedEvent(Object source, Order order) {
+        super(source);
+        this.order = order;
+    }
+    public Order getOrder() { return order; }
+}
+
+// 2. Publisher (the subject)
+@Service
+public class OrderService {
+    private final ApplicationEventPublisher eventPublisher;
+
+    public Order createOrder(OrderRequest req) {
+        Order order = orderRepository.save(new Order(req));
+        eventPublisher.publishEvent(new OrderCreatedEvent(this, order)); // notify observers
+        return order;
+    }
+}
+
+// 3. Listeners (observers) — completely decoupled!
+@Component
+public class OrderEmailListener {
+    @EventListener
+    @Async // run in background thread
+    public void onOrderCreated(OrderCreatedEvent event) {
+        emailService.sendOrderConfirmation(event.getOrder());
+    }
+}
+
+@Component
+public class InventoryListener {
+    @EventListener
+    public void onOrderCreated(OrderCreatedEvent event) {
+        inventoryService.reserveItems(event.getOrder().getItems());
+    }
+}
+
+@Component
+public class AnalyticsListener {
+    @EventListener
+    @Async
+    public void onOrderCreated(OrderCreatedEvent event) {
+        analyticsService.trackOrder(event.getOrder());
+    }
+}</div>
+          <div class="tip">Observer with Spring Events = complete decoupling. OrderService doesn't know about Email/Inventory/Analytics. Add new listener = zero change to OrderService. Combine with @Async for non-blocking side effects.</div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ===================== TAB: SCENARIOS ===================== -->
+    <div class="tab-content" id="tab-scenarios">
+      <h2 class="section-title"><i class="fas fa-lightbulb"></i> Scenario-Based Questions — How Would You Handle It?</h2>
+
+      <!-- Q45 -->
+      <div class="accordion-item" data-id="sc_1">
+        <div class="accordion-header" onclick="toggle('sc_1')">
+          <span class="accordion-question">45. Your API is suddenly getting 10x traffic — how do you handle it?</span>
+          <div class="accordion-meta">
+            <span class="badge badge-hard">Hard</span>
+            <span class="badge badge-micro">System Design</span>
+            <button class="btn btn-sm btn-secondary review-btn" data-id="sc_1" onclick="markReviewed(event,'sc_1')">Mark Reviewed</button>
+            <i class="fas fa-chevron-down accordion-icon"></i>
+          </div>
+        </div>
+        <div class="accordion-body">
+          <p><strong>Answer this in layers (impress the interviewer!):</strong></p>
+          <p><strong>1. Immediate actions (0-30 minutes):</strong></p>
+          <ul>
+            <li>Scale horizontally — add more instances (Kubernetes: increase replica count)</li>
+            <li>Enable load balancer to distribute traffic</li>
+            <li>Check if DB is bottleneck — scale read replicas</li>
+          </ul>
+          <p><strong>2. Application level:</strong></p>
+          <ul>
+            <li><strong>Caching</strong> — Redis for frequently read data (@Cacheable). Cache hit = no DB query.</li>
+            <li><strong>Connection pooling</strong> — Increase HikariCP pool size tuned to DB capacity</li>
+            <li><strong>Async processing</strong> — Move non-critical work to Kafka/async (@Async)</li>
+            <li><strong>Rate limiting</strong> — Protect with Bucket4j or API Gateway rate limiter</li>
+          </ul>
+          <p><strong>3. Database level:</strong></p>
+          <ul>
+            <li><strong>Read replicas</strong> — Route SELECT queries to replicas (write to master only)</li>
+            <li><strong>Query optimization</strong> — Add DB indexes, fix N+1, use DTO projections</li>
+            <li><strong>Database sharding</strong> — if write-heavy</li>
+          </ul>
+          <p><strong>4. Infrastructure level:</strong></p>
+          <ul>
+            <li><strong>CDN</strong> — Cache static content at edge</li>
+            <li><strong>Circuit breaker</strong> — Prevent cascade failure to downstream services</li>
+            <li><strong>Bulkhead</strong> — Isolate thread pools per service</li>
+          </ul>
+          <div class="code-block">// Rate limiting with Bucket4j
+@Component
+public class RateLimitFilter implements Filter {
+    // 100 requests per minute per IP
+    private final Map&lt;String, Bucket&gt; buckets = new ConcurrentHashMap&lt;&gt;();
+
+    @Override
+    public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain) {
+        String ip = ((HttpServletRequest)req).getRemoteAddr();
+        Bucket bucket = buckets.computeIfAbsent(ip, k -&gt;
+            Bucket.builder()
+                .addLimit(Bandwidth.classic(100, Refill.greedy(100, Duration.ofMinutes(1))))
+                .build()
+        );
+        if (bucket.tryConsume(1)) {
+            chain.doFilter(req, res);
+        } else {
+            ((HttpServletResponse)res).setStatus(429); // Too Many Requests
+        }
+    }
+}
+
+// application.properties - tune HikariCP
+spring.datasource.hikari.maximum-pool-size=50
+spring.datasource.hikari.minimum-idle=10
+spring.datasource.hikari.connection-timeout=30000
+
+# Enable virtual threads (Java 21) - handle more concurrent requests
+spring.threads.virtual.enabled=true</div>
+          <div class="tip"><strong>Key interview answer structure:</strong> "I would first identify the bottleneck (CPU? DB? Network?) using metrics/APM tools, then apply caching → horizontal scaling → async processing → database optimization in that order."</div>
+        </div>
+      </div>
+
+      <!-- Q46 -->
+      <div class="accordion-item" data-id="sc_2">
+        <div class="accordion-header" onclick="toggle('sc_2')">
+          <span class="accordion-question">46. Production app shows OutOfMemoryError — how do you debug and fix it?</span>
+          <div class="accordion-meta">
+            <span class="badge badge-hard">Hard</span>
+            <span class="badge badge-java">Real-World</span>
+            <button class="btn btn-sm btn-secondary review-btn" data-id="sc_2" onclick="markReviewed(event,'sc_2')">Mark Reviewed</button>
+            <i class="fas fa-chevron-down accordion-icon"></i>
+          </div>
+        </div>
+        <div class="accordion-body">
+          <p><strong>Types of OOM Errors:</strong></p>
+          <ul>
+            <li><code>Java heap space</code> — Too many objects in heap. Memory leak or heap too small.</li>
+            <li><code>GC overhead limit exceeded</code> — GC running &gt;98% time but reclaiming &lt;2% memory.</li>
+            <li><code>Metaspace</code> — Too many class definitions loaded. ClassLoader leak.</li>
+            <li><code>Unable to create native thread</code> — Too many threads. Thread leak.</li>
+          </ul>
+          <p><strong>Debugging Steps:</strong></p>
+          <ol>
+            <li><strong>Enable heap dump on OOM:</strong> Add <code>-XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/tmp/heapdump.hprof</code></li>
+            <li><strong>Analyze heap dump:</strong> Eclipse MAT (Memory Analyzer Tool) or VisualVM → find largest objects</li>
+            <li><strong>Check GC logs:</strong> <code>-verbose:gc -Xlog:gc*:gc.log</code></li>
+            <li><strong>Monitor with Actuator:</strong> /actuator/metrics/jvm.memory.used</li>
+            <li><strong>Use APM:</strong> New Relic, Dynatrace, or Prometheus + Grafana for trends</li>
+          </ol>
+          <p><strong>Common Root Causes:</strong></p>
+          <ul>
+            <li>Static collections growing unbounded (cache without eviction)</li>
+            <li>Not closing resources (InputStream, Connection not in try-with-resources)</li>
+            <li>Event listeners not unregistered (memory retained)</li>
+            <li>Incorrect JPA fetch (loading entire table into memory)</li>
+            <li>String concatenation in loops (use StringBuilder)</li>
+          </ul>
+          <div class="code-block">// ❌ Memory leak - static Map growing unbounded
+public class CacheService {
+    private static final Map&lt;String, Object&gt; cache = new HashMap&lt;&gt;(); // NEVER evicts!
+    public void put(String key, Object val) { cache.put(key, val); }
+}
+
+// ✅ Fix - Use Caffeine cache with size limit and TTL
+@Bean
+CacheManager cacheManager() {
+    return new CaffeineCacheManager() {{
+        setCaffeine(Caffeine.newBuilder()
+            .maximumSize(1000)
+            .expireAfterWrite(30, TimeUnit.MINUTES)
+            .recordStats());
+    }};
+}
+
+// ❌ Memory leak - not closing resources
+InputStream is = new FileInputStream("file.txt");
+// reading... but never closed! Kept in memory
+
+// ✅ Fix - try-with-resources
+try (InputStream is = new FileInputStream("file.txt");
+     BufferedReader reader = new BufferedReader(new InputStreamReader(is))) {
+    return reader.lines().collect(Collectors.joining("\n"));
+} // auto-closed!
+
+// ❌ Loading entire table into memory
+List&lt;Order&gt; allOrders = orderRepo.findAll(); // MILLIONS of records → OOM!
+
+// ✅ Fix - Use pagination or streaming
+// Option 1: Paginated
+Page&lt;Order&gt; page = orderRepo.findAll(PageRequest.of(0, 100));
+
+// Option 2: Stream with @Transactional
+@Transactional(readOnly = true)
+public void processAllOrders() {
+    orderRepo.streamAll().forEach(order -&gt; process(order)); // JPA stream
+}
+
+// JVM flags for production
+// -Xms1g -Xmx4g                         heap
+// -XX:+HeapDumpOnOutOfMemoryError        auto heap dump
+// -XX:HeapDumpPath=/tmp/heapdump.hprof
+// -XX:+UseG1GC                           G1 GC
+// -XX:MaxGCPauseMillis=200               target pause</div>
+          <div class="tip"><strong>Interview answer structure:</strong> "First I'd check the OOM type from the error message, enable heap dump on OOM, analyze with Eclipse MAT to find the dominator tree, then trace back to the root cause. Common fixes: add eviction to caches, use try-with-resources, paginate large queries."</div>
+        </div>
+      </div>
+
+      <!-- Q47 -->
+      <div class="accordion-item" data-id="sc_3">
+        <div class="accordion-header" onclick="toggle('sc_3')">
+          <span class="accordion-question">47. Complete Spring Boot REST API — Full CRUD with Validation, Pagination &amp; Best Practices</span>
+          <div class="accordion-meta">
+            <span class="badge badge-hard">Hard</span>
+            <span class="badge badge-spring">Complete Code</span>
+            <button class="btn btn-sm btn-secondary review-btn" data-id="sc_3" onclick="markReviewed(event,'sc_3')">Mark Reviewed</button>
+            <i class="fas fa-chevron-down accordion-icon"></i>
+          </div>
+        </div>
+        <div class="accordion-body">
+          <p>This is the complete production-ready Spring Boot REST API pattern that interviewers want to see:</p>
+          <div class="code-block">// ---- 1. Entity ----
+@Entity @Table(name = "employees")
+@EntityListeners(AuditingEntityListener.class)
+public class Employee {
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY) private Long id;
+    @NotBlank(message = "Name is required")
+    @Size(min = 2, max = 100) private String name;
+    @Email private String email;
+    @NotBlank private String department;
+    @Min(0) private Double salary;
+    @CreatedDate @Column(updatable = false) private LocalDateTime createdAt;
+    @LastModifiedDate private LocalDateTime updatedAt;
+    // Getters, Setters, Constructors
+}
+
+// ---- 2. Repository ----
+@Repository
+public interface EmployeeRepository extends JpaRepository&lt;Employee, Long&gt; {
+    Page&lt;Employee&gt; findByDepartment(String department, Pageable pageable);
+    Optional&lt;Employee&gt; findByEmail(String email);
+    @Query("SELECT e FROM Employee e WHERE e.salary &gt; :minSalary ORDER BY e.salary DESC")
+    List&lt;Employee&gt; findHighEarners(@Param("minSalary") double minSalary);
+}
+
+// ---- 3. DTO (Data Transfer Object) ----
+public record EmployeeDTO(Long id, String name, String email, String department, Double salary) {}
+public record CreateEmployeeRequest(@NotBlank String name, @Email String email,
+                                    @NotBlank String department, @Min(0) Double salary) {}
+
+// ---- 4. Service ----
+@Service @Transactional
+public class EmployeeService {
+    private final EmployeeRepository repo;
+    public EmployeeService(EmployeeRepository repo) { this.repo = repo; }
+
+    @Transactional(readOnly = true)
+    public Page&lt;EmployeeDTO&gt; getAll(int page, int size, String sortBy) {
+        Pageable pageable = PageRequest.of(page, size, Sort.by(sortBy));
+        return repo.findAll(pageable).map(this::toDTO);
+    }
+    @Transactional(readOnly = true)
+    public EmployeeDTO getById(Long id) {
+        return repo.findById(id).map(this::toDTO)
+            .orElseThrow(() -&gt; new ResourceNotFoundException("Employee not found: " + id));
+    }
+    public EmployeeDTO create(CreateEmployeeRequest req) {
+        if (repo.findByEmail(req.email()).isPresent())
+            throw new DuplicateResourceException("Email already exists: " + req.email());
+        Employee emp = new Employee(); emp.setName(req.name());
+        emp.setEmail(req.email()); emp.setDepartment(req.department());
+        emp.setSalary(req.salary());
+        return toDTO(repo.save(emp));
+    }
+    public EmployeeDTO update(Long id, CreateEmployeeRequest req) {
+        Employee emp = repo.findById(id)
+            .orElseThrow(() -&gt; new ResourceNotFoundException("Employee not found: " + id));
+        emp.setName(req.name()); emp.setDepartment(req.department());
+        emp.setSalary(req.salary());
+        return toDTO(repo.save(emp));
+    }
+    public void delete(Long id) {
+        if (!repo.existsById(id)) throw new ResourceNotFoundException("Employee not found: " + id);
+        repo.deleteById(id);
+    }
+    private EmployeeDTO toDTO(Employee e) {
+        return new EmployeeDTO(e.getId(), e.getName(), e.getEmail(), e.getDepartment(), e.getSalary());
+    }
+}
+
+// ---- 5. Controller ----
+@RestController @RequestMapping("/api/v1/employees")
+@Tag(name = "Employee API") // Swagger
+public class EmployeeController {
+    private final EmployeeService service;
+    public EmployeeController(EmployeeService service) { this.service = service; }
+
+    @GetMapping
+    public ResponseEntity&lt;Page&lt;EmployeeDTO&gt;&gt; getAll(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "id") String sortBy) {
+        return ResponseEntity.ok(service.getAll(page, size, sortBy));
+    }
+    @GetMapping("/{id}")
+    public ResponseEntity&lt;EmployeeDTO&gt; getById(@PathVariable Long id) {
+        return ResponseEntity.ok(service.getById(id));
+    }
+    @PostMapping
+    public ResponseEntity&lt;EmployeeDTO&gt; create(@Valid @RequestBody CreateEmployeeRequest req) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(service.create(req));
+    }
+    @PutMapping("/{id}")
+    public ResponseEntity&lt;EmployeeDTO&gt; update(@PathVariable Long id,
+                                               @Valid @RequestBody CreateEmployeeRequest req) {
+        return ResponseEntity.ok(service.update(id, req));
+    }
+    @DeleteMapping("/{id}")
+    public ResponseEntity&lt;Void&gt; delete(@PathVariable Long id) {
+        service.delete(id); return ResponseEntity.noContent().build();
+    }
+}</div>
+          <div class="tip"><strong>Production checklist:</strong> ✅ DTOs (never expose entities) ✅ Pagination ✅ @Valid + Bean Validation ✅ Proper HTTP status codes ✅ Global exception handler ✅ readOnly=true for SELECT ✅ Constructor injection ✅ API versioning (/api/v1/)</div>
+        </div>
+      </div>
+
+    </div>
+
     <!-- ===================== CHEATSHEET ===================== -->
-    <div class="tab-content" id="tab-cheatsheet" id="cheatsheet">
+    <div class="tab-content" id="tab-cheatsheet">
       <h2 class="section-title"><i class="fas fa-bolt"></i> Quick Reference Cheatsheet</h2>
       <p class="text-muted mb-24" style="font-size:14px">Fast-reference cards for walking into any interview</p>
 
@@ -1575,11 +3032,321 @@ class OrderServiceTest { ... }</div>
 
   </div><!-- /container -->
 
+  <!-- Print FAB -->
+  <button class="print-fab" onclick="window.print()" title="Save as PDF">
+    <i class="fas fa-file-pdf"></i>
+  </button>
+  <span class="print-fab-label">Save as PDF</span>
+
   <!-- Toast -->
   <div class="toast" id="toast">
     <i class="fas fa-check-circle"></i>
     <span id="toastMsg"></span>
   </div>
+
+<!-- ===================== TAB: DOCKER + AWS + CI/CD ===================== -->
+    <div class="tab-content" id="tab-docker-aws">
+      <h2 class="section-title" style="color:var(--cyan)"><i class="fab fa-docker"></i> Docker &middot; AWS &middot; CI/CD &mdash; Recruiter Shortlist Questions</h2>
+      <p style="color:var(--text-secondary);font-size:14px;margin-bottom:24px">Most asked DevOps questions for Java backend developers. Every 4yr dev is expected to know these!</p>
+
+      <div class="accordion-item" data-id="da1">
+        <div class="accordion-header" onclick="toggle('da1')">
+          <div class="accordion-question">Q1. What is Docker? Why do we use it for Spring Boot apps?</div>
+          <div class="accordion-meta"><span class="badge badge-easy">Easy</span><button class="btn btn-secondary btn-sm review-btn" data-id="da1" onclick="markReviewed('da1',event)"><i class="fas fa-check"></i> Mark</button><i class="fas fa-chevron-down accordion-icon"></i></div>
+        </div>
+        <div class="accordion-body">
+          <p><strong>Docker</strong> packages your app + all its dependencies (Java runtime, libraries, configs) into a single portable container.</p>
+          <p><strong>Why for Spring Boot?</strong></p>
+          <ul>
+            <li><strong>No more "works on my machine"</strong> -- same container runs on dev/staging/prod</li>
+            <li><strong>Consistent Java version</strong> -- Java 21 bundled, no server setup</li>
+            <li><strong>Easy scaling</strong> -- spin up 10 identical containers in seconds</li>
+            <li><strong>CI/CD ready</strong> -- build once, push to ECR, deploy anywhere</li>
+          </ul>
+          <div class="tip"><strong>One-line answer:</strong> "Docker packages my Spring Boot app + Java 21 into a container. I build once, push to ECR, deploy anywhere -- dev, staging, prod -- with the same image. No environment issues."</div>
+        </div>
+      </div>
+
+      <div class="accordion-item" data-id="da2">
+        <div class="accordion-header" onclick="toggle('da2')">
+          <div class="accordion-question">Q2. What is the difference between a Docker Image and a Container?</div>
+          <div class="accordion-meta"><span class="badge badge-easy">Easy</span><button class="btn btn-secondary btn-sm review-btn" data-id="da2" onclick="markReviewed('da2',event)"><i class="fas fa-check"></i> Mark</button><i class="fas fa-chevron-down accordion-icon"></i></div>
+        </div>
+        <div class="accordion-body">
+          <ul>
+            <li><strong>Image</strong> = read-only blueprint/template built from Dockerfile. Stored in registry. Like a <strong>Java Class</strong> definition.</li>
+            <li><strong>Container</strong> = running instance of an image. Created by <code>docker run</code>. Like a <strong>Java Object</strong> (new MyApp()). You can run 10 containers from 1 image independently.</li>
+          </ul>
+          <div class="tip"><strong>Java Analogy:</strong> Image = Class. Container = Object. One image, many running containers.</div>
+        </div>
+      </div>
+
+      <div class="accordion-item" data-id="da3">
+        <div class="accordion-header" onclick="toggle('da3')">
+          <div class="accordion-question">Q3. Explain the Dockerfile instructions you use for a Spring Boot app</div>
+          <div class="accordion-meta"><span class="badge badge-medium">Medium</span><button class="btn btn-secondary btn-sm review-btn" data-id="da3" onclick="markReviewed('da3',event)"><i class="fas fa-check"></i> Mark</button><i class="fas fa-chevron-down accordion-icon"></i></div>
+        </div>
+        <div class="accordion-body">
+          <ul>
+            <li><strong>FROM</strong> -- Base image. <code>eclipse-temurin:21-jre-alpine</code> = Java 21 JRE on tiny Alpine Linux</li>
+            <li><strong>WORKDIR</strong> -- Set working directory inside container. <code>WORKDIR /app</code></li>
+            <li><strong>COPY</strong> -- Copy JAR into image. <code>COPY target/app.jar app.jar</code></li>
+            <li><strong>EXPOSE</strong> -- Document port. <code>EXPOSE 8080</code> (informational)</li>
+            <li><strong>USER</strong> -- Switch to non-root user for security. <code>USER appuser</code></li>
+            <li><strong>ENTRYPOINT</strong> -- Run on start. <code>ENTRYPOINT ["java","-jar","app.jar"]</code></li>
+          </ul>
+          <div class="code-block">FROM eclipse-temurin:21-jre-alpine
+WORKDIR /app
+COPY target/sonata-app.jar app.jar
+EXPOSE 8080
+ENTRYPOINT ["java", "-jar", "app.jar"]</div>
+          <div class="tip"><strong>Pro tip:</strong> Use multi-stage builds -- Stage 1 with full JDK to compile, Stage 2 with JRE-only to run. Final image is 3x smaller!</div>
+        </div>
+      </div>
+
+      <div class="accordion-item" data-id="da4">
+        <div class="accordion-header" onclick="toggle('da4')">
+          <div class="accordion-question">Q4. What is Docker Compose? When would you use it?</div>
+          <div class="accordion-meta"><span class="badge badge-medium">Medium</span><button class="btn btn-secondary btn-sm review-btn" data-id="da4" onclick="markReviewed('da4',event)"><i class="fas fa-check"></i> Mark</button><i class="fas fa-chevron-down accordion-icon"></i></div>
+        </div>
+        <div class="accordion-body">
+          <p>Docker Compose runs <strong>multi-container apps</strong> using a single docker-compose.yml. Spring Boot + MySQL + Redis -- define all 3, run with <code>docker compose up -d</code>.</p>
+          <ul>
+            <li>All containers on same network -- Spring Boot reaches MySQL at hostname <code>mysql-db</code></li>
+            <li><code>depends_on</code> controls startup order with health checks</li>
+            <li>Named volumes for persistent data</li>
+            <li>Environment variables for config</li>
+          </ul>
+          <div class="code-block">services:
+  api:
+    build: .
+    ports: ["8080:8080"]
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/mydb
+    depends_on:
+      mysql:
+        condition: service_healthy
+  mysql:
+    image: mysql:8.0
+    environment:
+      - MYSQL_ROOT_PASSWORD=secret
+    volumes:
+      - mysql-data:/var/lib/mysql
+volumes:
+  mysql-data:</div>
+        </div>
+      </div>
+
+      <div class="accordion-item" data-id="da5">
+        <div class="accordion-header" onclick="toggle('da5')">
+          <div class="accordion-question">Q5. What is CI/CD? Explain the pipeline you have worked with</div>
+          <div class="accordion-meta"><span class="badge badge-medium">Medium</span><button class="btn btn-secondary btn-sm review-btn" data-id="da5" onclick="markReviewed('da5',event)"><i class="fas fa-check"></i> Mark</button><i class="fas fa-chevron-down accordion-icon"></i></div>
+        </div>
+        <div class="accordion-body">
+          <p><strong>CI (Continuous Integration)</strong> -- Every push triggers: build + test + code quality scan. Catches bugs immediately.</p>
+          <p><strong>CD (Continuous Delivery/Deployment)</strong> -- After CI: build Docker image, push to ECR, deploy to ECS. Automated releases.</p>
+          <p><strong>My GitHub Actions pipeline:</strong></p>
+          <ul>
+            <li>Trigger: push to main branch</li>
+            <li>Step 1: checkout code, setup Java 21</li>
+            <li>Step 2: <code>mvn clean verify</code> -- compile + run all JUnit tests</li>
+            <li>Step 3: SonarQube scan</li>
+            <li>Step 4: <code>docker build</code> -- create image</li>
+            <li>Step 5: <code>docker push</code> to AWS ECR</li>
+            <li>Step 6: <code>aws ecs update-service</code> -- rolling deploy</li>
+            <li>Step 7: Slack notification</li>
+          </ul>
+          <div class="tip">"Code merged to main automatically reaches production in under 10 minutes with zero manual steps. Failed tests block the deploy."</div>
+        </div>
+      </div>
+
+      <div class="accordion-item" data-id="da6">
+        <div class="accordion-header" onclick="toggle('da6')">
+          <div class="accordion-question">Q6. What AWS services have you worked with? Explain each</div>
+          <div class="accordion-meta"><span class="badge badge-medium">Medium</span><button class="btn btn-secondary btn-sm review-btn" data-id="da6" onclick="markReviewed('da6',event)"><i class="fas fa-check"></i> Mark</button><i class="fas fa-chevron-down accordion-icon"></i></div>
+        </div>
+        <div class="accordion-body">
+          <ul>
+            <li><strong>EC2</strong> -- Virtual server. Full control. Pay per hour.</li>
+            <li><strong>ECS Fargate</strong> -- Serverless containers. Deploy Docker images, AWS handles servers. Best for Spring Boot microservices.</li>
+            <li><strong>ECR</strong> -- Private Docker registry. Push from CI/CD, ECS pulls for deploy.</li>
+            <li><strong>RDS</strong> -- Managed MySQL/PostgreSQL. AWS handles backups, patches, Multi-AZ failover.</li>
+            <li><strong>S3</strong> -- Object storage. Store files, images, logs. Accessed via AWS SDK in Spring Boot.</li>
+            <li><strong>ALB</strong> -- Application Load Balancer. Distributes traffic across ECS containers. Health checks, SSL termination.</li>
+            <li><strong>IAM</strong> -- Access management. ECS Task Role allows container to access S3/RDS/Secrets -- no hardcoded keys!</li>
+            <li><strong>Secrets Manager</strong> -- Store DB passwords. Spring Boot fetches at runtime via AWS SDK.</li>
+            <li><strong>CloudWatch</strong> -- Logs, metrics, alarms. View Spring Boot logs, set CPU/error alerts.</li>
+            <li><strong>SQS</strong> -- Message queue. Decouple microservices asynchronously.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="accordion-item" data-id="da7">
+        <div class="accordion-header" onclick="toggle('da7')">
+          <div class="accordion-question">Q7. EC2 vs ECS vs Lambda -- when to use each?</div>
+          <div class="accordion-meta"><span class="badge badge-medium">Medium</span><button class="btn btn-secondary btn-sm review-btn" data-id="da7" onclick="markReviewed('da7',event)"><i class="fas fa-check"></i> Mark</button><i class="fas fa-chevron-down accordion-icon"></i></div>
+        </div>
+        <div class="accordion-body">
+          <ul>
+            <li><strong>EC2</strong> -- Full virtual server. You manage OS, patches, Java. Use when you need full control or custom AMI. Pay per hour (even when idle).</li>
+            <li><strong>ECS Fargate</strong> -- Serverless containers. Provide Docker image, AWS handles the server underneath. Best for Spring Boot APIs -- auto-scales, no server management. Pay per CPU/RAM used.</li>
+            <li><strong>Lambda</strong> -- Serverless functions. Event-driven, short-lived. Spring Boot works but cold start is an issue. Best for: S3 events, SQS consumers, scheduled tasks. Pay per invocation.</li>
+          </ul>
+          <div class="tip"><strong>For Spring Boot REST APIs:</strong> Always recommend ECS Fargate -- containerized, portable, auto-scaling, no server management overhead.</div>
+        </div>
+      </div>
+
+      <div class="accordion-item" data-id="da8">
+        <div class="accordion-header" onclick="toggle('da8')">
+          <div class="accordion-question">Q8. How do you pass DB credentials to Spring Boot running in Docker/ECS securely?</div>
+          <div class="accordion-meta"><span class="badge badge-hard">Hard</span><button class="btn btn-secondary btn-sm review-btn" data-id="da8" onclick="markReviewed('da8',event)"><i class="fas fa-check"></i> Mark</button><i class="fas fa-chevron-down accordion-icon"></i></div>
+        </div>
+        <div class="accordion-body">
+          <p><strong>NEVER hardcode in application.properties or Dockerfile!</strong></p>
+          <p><strong>Approach 1 -- Environment Variables:</strong></p>
+          <div class="code-block"># application.properties
+spring.datasource.url=${DB_URL}
+spring.datasource.password=${DB_PASSWORD}
+# Pass via docker-compose or ECS Task Definition environment section</div>
+          <p><strong>Approach 2 -- AWS Secrets Manager (Best for prod):</strong></p>
+          <div class="code-block"># Spring Cloud AWS reads secrets automatically
+spring.config.import=aws-secretsmanager:/myapp/prod/db
+# AWS stores: {"DB_PASSWORD":"secret123","DB_USER":"admin"}
+# Spring Boot injects into properties at startup!</div>
+          <div class="tip"><strong>In ECS:</strong> Add secrets to Task Definition. ECS injects as env vars at container start. Combined with IAM Task Role -- zero credentials in code!</div>
+        </div>
+      </div>
+
+      <div class="accordion-item" data-id="da9">
+        <div class="accordion-header" onclick="toggle('da9')">
+          <div class="accordion-question">Q9. What is a Docker Volume? Why is it needed?</div>
+          <div class="accordion-meta"><span class="badge badge-easy">Easy</span><button class="btn btn-secondary btn-sm review-btn" data-id="da9" onclick="markReviewed('da9',event)"><i class="fas fa-check"></i> Mark</button><i class="fas fa-chevron-down accordion-icon"></i></div>
+        </div>
+        <div class="accordion-body">
+          <p>Containers are <strong>stateless</strong> -- all data lost when container stops. <strong>Volume</strong> = persistent storage outside the container lifecycle.</p>
+          <ul>
+            <li><strong>MySQL container</strong> -- Mount volume at <code>/var/lib/mysql</code>. Data persists after restart!</li>
+            <li><strong>Bind Mount</strong> -- Map host directory to container. e.g., <code>-v /host/logs:/app/logs</code></li>
+            <li><strong>Named Volume</strong> -- Docker manages it. Best for production databases.</li>
+          </ul>
+          <div class="code-block">docker run -v mysql-data:/var/lib/mysql mysql:8.0
+# mysql-data is a named volume -- data survives container removal!</div>
+        </div>
+      </div>
+
+      <div class="accordion-item" data-id="da10">
+        <div class="accordion-header" onclick="toggle('da10')">
+          <div class="accordion-question">Q10. How do containers communicate with each other? What is Docker Network?</div>
+          <div class="accordion-meta"><span class="badge badge-medium">Medium</span><button class="btn btn-secondary btn-sm review-btn" data-id="da10" onclick="markReviewed('da10',event)"><i class="fas fa-check"></i> Mark</button><i class="fas fa-chevron-down accordion-icon"></i></div>
+        </div>
+        <div class="accordion-body">
+          <p>Docker Network is a virtual network allowing containers to talk using <strong>service names as hostnames</strong>.</p>
+          <p>In docker-compose, all services join same default network. Spring Boot reaches MySQL at <code>mysql-db:3306</code> -- no IP needed!</p>
+          <div class="code-block"># Without Docker network -- fragile, IP changes on restart!
+spring.datasource.url=jdbc:mysql://172.17.0.2:3306/db
+
+# With Docker network -- stable, uses service name
+spring.datasource.url=jdbc:mysql://mysql-db:3306/db</div>
+        </div>
+      </div>
+
+      <div class="accordion-item" data-id="da11">
+        <div class="accordion-header" onclick="toggle('da11')">
+          <div class="accordion-question">Q11. What is IAM in AWS? Explain Users vs Roles vs Policies</div>
+          <div class="accordion-meta"><span class="badge badge-medium">Medium</span><button class="btn btn-secondary btn-sm review-btn" data-id="da11" onclick="markReviewed('da11',event)"><i class="fas fa-check"></i> Mark</button><i class="fas fa-chevron-down accordion-icon"></i></div>
+        </div>
+        <div class="accordion-body">
+          <ul>
+            <li><strong>IAM User</strong> -- Represents a person. Has long-term Access Keys. Used for AWS Console/CLI.</li>
+            <li><strong>IAM Role</strong> -- Represents an AWS service. No long-term keys -- temporary tokens. ECS Task Role lets your container access S3/Secrets Manager without any keys in code!</li>
+            <li><strong>IAM Policy</strong> -- JSON permission document. Attached to User or Role. e.g., <code>AmazonS3ReadOnlyAccess</code>.</li>
+          </ul>
+          <div class="tip"><strong>Principle of Least Privilege:</strong> ECS container Role should only have exactly what it needs -- S3:GetObject, SecretsManager:GetSecretValue. Not admin!</div>
+        </div>
+      </div>
+
+      <div class="accordion-item" data-id="da12">
+        <div class="accordion-header" onclick="toggle('da12')">
+          <div class="accordion-question">Q12. What is a VPC? Explain Public vs Private subnets</div>
+          <div class="accordion-meta"><span class="badge badge-medium">Medium</span><button class="btn btn-secondary btn-sm review-btn" data-id="da12" onclick="markReviewed('da12',event)"><i class="fas fa-check"></i> Mark</button><i class="fas fa-chevron-down accordion-icon"></i></div>
+        </div>
+        <div class="accordion-body">
+          <p><strong>VPC</strong> = your own isolated private network in AWS.</p>
+          <ul>
+            <li><strong>Public Subnet</strong> -- Has route to Internet Gateway. Resources get public IPs. Put: ALB, NAT Gateway here.</li>
+            <li><strong>Private Subnet</strong> -- No direct internet. Resources go out via NAT but cannot be accessed from internet. Put: ECS containers, RDS here!</li>
+          </ul>
+          <p><strong>Best practice architecture:</strong> ALB (public) receives internet traffic, forwards to ECS (private), ECS connects to RDS (private). DB is never exposed to internet!</p>
+        </div>
+      </div>
+
+      <div class="accordion-item" data-id="da13">
+        <div class="accordion-header" onclick="toggle('da13')">
+          <div class="accordion-question">Q13. How do you achieve zero-downtime deployment with Docker + ECS?</div>
+          <div class="accordion-meta"><span class="badge badge-hard">Hard</span><button class="btn btn-secondary btn-sm review-btn" data-id="da13" onclick="markReviewed('da13',event)"><i class="fas fa-check"></i> Mark</button><i class="fas fa-chevron-down accordion-icon"></i></div>
+        </div>
+        <div class="accordion-body">
+          <p><strong>ECS Rolling Update:</strong></p>
+          <ol>
+            <li>New task definition created with new Docker image</li>
+            <li>ECS starts new container</li>
+            <li>ALB health check: GET /actuator/health returns 200</li>
+            <li>ALB routes traffic to new container</li>
+            <li>Old container gracefully drained (in-flight requests complete)</li>
+            <li>Old container stopped -- zero downtime!</li>
+          </ol>
+          <div class="code-block"># application.properties -- enable graceful shutdown
+server.shutdown=graceful
+spring.lifecycle.timeout-per-shutdown-phase=30s
+# Spring Boot finishes current requests before stopping!</div>
+          <div class="tip"><strong>Run 2+ tasks always!</strong> Desired count=2, multi-AZ. If 1 crashes, second serves traffic. No single point of failure.</div>
+        </div>
+      </div>
+
+      <div class="accordion-item" data-id="da14">
+        <div class="accordion-header" onclick="toggle('da14')">
+          <div class="accordion-question">Q14. How do you monitor a Spring Boot app deployed on AWS?</div>
+          <div class="accordion-meta"><span class="badge badge-medium">Medium</span><button class="btn btn-secondary btn-sm review-btn" data-id="da14" onclick="markReviewed('da14',event)"><i class="fas fa-check"></i> Mark</button><i class="fas fa-chevron-down accordion-icon"></i></div>
+        </div>
+        <div class="accordion-body">
+          <ul>
+            <li><strong>Logs</strong> -- Spring Boot logs sent to AWS CloudWatch Logs via ECS awslogs driver. Query with CloudWatch Insights.</li>
+            <li><strong>Health</strong> -- ALB pings <code>/actuator/health</code> every 30s. Unhealthy = container replaced automatically.</li>
+            <li><strong>Metrics</strong> -- Actuator + Micrometer exports JVM memory, GC, HTTP latency, thread count to CloudWatch.</li>
+            <li><strong>Alarms</strong> -- CPU over 80%, error rate over 5% triggers SNS notification to Slack/Email.</li>
+            <li><strong>Tracing</strong> -- AWS X-Ray or Zipkin for distributed tracing across microservices.</li>
+          </ul>
+          <div class="code-block"># application.properties
+management.endpoints.web.exposure.include=health,metrics,info
+management.endpoint.health.show-details=always</div>
+        </div>
+      </div>
+
+      <div class="accordion-item" data-id="da15">
+        <div class="accordion-header" onclick="toggle('da15')">
+          <div class="accordion-question">Q15. How do you handle dev/staging/prod environments in Docker + Spring Boot?</div>
+          <div class="accordion-meta"><span class="badge badge-hard">Hard</span><button class="btn btn-secondary btn-sm review-btn" data-id="da15" onclick="markReviewed('da15',event)"><i class="fas fa-check"></i> Mark</button><i class="fas fa-chevron-down accordion-icon"></i></div>
+        </div>
+        <div class="accordion-body">
+          <p><strong>Same Docker image for all environments</strong> -- inject config via env vars. Never build separate images per env!</p>
+          <ul>
+            <li><code>application-dev.properties</code> -- local DB, DEBUG logs</li>
+            <li><code>application-staging.properties</code> -- staging DB, INFO logs</li>
+            <li><code>application-prod.properties</code> -- RDS, WARN logs, tuning</li>
+          </ul>
+          <div class="code-block"># Activate via env var in ECS Task Definition
+SPRING_PROFILES_ACTIVE=prod
+
+# docker-compose.yml for local dev
+environment:
+  - SPRING_PROFILES_ACTIVE=dev
+  - DB_URL=jdbc:mysql://mysql:3306/devdb</div>
+          <div class="tip"><strong>One image, different configs.</strong> In prod: configs from Secrets Manager + env vars. In dev: docker-compose with .env file. Never rebuild image for config changes!</div>
+        </div>
+      </div>
+
+    </div><!-- /tab-docker-aws -->
+
 
 <script>
   const PROGRESS_KEY = 'prabakaranSai_interview_progress';
