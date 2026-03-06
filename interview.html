@@ -1,0 +1,1686 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Interview Prep – prabakaranSai-levelUp</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <style>
+    .prep-header {
+      padding: 32px 0 24px;
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+    .prep-title { font-size: 28px; font-weight: 800; margin-bottom: 6px; }
+    .prep-meta  { color: var(--text-secondary); font-size: 14px; }
+
+    .progress-section {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px 24px;
+      margin-bottom: 24px;
+      display: flex;
+      align-items: center;
+      gap: 24px;
+      flex-wrap: wrap;
+    }
+    .progress-label {
+      font-size: 14px;
+      color: var(--text-secondary);
+      white-space: nowrap;
+    }
+    .progress-label strong { color: var(--text-primary); }
+
+    .cheatsheet-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 14px;
+      margin-bottom: 32px;
+    }
+    .cheat-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px;
+    }
+    .cheat-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--purple-light);
+      margin-bottom: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .cheat-items { list-style: none; }
+    .cheat-items li {
+      font-size: 12.5px;
+      color: var(--text-secondary);
+      padding: 3px 0;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      line-height: 1.5;
+    }
+    .cheat-items li:last-child { border-bottom: none; }
+    .cheat-items li::before { content: '→'; color: var(--purple); flex-shrink: 0; font-size: 11px; margin-top: 2px; }
+    .cheat-items code {
+      font-family: 'Fira Code', monospace;
+      font-size: 11px;
+      background: var(--bg-secondary);
+      padding: 1px 5px;
+      border-radius: 3px;
+      color: var(--green-light);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAVBAR -->
+  <nav class="navbar">
+    <a href="index.html" class="nav-brand">
+      <div class="nav-logo">P</div>
+      <span class="nav-title">prabakaranSai-levelUp</span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="index.html"><i class="fas fa-home"></i> <span>Home</span></a></li>
+      <li><a href="playground.html"><i class="fas fa-code"></i> <span>Playground</span></a></li>
+      <li><a href="notes.html"><i class="fas fa-sticky-note"></i> <span>Notes</span></a></li>
+      <li><a href="interview.html" class="active"><i class="fas fa-brain"></i> <span>Interview Prep</span></a></li>
+    </ul>
+  </nav>
+
+  <div class="container">
+    <!-- Header -->
+    <div class="prep-header">
+      <div>
+        <h1 class="prep-title">Interview Prep <span style="background:var(--gradient);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">🎯</span></h1>
+        <p class="prep-meta">Java + Spring Boot · Curated for 4-Year Experienced Developers · 50+ Questions</p>
+      </div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+        <button class="btn btn-secondary btn-sm" onclick="expandAll()"><i class="fas fa-expand-alt"></i> Expand All</button>
+        <button class="btn btn-secondary btn-sm" onclick="collapseAll()"><i class="fas fa-compress-alt"></i> Collapse All</button>
+        <button class="btn btn-secondary btn-sm" onclick="resetProgress()"><i class="fas fa-redo"></i> Reset</button>
+      </div>
+    </div>
+
+    <!-- Progress -->
+    <div class="progress-section">
+      <div class="progress-label">Progress: <strong id="progressText">0 / 0 reviewed</strong></div>
+      <div class="progress-bar" style="flex:1;min-width:200px">
+        <div class="progress-fill" id="progressBar" style="width:0%"></div>
+      </div>
+      <div id="progressPct" style="font-size:14px;font-weight:700;color:var(--purple-light)">0%</div>
+    </div>
+
+    <!-- TABS -->
+    <div class="tabs">
+      <button class="tab-btn active" onclick="switchTab('java-core')"><i class="fab fa-java"></i> Java Core</button>
+      <button class="tab-btn" onclick="switchTab('java-adv')"><i class="fas fa-microchip"></i> JVM & Concurrency</button>
+      <button class="tab-btn" onclick="switchTab('java-new')"><i class="fas fa-star"></i> Java 8–21 Features</button>
+      <button class="tab-btn" onclick="switchTab('spring-core')"><i class="fas fa-leaf"></i> Spring Boot Core</button>
+      <button class="tab-btn" onclick="switchTab('spring-adv')"><i class="fas fa-shield-alt"></i> Spring Security & JPA</button>
+      <button class="tab-btn" onclick="switchTab('microservices')"><i class="fas fa-network-wired"></i> Microservices</button>
+      <button class="tab-btn" onclick="switchTab('cheatsheet')"><i class="fas fa-bolt"></i> Cheatsheet</button>
+    </div>
+
+    <!-- ===================== TAB: JAVA CORE ===================== -->
+    <div class="tab-content active" id="tab-java-core">
+      <h2 class="section-title"><i class="fab fa-java"></i> Java Core — OOP, Collections, Generics</h2>
+
+      <!-- Q1 -->
+      <div class="accordion-item" data-id="jc1">
+        <div class="accordion-header" onclick="toggle('jc1')">
+          <span class="accordion-question">1. Explain the 4 pillars of OOP with Java examples.</span>
+          <div class="accordion-meta">
+            <span class="badge badge-easy">Easy</span>
+            <span class="badge badge-java">Java</span>
+            <button class="btn btn-sm btn-secondary review-btn" data-id="jc1" onclick="markReviewed(event,'jc1')">Mark Reviewed</button>
+            <i class="fas fa-chevron-down accordion-icon"></i>
+          </div>
+        </div>
+        <div class="accordion-body">
+          <p><strong>1. Encapsulation</strong> — Binding data and methods together, hiding internal state via access modifiers.</p>
+          <div class="code-block">class BankAccount {
+    private double balance; // hidden
+    public void deposit(double amt) { if(amt > 0) balance += amt; }
+    public double getBalance() { return balance; }
+}</div>
+          <p><strong>2. Inheritance</strong> — Child class inherits parent class properties. Promotes reuse.</p>
+          <div class="code-block">class Animal { void eat() { System.out.println("eating"); } }
+class Dog extends Animal { void bark() { System.out.println("woof"); } }</div>
+          <p><strong>3. Polymorphism</strong> — Same interface, multiple behaviors. Compile-time (overloading) and Runtime (overriding).</p>
+          <div class="code-block">// Runtime polymorphism
+Animal a = new Dog();
+a.eat(); // Dog's eat() called (if overridden)</div>
+          <p><strong>4. Abstraction</strong> — Hiding implementation details, exposing only essential features. Done via abstract classes or interfaces.</p>
+          <div class="code-block">interface Payment { void pay(double amount); }
+class CreditCard implements Payment { public void pay(double amt) { ... } }</div>
+          <div class="tip"><strong>Recruiter insight:</strong> Always mention the "why" — encapsulation = data security, abstraction = reduce complexity, inheritance = reuse, polymorphism = flexibility.</div>
+        </div>
+      </div>
+
+      <!-- Q2 -->
+      <div class="accordion-item" data-id="jc2">
+        <div class="accordion-header" onclick="toggle('jc2')">
+          <span class="accordion-question">2. Interface vs Abstract Class — When to use which?</span>
+          <div class="accordion-meta">
+            <span class="badge badge-medium">Medium</span>
+            <button class="btn btn-sm btn-secondary review-btn" data-id="jc2" onclick="markReviewed(event,'jc2')">Mark Reviewed</button>
+            <i class="fas fa-chevron-down accordion-icon"></i>
+          </div>
+        </div>
+        <div class="accordion-body">
+          <p><strong>Abstract Class:</strong> Can have state (fields), constructors, concrete methods. Single inheritance only. Use when classes share a common base with shared implementation.</p>
+          <p><strong>Interface:</strong> Multiple inheritance supported. Default/static methods from Java 8. No state (except constants). Use for defining a contract/capability (Serializable, Runnable, Comparable).</p>
+          <div class="code-block">// Abstract class — shared state + partial implementation
+abstract class Vehicle {
+    private String brand;
+    Vehicle(String brand) { this.brand = brand; }
+    abstract void start();
+    void stop() { System.out.println("stopping"); } // concrete
+}
+
+// Interface — capability contract
+interface Flyable { void fly(); default void land() { System.out.println("landing"); } }
+interface Swimmable { void swim(); }
+class Duck extends Animal implements Flyable, Swimmable { ... }</div>
+          <div class="tip"><strong>Rule of thumb:</strong> "IS-A" relationship with shared state → abstract class. "CAN-DO" capability → interface. In modern Java (8+), prefer interfaces with default methods.</div>
+        </div>
+      </div>
+
+      <!-- Q3 -->
+      <div class="accordion-item" data-id="jc3">
+        <div class="accordion-header" onclick="toggle('jc3')">
+          <span class="accordion-question">3. How does HashMap work internally? What happens during hash collision?</span>
+          <div class="accordion-meta">
+            <span class="badge badge-hard">Hard</span>
+            <span class="badge badge-java">Important</span>
+            <button class="btn btn-sm btn-secondary review-btn" data-id="jc3" onclick="markReviewed(event,'jc3')">Mark Reviewed</button>
+            <i class="fas fa-chevron-down accordion-icon"></i>
+          </div>
+        </div>
+        <div class="accordion-body">
+          <p><strong>Internal structure:</strong> <code>Node&lt;K,V&gt;[]</code> array (buckets). Default capacity: 16, load factor: 0.75.</p>
+          <p><strong>put(key, value) process:</strong></p>
+          <ul>
+            <li>Compute <code>hash = key.hashCode() ^ (h >>> 16)</code> (spreading)</li>
+            <li>Find bucket index: <code>hash & (capacity - 1)</code></li>
+            <li>If bucket empty → insert new Node</li>
+            <li>If collision → traverse linked list, check equals(). If key exists → update value. If not → append.</li>
+            <li>If bucket size &gt; 8 AND table size ≥ 64 → convert to <strong>Red-Black Tree</strong> (O(log n) lookups)</li>
+            <li>If tree shrinks back to ≤ 6 → converts back to linked list</li>
+          </ul>
+          <p><strong>Resize:</strong> When size &gt; capacity × loadFactor → resize to 2× (rehash all entries).</p>
+          <div class="code-block">// Java 8 HashMap - simplified
+int hash = key.hashCode() ^ (key.hashCode() >>> 16);
+int index = hash & (table.length - 1);
+// Bucket = linked list until 8 nodes → then Red-Black Tree</div>
+          <div class="tip"><strong>Key points to mention:</strong> hashCode() + equals() contract, why 0.75 load factor (balances space/time), Java 8 treeification improvement, thread-unsafe (use ConcurrentHashMap for concurrency).</div>
+        </div>
+      </div>
+
+      <!-- Q4 -->
+      <div class="accordion-item" data-id="jc4">
+        <div class="accordion-header" onclick="toggle('jc4')">
+          <span class="accordion-question">4. HashMap vs LinkedHashMap vs TreeMap vs ConcurrentHashMap</span>
+          <div class="accordion-meta">
+            <span class="badge badge-medium">Medium</span>
+            <button class="btn btn-sm btn-secondary review-btn" data-id="jc4" onclick="markReviewed(event,'jc4')">Mark Reviewed</button>
+            <i class="fas fa-chevron-down accordion-icon"></i>
+          </div>
+        </div>
+        <div class="accordion-body">
+          <ul>
+            <li><strong>HashMap</strong> — No ordering, O(1) avg, null key/values allowed, NOT thread-safe</li>
+            <li><strong>LinkedHashMap</strong> — Maintains insertion order (or access order), O(1), null allowed, NOT thread-safe. Good for LRU cache (<code>new LinkedHashMap(cap, 0.75f, true)</code>)</li>
+            <li><strong>TreeMap</strong> — Sorted by natural order or Comparator, O(log n), NO null keys, NOT thread-safe</li>
+            <li><strong>ConcurrentHashMap</strong> — Thread-safe, NO null keys/values. Java 8: uses CAS + synchronized at bucket level (16 default segments in Java 7). High concurrency, good for read-heavy workloads</li>
+            <li><strong>WeakHashMap</strong> — Keys held by weak references (GC-able). Good for cache entries</li>
+          </ul>
+          <div class="code-block">// LRU Cache using LinkedHashMap
+class LRUCache extends LinkedHashMap&lt;Integer, Integer&gt; {
+    private int capacity;
+    LRUCache(int cap) { super(cap, 0.75f, true); this.capacity = cap; }
+    @Override protected boolean removeEldestEntry(Map.Entry&lt;?,?&gt; e) {
+        return size() > capacity;
+    }
+}</div>
+        </div>
+      </div>
+
+      <!-- Q5 -->
+      <div class="accordion-item" data-id="jc5">
+        <div class="accordion-header" onclick="toggle('jc5')">
+          <span class="accordion-question">5. Comparable vs Comparator — Difference and usage</span>
+          <div class="accordion-meta">
+            <span class="badge badge-easy">Easy</span>
+            <button class="btn btn-sm btn-secondary review-btn" data-id="jc5" onclick="markReviewed(event,'jc5')">Mark Reviewed</button>
+            <i class="fas fa-chevron-down accordion-icon"></i>
+          </div>
+        </div>
+        <div class="accordion-body">
+          <p><strong>Comparable</strong> — Defines natural ordering inside the class itself. Implements <code>compareTo(T o)</code>. One sort sequence.</p>
+          <p><strong>Comparator</strong> — External comparator, separate from class. Multiple sort sequences possible. Functional interface — use lambdas.</p>
+          <div class="code-block">// Comparable - natural order (inside class)
+class Employee implements Comparable&lt;Employee&gt; {
+    String name; int salary;
+    @Override public int compareTo(Employee o) { return this.salary - o.salary; }
+}
+Collections.sort(employees); // uses compareTo
+
+// Comparator - multiple orderings (external)
+Comparator&lt;Employee&gt; byName   = Comparator.comparing(e -> e.name);
+Comparator&lt;Employee&gt; bySalary = Comparator.comparingInt(e -> e.salary);
+Comparator&lt;Employee&gt; complex  = Comparator.comparing(Employee::getName)
+                                           .thenComparingInt(Employee::getSalary)
+                                           .reversed();
+employees.sort(byName);
+employees.sort(complex);</div>
+          <div class="tip">Prefer Comparator for flexibility. Use <code>Comparator.comparing()</code> — it's null-safe and chaining-friendly.</div>
+        </div>
+      </div>
+
+      <!-- Q6 -->
+      <div class="accordion-item" data-id="jc6">
+        <div class="accordion-header" onclick="toggle('jc6')">
+          <span class="accordion-question">6. How to create an Immutable class in Java?</span>
+          <div class="accordion-meta">
+            <span class="badge badge-medium">Medium</span>
+            <button class="btn btn-sm btn-secondary review-btn" data-id="jc6" onclick="markReviewed(event,'jc6')">Mark Reviewed</button>
+            <i class="fas fa-chevron-down accordion-icon"></i>
+          </div>
+        </div>
+        <div class="accordion-body">
+          <p>Rules for creating an immutable class:</p>
+          <ul>
+            <li>Declare class as <strong>final</strong> (prevent subclassing)</li>
+            <li>All fields <strong>private final</strong></li>
+            <li>No setters</li>
+            <li>Initialize all fields via constructor</li>
+            <li>Deep copy of mutable fields (e.g., collections, dates)</li>
+            <li>Return defensive copies from getters for mutable fields</li>
+          </ul>
+          <div class="code-block">public final class ImmutableEmployee {
+    private final String name;
+    private final int salary;
+    private final List&lt;String&gt; skills; // mutable field!
+
+    public ImmutableEmployee(String name, int salary, List&lt;String&gt; skills) {
+        this.name = name;
+        this.salary = salary;
+        this.skills = new ArrayList&lt;&gt;(skills); // defensive copy
+    }
+
+    public String getName()    { return name; }
+    public int getSalary()     { return salary; }
+    public List&lt;String&gt; getSkills() {
+        return Collections.unmodifiableList(skills); // defensive copy
+    }
+}</div>
+          <div class="tip">Java's <code>record</code> keyword (Java 16+) creates immutable classes automatically! Also String, Integer, LocalDate are immutable.</div>
+        </div>
+      </div>
+
+      <!-- Q7 -->
+      <div class="accordion-item" data-id="jc7">
+        <div class="accordion-header" onclick="toggle('jc7')">
+          <span class="accordion-question">7. Exception Handling — Checked vs Unchecked, Custom Exceptions, Best Practices</span>
+          <div class="accordion-meta">
+            <span class="badge badge-medium">Medium</span>
+            <button class="btn btn-sm btn-secondary review-btn" data-id="jc7" onclick="markReviewed(event,'jc7')">Mark Reviewed</button>
+            <i class="fas fa-chevron-down accordion-icon"></i>
+          </div>
+        </div>
+        <div class="accordion-body">
+          <p><strong>Checked Exceptions</strong> — Must be declared or caught. Compiler enforces. Subclass of Exception (not RuntimeException). Example: IOException, SQLException.</p>
+          <p><strong>Unchecked Exceptions</strong> — Subclass of RuntimeException. Not enforced. Example: NullPointerException, IllegalArgumentException.</p>
+          <p><strong>Error</strong> — JVM-level problems (OutOfMemoryError, StackOverflowError). Don't catch these.</p>
+          <div class="code-block">// Custom exception hierarchy
+public class AppException extends RuntimeException {
+    private final String errorCode;
+    public AppException(String errorCode, String message) {
+        super(message);
+        this.errorCode = errorCode;
+    }
+    public AppException(String errorCode, String message, Throwable cause) {
+        super(message, cause);
+        this.errorCode = errorCode;
+    }
+    public String getErrorCode() { return errorCode; }
+}
+public class ResourceNotFoundException extends AppException {
+    public ResourceNotFoundException(String id) {
+        super("RESOURCE_NOT_FOUND", "Resource not found: " + id);
+    }
+}
+
+// Best practices
+try (InputStream in = new FileInputStream("file.txt")) { // try-with-resources
+    // auto-closes
+} catch (IOException e) {
+    log.error("Failed to read file", e); // log with cause
+    throw new AppException("FILE_READ_FAILED", "Failed to read file", e); // wrap
+}</div>
+          <div class="tip"><strong>Best practices:</strong> Prefer unchecked for programming errors. Never catch Exception/Throwable silently. Always log the cause. Use try-with-resources. Don't use exceptions for flow control.</div>
+        </div>
+      </div>
+
+      <!-- Q8 -->
+      <div class="accordion-item" data-id="jc8">
+        <div class="accordion-header" onclick="toggle('jc8')">
+          <span class="accordion-question">8. SOLID Principles with Java examples</span>
+          <div class="accordion-meta">
+            <span class="badge badge-hard">Hard</span>
+            <span class="badge badge-java">Important</span>
+            <button class="btn btn-sm btn-secondary review-btn" data-id="jc8" onclick="markReviewed(event,'jc8')">Mark Reviewed</button>
+            <i class="fas fa-chevron-down accordion-icon"></i>
+          </div>
+        </div>
+        <div class="accordion-body">
+          <ul>
+            <li><strong>S — Single Responsibility:</strong> A class should have only one reason to change. Separate UserService from EmailService.</li>
+            <li><strong>O — Open/Closed:</strong> Open for extension, closed for modification. Use Strategy pattern, not if-else chains.</li>
+            <li><strong>L — Liskov Substitution:</strong> Subclasses must be substitutable for their base classes without altering correctness.</li>
+            <li><strong>I — Interface Segregation:</strong> Clients should not be forced to depend on interfaces they don't use. Split fat interfaces.</li>
+            <li><strong>D — Dependency Inversion:</strong> High-level modules shouldn't depend on low-level. Both should depend on abstractions (inject interfaces, not concrete classes).</li>
+          </ul>
+          <div class="code-block">// D - Dependency Inversion (Spring does this via DI)
+interface NotificationService { void send(String msg); }
+class EmailNotification implements NotificationService { ... }
+class SmsNotification   implements NotificationService { ... }
+
+// High-level class depends on abstraction, not implementation
+@Service
+class OrderService {
+    private final NotificationService notificationService; // injected
+    OrderService(NotificationService ns) { this.notificationService = ns; }
+}</div>
+          <div class="tip"><strong>In interviews:</strong> For each principle, state what problem it solves + give a real-world code example. This differentiates senior devs.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===================== TAB: JVM & CONCURRENCY ===================== -->
+    <div class="tab-content" id="tab-java-adv">
+      <h2 class="section-title"><i class="fas fa-microchip"></i> JVM Architecture, GC &amp; Concurrency</h2>
+
+      <!-- Q9 -->
+      <div class="accordion-item" data-id="adv1">
+        <div class="accordion-header" onclick="toggle('adv1')">
+          <span class="accordion-question">9. Explain JVM Memory Model — Heap, Stack, Metaspace</span>
+          <div class="accordion-meta">
+            <span class="badge badge-hard">Hard</span>
+            <span class="badge badge-java">Important</span>
+            <button class="btn btn-sm btn-secondary review-btn" data-id="adv1" onclick="markReviewed(event,'adv1')">Mark Reviewed</button>
+            <i class="fas fa-chevron-down accordion-icon"></i>
+          </div>
+        </div>
+        <div class="accordion-body">
+          <ul>
+            <li><strong>Heap</strong> — Shared across threads. All objects live here. Divided into: <em>Young Gen</em> (Eden + Survivor S0/S1) and <em>Old Gen (Tenured)</em>.</li>
+            <li><strong>Young Gen (Eden)</strong> — New objects allocated here. Minor GC (fast) clears it. Survivors promoted to S0/S1.</li>
+            <li><strong>Old Gen</strong> — Long-lived objects. Major GC (slow, STW) clears it. Tenuring threshold controls promotion.</li>
+            <li><strong>Metaspace (Java 8+)</strong> — Class metadata, method bytecode, static variables. Replaced PermGen. Grows dynamically (native memory). Can cause native OOM.</li>
+            <li><strong>Stack</strong> — Per-thread. Method call frames (local variables, operand stack, return address). StackOverflowError = too deep recursion.</li>
+            <li><strong>PC Register</strong> — Per-thread. Points to current instruction.</li>
+            <li><strong>Native Method Stack</strong> — JNI calls.</li>
+          </ul>
+          <div class="code-block">// JVM flags for tuning
+-Xms512m -Xmx2g        // initial/max heap
+-XX:MetaspaceSize=256m  // initial metaspace
+-XX:MaxMetaspaceSize=512m
+-XX:+UseG1GC            // use G1 garbage collector
+-XX:NewRatio=3          // Old:Young = 3:1</div>
+          <div class="tip">OOM Types: <code>java.lang.OutOfMemoryError: Java heap space</code> → heap full. <code>...GC overhead limit exceeded</code> → GC running &gt;98% time. <code>...Metaspace</code> → class loading issue (ClassLoader leak).</div>
+        </div>
+      </div>
+
+      <!-- Q10 -->
+      <div class="accordion-item" data-id="adv2">
+        <div class="accordion-header" onclick="toggle('adv2')">
+          <span class="accordion-question">10. Garbage Collection — Types of GC algorithms (G1, ZGC, etc.)</span>
+          <div class="accordion-meta">
+            <span class="badge badge-hard">Hard</span>
+            <button class="btn btn-sm btn-secondary review-btn" data-id="adv2" onclick="markReviewed(event,'adv2')">Mark Reviewed</button>
+            <i class="fas fa-chevron-down accordion-icon"></i>
+          </div>
+        </div>
+        <div class="accordion-body">
+          <ul>
+            <li><strong>Serial GC</strong> — Single-threaded. Good for small apps / single CPU.</li>
+            <li><strong>Parallel GC (Throughput)</strong> — Multi-threaded. Stop-the-world. Default in Java 8. Good for batch processing.</li>
+            <li><strong>CMS (Concurrent Mark Sweep)</strong> — Deprecated Java 9, removed 14. Concurrent collection, short STW pauses.</li>
+            <li><strong>G1 GC (Java 9+ default)</strong> — Divides heap into equal-sized regions. Concurrent + incremental. Predictable pause targets. Replaces CMS.</li>
+            <li><strong>ZGC (Java 15+ production)</strong> — Sub-millisecond pauses. Scalable to terabytes. Almost fully concurrent. Use <code>-XX:+UseZGC</code>.</li>
+            <li><strong>Shenandoah</strong> — RedHat's ultra-low-pause GC. Similar to ZGC.</li>
+          </ul>
+          <p>GC Phases: Mark (find live objects) → Sweep (reclaim dead) → Compact (defragment).</p>
+          <div class="tip"><strong>Choose:</strong> G1 for most apps. ZGC for latency-sensitive (trading, gaming). Parallel for maximum throughput. Always measure, never guess.</div>
+        </div>
+      </div>
+
+      <!-- Q11 -->
+      <div class="accordion-item" data-id="adv3">
+        <div class="accordion-header" onclick="toggle('adv3')">
+          <span class="accordion-question">11. volatile vs synchronized vs AtomicInteger — When to use what?</span>
+          <div class="accordion-meta">
+            <span class="badge badge-hard">Hard</span>
+            <span class="badge badge-java">Important</span>
+            <button class="btn btn-sm btn-secondary review-btn" data-id="adv3" onclick="markReviewed(event,'adv3')">Mark Reviewed</button>
+            <i class="fas fa-chevron-down accordion-icon"></i>
+          </div>
+        </div>
+        <div class="accordion-body">
+          <p><strong>volatile</strong> — Guarantees <em>visibility</em> only (changes visible to all threads immediately). Does NOT guarantee atomicity. Use for: simple boolean flags, double-checked locking pattern.</p>
+          <p><strong>synchronized</strong> — Guarantees <em>visibility + atomicity + mutual exclusion</em>. Only one thread at a time. High performance overhead. Use for compound operations.</p>
+          <p><strong>Atomic classes</strong> — Lock-free thread safety using CAS (Compare-And-Swap) CPU instructions. AtomicInteger, AtomicLong, AtomicReference. Much faster than synchronized for single variables.</p>
+          <div class="code-block">// volatile - visibility only
+volatile boolean running = true; // flag pattern
+void stop() { running = false; }
+
+// synchronized - mutual exclusion
+class Counter {
+    private int count = 0;
+    synchronized void increment() { count++; } // atomic
+}
+
+// AtomicInteger - lock-free, faster
+AtomicInteger counter = new AtomicInteger(0);
+counter.incrementAndGet();                     // CAS-based
+counter.compareAndSet(expected, newValue);
+
+// ReentrantLock - explicit lock, more control
+ReentrantLock lock = new ReentrantLock();
+lock.lock();
+try { /* critical section */ } 
+finally { lock.unlock(); } // ALWAYS unlock in finally!</div>
+          <div class="tip">volatile i++ is NOT atomic (read-modify-write). Use AtomicInteger. Use synchronized/ReentrantLock only when you need compound operations or waiting/notification.</div>
+        </div>
+      </div>
+
+      <!-- Q12 -->
+      <div class="accordion-item" data-id="adv4">
+        <div class="accordion-header" onclick="toggle('adv4')">
+          <span class="accordion-question">12. ExecutorService, ThreadPool, CompletableFuture — Explain with real use cases</span>
+          <div class="accordion-meta">
+            <span class="badge badge-hard">Hard</span>
+            <button class="btn btn-sm btn-secondary review-btn" data-id="adv4" onclick="markReviewed(event,'adv4')">Mark Reviewed</button>
+            <i class="fas fa-chevron-down accordion-icon"></i>
+          </div>
+        </div>
+        <div class="accordion-body">
+          <p><strong>ExecutorService</strong> — Manages thread lifecycle. Decouple task submission from execution.</p>
+          <div class="code-block">// Thread pool types
+ExecutorService fixed  = Executors.newFixedThreadPool(10);      // fixed threads
+ExecutorService cached = Executors.newCachedThreadPool();        // grows as needed
+ExecutorService single = Executors.newSingleThreadExecutor();    // single thread
+ScheduledExecutorService sched = Executors.newScheduledThreadPool(2);
+
+// Custom pool (recommended for production)
+ExecutorService pool = new ThreadPoolExecutor(
+    5, 20, 60L, TimeUnit.SECONDS,
+    new LinkedBlockingQueue&lt;&gt;(100),
+    new ThreadFactory() { ... },
+    new ThreadPoolExecutor.CallerRunsPolicy() // rejection policy
+);
+
+// CompletableFuture - async + non-blocking
+CompletableFuture.supplyAsync(() -> fetchUser(id))
+    .thenApplyAsync(user -> fetchOrders(user.getId()))
+    .thenAcceptAsync(orders -> notifyUI(orders))
+    .exceptionally(ex -> { log.error("failed", ex); return null; });
+
+// Combine multiple futures
+CompletableFuture&lt;User&gt; userFuture   = CompletableFuture.supplyAsync(() -> fetchUser());
+CompletableFuture&lt;Order&gt; orderFuture = CompletableFuture.supplyAsync(() -> fetchOrder());
+CompletableFuture.allOf(userFuture, orderFuture).thenRun(() -> {
+    User u = userFuture.join();
+    Order o = orderFuture.join();
+});</div>
+          <div class="tip">Always shut down ExecutorService gracefully: <code>pool.shutdown(); pool.awaitTermination(60, SECONDS);</code>. Avoid <code>Executors.newCachedThreadPool()</code> in production (unbounded threads → OOM).</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===================== TAB: JAVA 8-21 ===================== -->
+    <div class="tab-content" id="tab-java-new">
+      <h2 class="section-title"><i class="fas fa-star"></i> Java 8 through 21 — Key Features</h2>
+
+      <div class="accordion-item" data-id="new1">
+        <div class="accordion-header" onclick="toggle('new1')">
+          <span class="accordion-question">13. Java 8 — Streams, Lambda, Optional, Date-Time API, CompletableFuture</span>
+          <div class="accordion-meta">
+            <span class="badge badge-hard">Hard</span>
+            <span class="badge badge-new">Java 8</span>
+            <button class="btn btn-sm btn-secondary review-btn" data-id="new1" onclick="markReviewed(event,'new1')">Mark Reviewed</button>
+            <i class="fas fa-chevron-down accordion-icon"></i>
+          </div>
+        </div>
+        <div class="accordion-body">
+          <ul>
+            <li><strong>Lambda expressions</strong> — Anonymous functions. <code>(x, y) -&gt; x + y</code></li>
+            <li><strong>Functional Interfaces</strong> — @FunctionalInterface. Function&lt;T,R&gt;, Predicate&lt;T&gt;, Consumer&lt;T&gt;, Supplier&lt;T&gt;, BiFunction&lt;T,U,R&gt;</li>
+            <li><strong>Stream API</strong> — Lazy, sequential or parallel processing. Intermediate (filter, map, flatMap, sorted) + Terminal (collect, reduce, count, forEach)</li>
+            <li><strong>Optional&lt;T&gt;</strong> — Avoid null. orElse(), orElseGet(), orElseThrow(), map(), flatMap(), filter()</li>
+            <li><strong>Default/Static methods in interfaces</strong> — Backward compatible API evolution</li>
+            <li><strong>Method references</strong> — Class::method, instance::method, Class::new</li>
+            <li><strong>Date-Time API</strong> — java.time.*. LocalDate, LocalDateTime, ZonedDateTime, Duration, Period, DateTimeFormatter. Immutable &amp; thread-safe.</li>
+            <li><strong>CompletableFuture</strong> — Async programming. thenApply, thenCompose, thenCombine, allOf, anyOf</li>
+          </ul>
+          <div class="code-block">// Stream pipeline
+Map&lt;String, Long&gt; wordCount = words.stream()
+    .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()));
+
+// Date-Time
+LocalDate today = LocalDate.now();
+LocalDate nextWeek = today.plusWeeks(1);
+long daysBetween = ChronoUnit.DAYS.between(today, nextWeek);
+DateTimeFormatter fmt = DateTimeFormatter.ofPattern("dd-MM-yyyy");</div>
+        </div>
+      </div>
+
+      <div class="accordion-item" data-id="new2">
+        <div class="accordion-header" onclick="toggle('new2')">
+          <span class="accordion-question">14. Java 11, 14, 16, 17 — What are the key features?</span>
+          <div class="accordion-meta">
+            <span class="badge badge-medium">Medium</span>
+            <span class="badge badge-new">Java 11-17</span>
+            <button class="btn btn-sm btn-secondary review-btn" data-id="new2" onclick="markReviewed(event,'new2')">Mark Reviewed</button>
+            <i class="fas fa-chevron-down accordion-icon"></i>
+          </div>
+        </div>
+        <div class="accordion-body">
+          <p><strong>Java 10:</strong> Local variable type inference: <code>var list = new ArrayList&lt;String&gt;();</code></p>
+          <p><strong>Java 11 (LTS):</strong></p>
+          <ul>
+            <li>String methods: isBlank(), strip(), repeat(), lines()</li>
+            <li>HTTP Client API (java.net.http.HttpClient) — async HTTP/2</li>
+            <li>var in lambda params: <code>(var x, var y) -&gt; x + y</code></li>
+            <li>Files.readString() / Files.writeString()</li>
+          </ul>
+          <p><strong>Java 14:</strong> Switch expressions (standard), NullPointerException helpful messages</p>
+          <p><strong>Java 16:</strong> Records (standard), Pattern Matching for instanceof (standard)</p>
+          <p><strong>Java 17 (LTS):</strong></p>
+          <ul>
+            <li>Sealed classes/interfaces — restrict which classes can implement/extend</li>
+            <li>Text blocks (multiline strings) — standard since Java 15</li>
+            <li>Pattern matching for instanceof — standard</li>
+          </ul>
+          <div class="code-block">// Java 17 - Text blocks
+String json = """
+    {
+        "name": "Prabakaran",
+        "role": "Java Developer"
+    }
+    """;
+
+// Switch expression (Java 14+)
+String day = switch(dayNum) {
+    case 1 -> "Monday";
+    case 2 -> "Tuesday";
+    default -> "Other";
+};
+
+// Pattern matching instanceof
+if (obj instanceof String s &amp;&amp; s.length() &gt; 5) {
+    System.out.println(s.toUpperCase()); // s is String in this scope
+}</div>
+        </div>
+      </div>
+
+      <div class="accordion-item" data-id="new3">
+        <div class="accordion-header" onclick="toggle('new3')">
+          <span class="accordion-question">15. Java 21 (LTS) — Virtual Threads, Sequenced Collections, Pattern Matching Switch</span>
+          <div class="accordion-meta">
+            <span class="badge badge-hard">Hard</span>
+            <span class="badge badge-new">Java 21</span>
+            <button class="btn btn-sm btn-secondary review-btn" data-id="new3" onclick="markReviewed(event,'new3')">Mark Reviewed</button>
+            <i class="fas fa-chevron-down accordion-icon"></i>
+          </div>
+        </div>
+        <div class="accordion-body">
+          <ul>
+            <li><strong>Virtual Threads</strong> — Lightweight JVM-managed threads. Platform threads mapped to OS threads. VTs auto-unmount during blocking I/O. Use <code>Executors.newVirtualThreadPerTaskExecutor()</code>. Great for I/O-bound microservices.</li>
+            <li><strong>Sequenced Collections</strong> — New interfaces: SequencedCollection, SequencedMap. Methods: getFirst(), getLast(), addFirst(), reversed().</li>
+            <li><strong>Pattern Matching for Switch</strong> — Exhaustive switch with type patterns + guarded patterns.</li>
+            <li><strong>Record Patterns</strong> — Destructure records in patterns.</li>
+            <li><strong>String Templates (Preview)</strong> — STR."Hello \{name}"</li>
+          </ul>
+          <div class="code-block">// Virtual Threads
+try (var executor = Executors.newVirtualThreadPerTaskExecutor()) {
+    IntStream.range(0, 10_000).forEach(i -&gt;
+        executor.submit(() -&gt; { Thread.sleep(100); return i; })
+    );
+} // handles 10,000 concurrent tasks efficiently!
+
+// Sequenced Collections
+SequencedList&lt;String&gt; list = new ArrayList&lt;&gt;(List.of("a","b","c"));
+list.getFirst();  // "a"
+list.getLast();   // "c"
+list.reversed();  // reversed view
+
+// Record Patterns
+record Point(int x, int y) {}
+Object obj = new Point(1, 2);
+if (obj instanceof Point(int x, int y)) { // destructure!
+    System.out.println("x=" + x + ", y=" + y);
+}</div>
+          <div class="tip"><strong>Key interview point:</strong> Virtual threads don't replace reactive programming but make blocking code scale as well as reactive. Spring Boot 3.2+ natively supports virtual threads with <code>spring.threads.virtual.enabled=true</code>.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===================== TAB: SPRING CORE ===================== -->
+    <div class="tab-content" id="tab-spring-core">
+      <h2 class="section-title"><i class="fas fa-leaf"></i> Spring Boot Core</h2>
+
+      <div class="accordion-item" data-id="sc1">
+        <div class="accordion-header" onclick="toggle('sc1')">
+          <span class="accordion-question">16. How does Spring Boot Auto-Configuration work internally?</span>
+          <div class="accordion-meta">
+            <span class="badge badge-hard">Hard</span>
+            <span class="badge badge-spring">Spring</span>
+            <button class="btn btn-sm btn-secondary review-btn" data-id="sc1" onclick="markReviewed(event,'sc1')">Mark Reviewed</button>
+            <i class="fas fa-chevron-down accordion-icon"></i>
+          </div>
+        </div>
+        <div class="accordion-body">
+          <ul>
+            <li><code>@SpringBootApplication</code> = <code>@SpringBootConfiguration</code> + <code>@EnableAutoConfiguration</code> + <code>@ComponentScan</code></li>
+            <li><code>@EnableAutoConfiguration</code> triggers auto-config loading</li>
+            <li>Spring Boot reads <code>META-INF/spring/org.springframework.boot.autoconfigure.AutoConfiguration.imports</code> (Spring 3.x) or <code>spring.factories</code> (Spring 2.x)</li>
+            <li>Each AutoConfiguration class has <code>@Conditional</code> annotations to decide if it should apply</li>
+            <li>Your explicit beans always override auto-configured beans (<code>@ConditionalOnMissingBean</code>)</li>
+          </ul>
+          <div class="code-block">// spring.factories or AutoConfiguration.imports
+org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration
+org.springframework.boot.autoconfigure.web.servlet.WebMvcAutoConfiguration
+
+// RedisAutoConfiguration simplified
+@AutoConfiguration
+@ConditionalOnClass(RedisOperations.class)  // Redis jar on classpath?
+@ConditionalOnMissingBean(RedisConnectionFactory.class) // not already configured?
+@EnableConfigurationProperties(RedisProperties.class)
+public class RedisAutoConfiguration {
+    @Bean
+    public RedisTemplate&lt;?,?&gt; redisTemplate(RedisConnectionFactory factory) { ... }
+}
+
+// Debug auto-configuration
+// Run with --debug flag to see AutoConfigurationReport
+// Or: spring.autoconfigure.exclude=com.example.SomeAutoConfig</div>
+          <div class="tip">Shortcut to explain: "Spring Boot reads a list of configuration classes from the classpath, filters them using @Conditional checks, and applies those that pass."</div>
+        </div>
+      </div>
+
+      <div class="accordion-item" data-id="sc2">
+        <div class="accordion-header" onclick="toggle('sc2')">
+          <span class="accordion-question">17. Spring Bean Scopes — Singleton, Prototype, Request, Session</span>
+          <div class="accordion-meta">
+            <span class="badge badge-medium">Medium</span>
+            <span class="badge badge-spring">Spring</span>
+            <button class="btn btn-sm btn-secondary review-btn" data-id="sc2" onclick="markReviewed(event,'sc2')">Mark Reviewed</button>
+            <i class="fas fa-chevron-down accordion-icon"></i>
+          </div>
+        </div>
+        <div class="accordion-body">
+          <ul>
+            <li><strong>Singleton (default)</strong> — One instance per IoC container. Shared. Created at startup (eager) or first use (lazy)</li>
+            <li><strong>Prototype</strong> — New instance every time requested. Spring doesn't manage lifecycle after creation</li>
+            <li><strong>Request</strong> — One per HTTP request (web only)</li>
+            <li><strong>Session</strong> — One per HTTP session (web only)</li>
+            <li><strong>Application</strong> — One per ServletContext</li>
+            <li><strong>WebSocket</strong> — One per WebSocket session</li>
+          </ul>
+          <div class="code-block">@Bean @Scope("prototype") UserSession userSession() { return new UserSession(); }
+
+// Problem: Prototype bean in Singleton bean (common interview question!)
+@Service // singleton
+class OrderService {
+    @Autowired UserSession session; // WRONG! Always same instance!
+    
+    // Fix 1: ApplicationContext.getBean()
+    @Autowired ApplicationContext ctx;
+    void process() { UserSession s = ctx.getBean(UserSession.class); }
+    
+    // Fix 2: @Lookup method injection
+    @Lookup public UserSession getUserSession() { return null; } // Spring overrides
+    
+    // Fix 3: ObjectProvider
+    @Autowired ObjectProvider&lt;UserSession&gt; sessionProvider;
+    void process() { UserSession s = sessionProvider.getObject(); }
+}</div>
+        </div>
+      </div>
+
+      <div class="accordion-item" data-id="sc3">
+        <div class="accordion-header" onclick="toggle('sc3')">
+          <span class="accordion-question">18. @Component vs @Service vs @Repository vs @Controller</span>
+          <div class="accordion-meta">
+            <span class="badge badge-easy">Easy</span>
+            <span class="badge badge-spring">Spring</span>
+            <button class="btn btn-sm btn-secondary review-btn" data-id="sc3" onclick="markReviewed(event,'sc3')">Mark Reviewed</button>
+            <i class="fas fa-chevron-down accordion-icon"></i>
+          </div>
+        </div>
+        <div class="accordion-body">
+          <p>All are stereotype annotations that register beans. They differ in semantic meaning and additional behavior:</p>
+          <ul>
+            <li><strong>@Component</strong> — Generic stereotype. Use for utility classes, helpers.</li>
+            <li><strong>@Service</strong> — Business logic layer. Same as @Component but semantically meaningful. Transactions applied here.</li>
+            <li><strong>@Repository</strong> — Data access layer. Additionally: translates persistence exceptions (e.g., SQL exceptions) to Spring's <code>DataAccessException</code> hierarchy.</li>
+            <li><strong>@Controller</strong> — Web MVC controller. Processes HTTP requests, returns view names. Used with @RequestMapping.</li>
+            <li><strong>@RestController</strong> — @Controller + @ResponseBody. Returns JSON/XML directly. Used for REST APIs.</li>
+          </ul>
+          <div class="tip">Key difference: @Repository adds exception translation via PersistenceExceptionTranslationPostProcessor. @RestController vs @Controller: @RestController skips view resolution, writes directly to HTTP response.</div>
+        </div>
+      </div>
+
+      <div class="accordion-item" data-id="sc4">
+        <div class="accordion-header" onclick="toggle('sc4')">
+          <span class="accordion-question">19. Spring AOP — Aspect, Advice, Pointcut, JoinPoint, Proxy</span>
+          <div class="accordion-meta">
+            <span class="badge badge-hard">Hard</span>
+            <span class="badge badge-spring">Spring</span>
+            <button class="btn btn-sm btn-secondary review-btn" data-id="sc4" onclick="markReviewed(event,'sc4')">Mark Reviewed</button>
+            <i class="fas fa-chevron-down accordion-icon"></i>
+          </div>
+        </div>
+        <div class="accordion-body">
+          <ul>
+            <li><strong>Aspect</strong> — The module encapsulating cross-cutting concern (logging, security, transactions)</li>
+            <li><strong>Advice</strong> — Action to take: @Before, @After, @AfterReturning, @AfterThrowing, @Around</li>
+            <li><strong>Pointcut</strong> — Expression selecting which JoinPoints to intercept. e.g., <code>execution(* com.example.service.*.*(..))</code></li>
+            <li><strong>JoinPoint</strong> — Point in execution (method call, field access). Spring AOP only supports method execution.</li>
+            <li><strong>Proxy</strong> — Spring creates JDK dynamic proxy (for interface) or CGLIB proxy (for class). Wraps the bean.</li>
+          </ul>
+          <div class="code-block">@Aspect @Component
+public class LoggingAspect {
+    
+    @Pointcut("execution(* com.example.service..*(..))")
+    private void serviceLayer() {}
+    
+    @Before("serviceLayer()")
+    public void logBefore(JoinPoint jp) {
+        log.info("Calling: {}", jp.getSignature().getName());
+    }
+    
+    @Around("@annotation(Auditable)") // annotation-based pointcut
+    public Object audit(ProceedingJoinPoint pjp) throws Throwable {
+        long start = System.currentTimeMillis();
+        try {
+            Object result = pjp.proceed(); // call actual method
+            log.info("Completed in {}ms", System.currentTimeMillis() - start);
+            return result;
+        } catch (Exception e) {
+            log.error("Failed: {}", pjp.getSignature(), e);
+            throw e;
+        }
+    }
+}</div>
+          <div class="tip"><strong>AOP Limitations:</strong> Only works on Spring-managed beans. Self-invocation bypasses proxy (use AopContext.currentProxy()). Only method-level joinpoints. CGLIB proxies require no-arg constructor.</div>
+        </div>
+      </div>
+
+      <div class="accordion-item" data-id="sc5">
+        <div class="accordion-header" onclick="toggle('sc5')">
+          <span class="accordion-question">20. @Transactional — Propagation, Isolation, Rollback, Pitfalls</span>
+          <div class="accordion-meta">
+            <span class="badge badge-hard">Hard</span>
+            <span class="badge badge-spring">Important</span>
+            <button class="btn btn-sm btn-secondary review-btn" data-id="sc5" onclick="markReviewed(event,'sc5')">Mark Reviewed</button>
+            <i class="fas fa-chevron-down accordion-icon"></i>
+          </div>
+        </div>
+        <div class="accordion-body">
+          <p><strong>Propagation types:</strong></p>
+          <ul>
+            <li>REQUIRED (default) — Join existing tx or create new</li>
+            <li>REQUIRES_NEW — Always create new tx. Suspend existing.</li>
+            <li>SUPPORTS — Use existing if available, else non-transactional</li>
+            <li>MANDATORY — Must exist, else throw exception</li>
+            <li>NEVER — Must NOT be in transaction</li>
+            <li>NESTED — Nested tx using savepoints</li>
+          </ul>
+          <p><strong>Isolation levels:</strong> READ_UNCOMMITTED, READ_COMMITTED, REPEATABLE_READ, SERIALIZABLE</p>
+          <div class="code-block">@Transactional(
+    propagation = Propagation.REQUIRED,
+    isolation = Isolation.READ_COMMITTED,
+    rollbackFor = {Exception.class},      // rollback on checked too
+    noRollbackFor = {InventoryException.class},
+    readOnly = true,                       // optimization for SELECT
+    timeout = 30
+)
+public Order createOrder(OrderRequest req) { ... }
+
+// PITFALL 1: self-invocation bypasses proxy
+@Service class OrderService {
+    void outer() { inner(); }              // WRONG - no transaction!
+    @Transactional void inner() { ... }    // not invoked through proxy
+}
+
+// PITFALL 2: @Transactional on private methods - doesn't work!
+// PITFALL 3: RuntimeException rolls back, checked Exception does NOT by default
+// Use rollbackFor = Exception.class for checked exceptions</div>
+        </div>
+      </div>
+
+      <div class="accordion-item" data-id="sc6">
+        <div class="accordion-header" onclick="toggle('sc6')">
+          <span class="accordion-question">21. Global Exception Handling — @ControllerAdvice, @ExceptionHandler</span>
+          <div class="accordion-meta">
+            <span class="badge badge-medium">Medium</span>
+            <span class="badge badge-spring">Spring</span>
+            <button class="btn btn-sm btn-secondary review-btn" data-id="sc6" onclick="markReviewed(event,'sc6')">Mark Reviewed</button>
+            <i class="fas fa-chevron-down accordion-icon"></i>
+          </div>
+        </div>
+        <div class="accordion-body">
+          <div class="code-block">// Standard error response DTO
+@Data @Builder
+public class ErrorResponse {
+    private String errorCode;
+    private String message;
+    private LocalDateTime timestamp;
+    private String path;
+    private List&lt;String&gt; validationErrors;
+}
+
+@RestControllerAdvice
+public class GlobalExceptionHandler {
+    
+    @ExceptionHandler(ResourceNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ErrorResponse handleNotFound(ResourceNotFoundException ex, HttpServletRequest req) {
+        return ErrorResponse.builder()
+            .errorCode("RESOURCE_NOT_FOUND")
+            .message(ex.getMessage())
+            .timestamp(LocalDateTime.now())
+            .path(req.getRequestURI())
+            .build();
+    }
+    
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handleValidation(MethodArgumentNotValidException ex) {
+        List&lt;String&gt; errors = ex.getBindingResult().getFieldErrors()
+            .stream().map(fe -> fe.getField() + ": " + fe.getDefaultMessage())
+            .collect(Collectors.toList());
+        return ErrorResponse.builder()
+            .errorCode("VALIDATION_FAILED")
+            .message("Validation failed")
+            .validationErrors(errors).build();
+    }
+    
+    @ExceptionHandler(Exception.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ErrorResponse handleGeneral(Exception ex) {
+        log.error("Unhandled exception", ex);
+        return ErrorResponse.builder().errorCode("INTERNAL_ERROR")
+            .message("Something went wrong").build();
+    }
+}</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===================== TAB: SPRING SECURITY & JPA ===================== -->
+    <div class="tab-content" id="tab-spring-adv">
+      <h2 class="section-title"><i class="fas fa-shield-alt"></i> Spring Security, JPA &amp; Caching</h2>
+
+      <div class="accordion-item" data-id="sa1">
+        <div class="accordion-header" onclick="toggle('sa1')">
+          <span class="accordion-question">22. JWT Authentication in Spring Boot — Step by step implementation</span>
+          <div class="accordion-meta">
+            <span class="badge badge-hard">Hard</span>
+            <span class="badge badge-spring">Important</span>
+            <button class="btn btn-sm btn-secondary review-btn" data-id="sa1" onclick="markReviewed(event,'sa1')">Mark Reviewed</button>
+            <i class="fas fa-chevron-down accordion-icon"></i>
+          </div>
+        </div>
+        <div class="accordion-body">
+          <p><strong>Steps:</strong></p>
+          <ol>
+            <li>Add dependencies: spring-security, jjwt-api, jjwt-impl, jjwt-jackson</li>
+            <li>Create <code>JwtService</code> — generateToken(), validateToken(), extractClaims()</li>
+            <li>Create <code>JwtAuthFilter extends OncePerRequestFilter</code></li>
+            <li>Configure <code>SecurityFilterChain</code></li>
+            <li>Create <code>AuthController</code> with /login endpoint</li>
+          </ol>
+          <div class="code-block">// JwtService
+@Service public class JwtService {
+    @Value("${jwt.secret}") private String secret;
+    @Value("${jwt.expiry:86400000}") private long expiry;
+    
+    public String generateToken(UserDetails user) {
+        return Jwts.builder()
+            .subject(user.getUsername())
+            .issuedAt(new Date())
+            .expiration(new Date(System.currentTimeMillis() + expiry))
+            .signWith(getKey())
+            .compact();
+    }
+    public boolean isValid(String token, UserDetails user) {
+        return extractUsername(token).equals(user.getUsername()) &amp;&amp; !isExpired(token);
+    }
+    private SecretKey getKey() {
+        return Keys.hmacShaKeyFor(Decoders.BASE64.decode(secret));
+    }
+}
+
+// JwtAuthFilter
+@Component public class JwtAuthFilter extends OncePerRequestFilter {
+    @Override protected void doFilterInternal(HttpServletRequest req, HttpServletResponse res, FilterChain chain) throws ... {
+        String authHeader = req.getHeader("Authorization");
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) { chain.doFilter(req, res); return; }
+        String token = authHeader.substring(7);
+        String username = jwtService.extractUsername(token);
+        if (username != null &amp;&amp; SecurityContextHolder.getContext().getAuthentication() == null) {
+            UserDetails user = userService.loadUserByUsername(username);
+            if (jwtService.isValid(token, user)) {
+                UsernamePasswordAuthenticationToken authToken =
+                    new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
+                authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(req));
+                SecurityContextHolder.getContext().setAuthentication(authToken);
+            }
+        }
+        chain.doFilter(req, res);
+    }
+}
+
+// SecurityFilterChain
+@Bean SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    return http
+        .csrf(AbstractHttpConfigurer::disable)
+        .sessionManagement(s -> s.sessionCreationPolicy(STATELESS))
+        .authorizeHttpRequests(auth -> auth
+            .requestMatchers("/api/auth/**").permitAll()
+            .requestMatchers("/api/admin/**").hasRole("ADMIN")
+            .anyRequest().authenticated())
+        .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
+        .build();
+}</div>
+        </div>
+      </div>
+
+      <div class="accordion-item" data-id="sa2">
+        <div class="accordion-header" onclick="toggle('sa2')">
+          <span class="accordion-question">23. N+1 Problem in JPA — Causes, Detection, and Fixes</span>
+          <div class="accordion-meta">
+            <span class="badge badge-hard">Hard</span>
+            <span class="badge badge-spring">Important</span>
+            <button class="btn btn-sm btn-secondary review-btn" data-id="sa2" onclick="markReviewed(event,'sa2')">Mark Reviewed</button>
+            <i class="fas fa-chevron-down accordion-icon"></i>
+          </div>
+        </div>
+        <div class="accordion-body">
+          <p><strong>N+1 Problem:</strong> Fetching N parent entities causes N additional queries for lazy-loaded children. Total = N+1 queries.</p>
+          <div class="code-block">// PROBLEM: Authors with books (lazy fetch)
+List&lt;Author&gt; authors = authorRepo.findAll(); // 1 query
+authors.forEach(a -> a.getBooks().size());     // N queries!
+
+// FIX 1: JPQL Fetch Join (most common)
+@Query("SELECT a FROM Author a JOIN FETCH a.books")
+List&lt;Author&gt; findAllWithBooks();
+
+// FIX 2: @EntityGraph
+@EntityGraph(attributePaths = {"books", "books.chapters"})
+List&lt;Author&gt; findAll();
+
+// FIX 3: @BatchSize (Hibernate)
+@OneToMany
+@BatchSize(size = 20) // fetches 20 collections at once
+private Set&lt;Book&gt; books;
+
+// FIX 4: DTO projection (best performance - no entity loading)
+@Query("SELECT new com.example.dto.AuthorDTO(a.id, a.name, COUNT(b)) " +
+       "FROM Author a LEFT JOIN a.books b GROUP BY a.id, a.name")
+List&lt;AuthorDTO&gt; findAuthorSummary();
+
+// DETECTION: spring.jpa.show-sql=true, Hibernate Statistics, Hypersistence Optimizer</div>
+          <div class="tip">Use <code>spring.jpa.properties.hibernate.generate_statistics=true</code> and check query count. Tools: Hypersistence Optimizer, p6spy, JDBC proxy logs.</div>
+        </div>
+      </div>
+
+      <div class="accordion-item" data-id="sa3">
+        <div class="accordion-header" onclick="toggle('sa3')">
+          <span class="accordion-question">24. Redis Caching in Spring Boot — @Cacheable, TTL, Eviction</span>
+          <div class="accordion-meta">
+            <span class="badge badge-medium">Medium</span>
+            <span class="badge badge-spring">Spring</span>
+            <button class="btn btn-sm btn-secondary review-btn" data-id="sa3" onclick="markReviewed(event,'sa3')">Mark Reviewed</button>
+            <i class="fas fa-chevron-down accordion-icon"></i>
+          </div>
+        </div>
+        <div class="accordion-body">
+          <div class="code-block">// 1. Enable caching
+@SpringBootApplication @EnableCaching public class App { }
+
+// 2. Configure Redis TTL
+@Configuration public class CacheConfig {
+    @Bean RedisCacheConfiguration defaultConfig() {
+        return RedisCacheConfiguration.defaultCacheConfig()
+            .entryTtl(Duration.ofMinutes(30))
+            .serializeValuesWith(RedisSerializationContext.SerializationPair
+                .fromSerializer(new GenericJackson2JsonRedisSerializer()));
+    }
+    @Bean RedisCacheManager cacheManager(RedisConnectionFactory rcf) {
+        Map&lt;String, RedisCacheConfiguration&gt; configs = Map.of(
+            "users", defaultConfig().entryTtl(Duration.ofHours(1)),
+            "products", defaultConfig().entryTtl(Duration.ofMinutes(5))
+        );
+        return RedisCacheManager.builder(rcf)
+            .withInitialCacheConfigurations(configs).build();
+    }
+}
+
+// 3. Use cache annotations
+@Service public class ProductService {
+    @Cacheable(value = "products", key = "#id", unless = "#result == null")
+    public Product getById(Long id) { return productRepo.findById(id).orElse(null); }
+    
+    @CachePut(value = "products", key = "#product.id")  // update without skipping method
+    public Product update(Product product) { return productRepo.save(product); }
+    
+    @CacheEvict(value = "products", key = "#id")        // remove from cache
+    public void delete(Long id) { productRepo.deleteById(id); }
+    
+    @CacheEvict(value = "products", allEntries = true)  // clear entire cache
+    @Scheduled(fixedDelay = 600_000) public void clearCache() {}
+}</div>
+        </div>
+      </div>
+
+      <div class="accordion-item" data-id="sa4">
+        <div class="accordion-header" onclick="toggle('sa4')">
+          <span class="accordion-question">25. Spring Boot Actuator — Endpoints, Custom Health Indicator</span>
+          <div class="accordion-meta">
+            <span class="badge badge-easy">Easy</span>
+            <span class="badge badge-spring">Spring</span>
+            <button class="btn btn-sm btn-secondary review-btn" data-id="sa4" onclick="markReviewed(event,'sa4')">Mark Reviewed</button>
+            <i class="fas fa-chevron-down accordion-icon"></i>
+          </div>
+        </div>
+        <div class="accordion-body">
+          <p>Actuator exposes production-ready endpoints for monitoring and management.</p>
+          <ul>
+            <li><code>/actuator/health</code> — App health (DB, Redis, disk)</li>
+            <li><code>/actuator/info</code> — App information</li>
+            <li><code>/actuator/metrics</code> — JVM, HTTP, custom metrics (Micrometer)</li>
+            <li><code>/actuator/env</code> — Environment properties</li>
+            <li><code>/actuator/loggers</code> — View/change log levels at runtime</li>
+            <li><code>/actuator/beans</code> — All Spring beans</li>
+            <li><code>/actuator/httptrace</code> — Last 100 HTTP requests</li>
+            <li><code>/actuator/threaddump</code> — Thread dump</li>
+          </ul>
+          <div class="code-block"># application.properties
+management.endpoints.web.exposure.include=health,info,metrics,loggers
+management.endpoint.health.show-details=when_authorized
+management.info.env.enabled=true
+
+// Custom Health Indicator
+@Component public class PaymentGatewayHealthIndicator implements HealthIndicator {
+    @Override public Health health() {
+        try {
+            boolean ok = paymentGateway.ping();
+            return ok ? Health.up().withDetail("gateway", "reachable").build()
+                      : Health.down().withDetail("gateway", "unreachable").build();
+        } catch (Exception e) {
+            return Health.down(e).build();
+        }
+    }
+}
+
+// Custom metric with Micrometer
+@Service public class OrderService {
+    private final Counter orderCounter;
+    OrderService(MeterRegistry registry) {
+        this.orderCounter = registry.counter("orders.created", "type", "online");
+    }
+    public Order createOrder(OrderRequest req) {
+        Order order = ... ;
+        orderCounter.increment();
+        return order;
+    }
+}</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===================== TAB: MICROSERVICES ===================== -->
+    <div class="tab-content" id="tab-microservices">
+      <h2 class="section-title"><i class="fas fa-network-wired"></i> Microservices, Spring Cloud &amp; Patterns</h2>
+
+      <div class="accordion-item" data-id="ms1">
+        <div class="accordion-header" onclick="toggle('ms1')">
+          <span class="accordion-question">26. Circuit Breaker Pattern — Resilience4j with Spring Boot</span>
+          <div class="accordion-meta">
+            <span class="badge badge-hard">Hard</span>
+            <span class="badge badge-micro">Microservices</span>
+            <button class="btn btn-sm btn-secondary review-btn" data-id="ms1" onclick="markReviewed(event,'ms1')">Mark Reviewed</button>
+            <i class="fas fa-chevron-down accordion-icon"></i>
+          </div>
+        </div>
+        <div class="accordion-body">
+          <p><strong>States:</strong> CLOSED (normal) → OPEN (fail-fast, no calls) → HALF_OPEN (test recovery) → CLOSED</p>
+          <p><strong>Transitions:</strong> failureRate &gt; threshold → OPEN. After waitDurationInOpenState → HALF_OPEN. If test calls succeed → CLOSED. If fail → OPEN again.</p>
+          <div class="code-block"># application.yml
+resilience4j:
+  circuitbreaker:
+    instances:
+      paymentService:
+        failureRateThreshold: 50          # open when 50% fail
+        slowCallRateThreshold: 80
+        slowCallDurationThreshold: 2s
+        waitDurationInOpenState: 30s
+        slidingWindowSize: 10
+        permittedNumberOfCallsInHalfOpenState: 3
+  retry:
+    instances:
+      paymentService:
+        maxAttempts: 3
+        waitDuration: 500ms
+        retryExceptions: [java.io.IOException]
+
+// Java annotation
+@CircuitBreaker(name = "paymentService", fallbackMethod = "paymentFallback")
+@Retry(name = "paymentService")
+@TimeLimiter(name = "paymentService")
+public CompletableFuture&lt;PaymentResponse&gt; processPayment(PaymentRequest req) {
+    return CompletableFuture.supplyAsync(() -> paymentClient.process(req));
+}
+
+private CompletableFuture&lt;PaymentResponse&gt; paymentFallback(PaymentRequest req, Exception ex) {
+    log.warn("Payment service fallback triggered: {}", ex.getMessage());
+    return CompletableFuture.completedFuture(PaymentResponse.pending(req.getId()));
+}</div>
+          <div class="tip">Also configure: @Bulkhead (limit concurrent calls), @RateLimiter (calls/second). Use Actuator endpoint /actuator/circuitbreakers to monitor state.</div>
+        </div>
+      </div>
+
+      <div class="accordion-item" data-id="ms2">
+        <div class="accordion-header" onclick="toggle('ms2')">
+          <span class="accordion-question">27. Service Discovery — Eureka, Load Balancing, Feign Client</span>
+          <div class="accordion-meta">
+            <span class="badge badge-medium">Medium</span>
+            <span class="badge badge-micro">Microservices</span>
+            <button class="btn btn-sm btn-secondary review-btn" data-id="ms2" onclick="markReviewed(event,'ms2')">Mark Reviewed</button>
+            <i class="fas fa-chevron-down accordion-icon"></i>
+          </div>
+        </div>
+        <div class="accordion-body">
+          <div class="code-block">// Eureka Server
+@SpringBootApplication @EnableEurekaServer public class DiscoveryServer {}
+
+// Eureka Client (each microservice)
+@SpringBootApplication @EnableDiscoveryClient public class OrderService {}
+
+# application.yml (client)
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka/
+spring:
+  application:
+    name: order-service  # service name for discovery
+
+// Feign Client - declarative HTTP client
+@FeignClient(name = "payment-service", fallback = PaymentFallback.class)
+public interface PaymentClient {
+    @PostMapping("/api/payments")
+    PaymentResponse createPayment(@RequestBody PaymentRequest req);
+    
+    @GetMapping("/api/payments/{id}")
+    PaymentResponse getPayment(@PathVariable Long id);
+}
+
+@Component
+class PaymentFallback implements PaymentClient {
+    public PaymentResponse createPayment(PaymentRequest req) {
+        return PaymentResponse.builder().status("PENDING").build();
+    }
+}
+
+// Load Balancing with Spring Cloud LoadBalancer
+@Bean @LoadBalanced RestTemplate restTemplate() { return new RestTemplate(); }
+// restTemplate.getForObject("http://payment-service/api/payments", ...)</div>
+        </div>
+      </div>
+
+      <div class="accordion-item" data-id="ms3">
+        <div class="accordion-header" onclick="toggle('ms3')">
+          <span class="accordion-question">28. Microservices Patterns — Saga, CQRS, API Gateway, Event Sourcing</span>
+          <div class="accordion-meta">
+            <span class="badge badge-hard">Hard</span>
+            <span class="badge badge-micro">Microservices</span>
+            <button class="btn btn-sm btn-secondary review-btn" data-id="ms3" onclick="markReviewed(event,'ms3')">Mark Reviewed</button>
+            <i class="fas fa-chevron-down accordion-icon"></i>
+          </div>
+        </div>
+        <div class="accordion-body">
+          <ul>
+            <li><strong>Saga Pattern</strong> — Manages distributed transactions. Choreography (events) or Orchestration (central coordinator). Each step has compensating transaction for rollback.</li>
+            <li><strong>CQRS</strong> — Separate read (Query) and write (Command) models. Write model handles commands, updates, publishes events. Read model optimized for queries (denormalized). Kafka/events sync them.</li>
+            <li><strong>API Gateway</strong> — Single entry point. Handles: routing, auth, rate limiting, SSL termination, request aggregation. Spring Cloud Gateway, Kong, AWS API Gateway.</li>
+            <li><strong>Event Sourcing</strong> — Store sequence of events instead of current state. Reconstruct state by replaying events. Natural audit log. Used with CQRS.</li>
+            <li><strong>Outbox Pattern</strong> — Solve dual-write problem (DB + message broker). Write event to outbox table in same TX, then relay service publishes to Kafka.</li>
+            <li><strong>Sidecar Pattern</strong> — Deploy helper container alongside main service (logging, metrics, service mesh).</li>
+          </ul>
+          <div class="code-block">// CQRS - Command side
+@CommandHandler
+public void handle(CreateOrderCommand cmd) {
+    Order order = new Order(cmd.getId(), cmd.getItems());
+    orderRepository.save(order);
+    eventPublisher.publish(new OrderCreatedEvent(order));
+}
+
+// CQRS - Query side (optimized read model)
+@QueryHandler
+public OrderSummaryDTO handle(GetOrderQuery query) {
+    return orderReadRepository.findSummaryById(query.getId()); // denormalized table
+}</div>
+        </div>
+      </div>
+
+      <div class="accordion-item" data-id="ms4">
+        <div class="accordion-header" onclick="toggle('ms4')">
+          <span class="accordion-question">29. Kafka Integration with Spring Boot — Producer, Consumer, Error Handling</span>
+          <div class="accordion-meta">
+            <span class="badge badge-hard">Hard</span>
+            <span class="badge badge-micro">Microservices</span>
+            <button class="btn btn-sm btn-secondary review-btn" data-id="ms4" onclick="markReviewed(event,'ms4')">Mark Reviewed</button>
+            <i class="fas fa-chevron-down accordion-icon"></i>
+          </div>
+        </div>
+        <div class="accordion-body">
+          <div class="code-block">// Producer
+@Service public class OrderEventProducer {
+    private final KafkaTemplate&lt;String, OrderEvent&gt; kafkaTemplate;
+    
+    public void publishOrderCreated(OrderEvent event) {
+        kafkaTemplate.send("order-events", event.getOrderId(), event)
+            .whenComplete((result, ex) -> {
+                if (ex != null) log.error("Failed to publish", ex);
+                else log.info("Published to partition {}", result.getRecordMetadata().partition());
+            });
+    }
+}
+
+// Consumer with error handling
+@Service public class OrderEventConsumer {
+    @KafkaListener(topics = "order-events", groupId = "inventory-service",
+                   containerFactory = "kafkaListenerContainerFactory")
+    public void consume(OrderEvent event, Acknowledgment ack) {
+        try {
+            inventoryService.reserve(event);
+            ack.acknowledge(); // manual ack
+        } catch (RetryableException e) {
+            // will retry
+        } catch (NonRetryableException e) {
+            ack.acknowledge(); // ack to skip
+            deadLetterQueue.send(event);
+        }
+    }
+}
+
+# application.yml
+spring:
+  kafka:
+    bootstrap-servers: localhost:9092
+    consumer:
+      group-id: order-service
+      auto-offset-reset: earliest
+      enable-auto-commit: false   # manual ack
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer</div>
+        </div>
+      </div>
+
+      <div class="accordion-item" data-id="ms5">
+        <div class="accordion-header" onclick="toggle('ms5')">
+          <span class="accordion-question">30. Spring Boot Profiles, Configuration Management, 12-Factor App</span>
+          <div class="accordion-meta">
+            <span class="badge badge-easy">Easy</span>
+            <span class="badge badge-spring">Spring</span>
+            <button class="btn btn-sm btn-secondary review-btn" data-id="ms5" onclick="markReviewed(event,'ms5')">Mark Reviewed</button>
+            <i class="fas fa-chevron-down accordion-icon"></i>
+          </div>
+        </div>
+        <div class="accordion-body">
+          <div class="code-block">// Profile-specific properties files:
+// application-dev.properties
+// application-staging.properties
+// application-prod.properties
+
+// Activate via:
+spring.profiles.active=dev               // in application.properties
+-Dspring.profiles.active=prod            // JVM arg
+SPRING_PROFILES_ACTIVE=prod              // env var
+
+// @Profile on beans
+@Configuration @Profile("dev") class DevConfig { ... }
+@Configuration @Profile("prod") class ProdConfig { ... }
+@Configuration @Profile("!prod") class NotProdConfig { ... }
+
+// Type-safe configuration properties
+@ConfigurationProperties(prefix = "app.payment")
+@Validated
+public record PaymentProperties(
+    @NotBlank String apiKey,
+    @NotNull URL gatewayUrl,
+    @Min(1) @Max(10) int retryCount,
+    Duration timeout
+) {}
+
+// Use in test
+@SpringBootTest
+@ActiveProfiles("test")
+class OrderServiceTest { ... }</div>
+          <div class="tip"><strong>12-Factor App key principles relevant to Spring Boot:</strong> III. Config in env (not hardcoded). XI. Treat logs as event streams. IX. Disposability (fast start/shutdown). XII. Dev/prod parity.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===================== CHEATSHEET ===================== -->
+    <div class="tab-content" id="tab-cheatsheet" id="cheatsheet">
+      <h2 class="section-title"><i class="fas fa-bolt"></i> Quick Reference Cheatsheet</h2>
+      <p class="text-muted mb-24" style="font-size:14px">Fast-reference cards for walking into any interview</p>
+
+      <div class="cheatsheet-grid">
+
+        <div class="cheat-card">
+          <div class="cheat-title">Spring Annotations</div>
+          <ul class="cheat-items">
+            <li><code>@SpringBootApplication</code> = Config + EnableAutoConfig + ComponentScan</li>
+            <li><code>@RestController</code> = @Controller + @ResponseBody</li>
+            <li><code>@Service</code> Business logic layer</li>
+            <li><code>@Repository</code> Data access + exception translation</li>
+            <li><code>@Transactional</code> Manage TX boundaries</li>
+            <li><code>@Async</code> Run method in separate thread</li>
+            <li><code>@Scheduled</code> Schedule tasks (cron/fixed)</li>
+            <li><code>@EventListener</code> Handle application events</li>
+            <li><code>@ConditionalOnProperty</code> Conditional bean creation</li>
+            <li><code>@Profile</code> Environment-specific beans</li>
+          </ul>
+        </div>
+
+        <div class="cheat-card">
+          <div class="cheat-title">JPA Annotations</div>
+          <ul class="cheat-items">
+            <li><code>@Entity</code> Maps class to DB table</li>
+            <li><code>@Table(name="...")</code> Custom table name</li>
+            <li><code>@Id @GeneratedValue</code> Primary key</li>
+            <li><code>@Column(nullable=false)</code> Column config</li>
+            <li><code>@OneToMany(fetch=LAZY)</code> Relationship</li>
+            <li><code>@ManyToOne @JoinColumn</code> FK relationship</li>
+            <li><code>@ManyToMany @JoinTable</code> Many-to-many</li>
+            <li><code>@CreatedDate @LastModifiedDate</code> Auditing</li>
+            <li><code>@Version</code> Optimistic locking</li>
+            <li><code>@NamedQuery</code> Pre-defined JPQL</li>
+          </ul>
+        </div>
+
+        <div class="cheat-card">
+          <div class="cheat-title">Java 8 Stream Terminal Ops</div>
+          <ul class="cheat-items">
+            <li><code>collect(toList())</code> Gather into collection</li>
+            <li><code>forEach(Consumer)</code> Iterate</li>
+            <li><code>reduce(identity, BinaryOp)</code> Fold</li>
+            <li><code>count()</code> Count elements</li>
+            <li><code>findFirst() / findAny()</code> Return Optional</li>
+            <li><code>anyMatch / allMatch / noneMatch</code> Predicates</li>
+            <li><code>min / max(Comparator)</code> Min/max Optional</li>
+            <li><code>toArray()</code> Convert to array</li>
+            <li><code>groupingBy(classifier)</code> Group to Map</li>
+            <li><code>partitioningBy(Predicate)</code> Split to Map</li>
+          </ul>
+        </div>
+
+        <div class="cheat-card">
+          <div class="cheat-title">Spring Security Filter Chain</div>
+          <ul class="cheat-items">
+            <li>Request comes in → filter chain executes in order</li>
+            <li>Key filters: SecurityContextPersistenceFilter → UsernamePasswordAuthFilter → BasicAuthFilter → AnonymousAuthFilter → ExceptionTranslationFilter → FilterSecurityInterceptor</li>
+            <li>JWT filter added: BEFORE UsernamePasswordAuthFilter</li>
+            <li>SecurityContextHolder stores auth per thread</li>
+            <li>Authentication = principal + credentials + authorities</li>
+            <li>GrantedAuthority = Role/Permission</li>
+          </ul>
+        </div>
+
+        <div class="cheat-card">
+          <div class="cheat-title">Collections Complexity</div>
+          <ul class="cheat-items">
+            <li>ArrayList: get O(1), add O(1)*, remove O(n)</li>
+            <li>LinkedList: get O(n), add/remove head O(1)</li>
+            <li>HashMap: get/put O(1) avg, O(n) worst</li>
+            <li>TreeMap: get/put O(log n)</li>
+            <li>HashSet: add/contains O(1) avg</li>
+            <li>TreeSet: add/contains O(log n)</li>
+            <li>PriorityQueue: offer O(log n), peek O(1)</li>
+          </ul>
+        </div>
+
+        <div class="cheat-card">
+          <div class="cheat-title">@Transactional Propagation</div>
+          <ul class="cheat-items">
+            <li>REQUIRED — join/create (default)</li>
+            <li>REQUIRES_NEW — always new, suspend existing</li>
+            <li>SUPPORTS — use if exists, else none</li>
+            <li>MANDATORY — must exist or exception</li>
+            <li>NEVER — must NOT be in tx</li>
+            <li>NOT_SUPPORTED — suspend existing, run without</li>
+            <li>NESTED — savepoint-based nesting</li>
+          </ul>
+        </div>
+
+        <div class="cheat-card">
+          <div class="cheat-title">Design Patterns (Most Asked)</div>
+          <ul class="cheat-items">
+            <li><strong>Singleton</strong> — One instance (Spring beans!)</li>
+            <li><strong>Factory/Abstract Factory</strong> — Object creation abstraction</li>
+            <li><strong>Builder</strong> — Step-by-step complex object (@Builder)</li>
+            <li><strong>Observer</strong> — Event-driven (ApplicationEvent)</li>
+            <li><strong>Strategy</strong> — Interchangeable algorithms</li>
+            <li><strong>Decorator</strong> — Add behavior wrapping</li>
+            <li><strong>Proxy</strong> — Spring AOP uses this!</li>
+            <li><strong>Template Method</strong> — JdbcTemplate, RestTemplate</li>
+          </ul>
+        </div>
+
+        <div class="cheat-card">
+          <div class="cheat-title">Microservices Patterns</div>
+          <ul class="cheat-items">
+            <li><strong>Circuit Breaker</strong> — Fail fast on failure</li>
+            <li><strong>Saga</strong> — Distributed transactions</li>
+            <li><strong>CQRS</strong> — Separate read/write</li>
+            <li><strong>API Gateway</strong> — Single entry point</li>
+            <li><strong>Service Discovery</strong> — Dynamic service location</li>
+            <li><strong>Event Sourcing</strong> — Store events not state</li>
+            <li><strong>Outbox</strong> — Reliable messaging</li>
+            <li><strong>Strangler Fig</strong> — Migrate legacy gradually</li>
+          </ul>
+        </div>
+
+        <div class="cheat-card">
+          <div class="cheat-title">HTTP Status Codes</div>
+          <ul class="cheat-items">
+            <li>200 OK, 201 Created, 204 No Content</li>
+            <li>400 Bad Request (validation failed)</li>
+            <li>401 Unauthorized (auth required)</li>
+            <li>403 Forbidden (no permission)</li>
+            <li>404 Not Found</li>
+            <li>409 Conflict (duplicate)</li>
+            <li>422 Unprocessable Entity</li>
+            <li>429 Too Many Requests (rate limit)</li>
+            <li>500 Internal Server Error</li>
+            <li>503 Service Unavailable</li>
+          </ul>
+        </div>
+
+        <div class="cheat-card">
+          <div class="cheat-title">Java Concurrency Classes</div>
+          <ul class="cheat-items">
+            <li><code>ConcurrentHashMap</code> Thread-safe map</li>
+            <li><code>CopyOnWriteArrayList</code> Thread-safe list (read-heavy)</li>
+            <li><code>BlockingQueue</code> Producer-consumer</li>
+            <li><code>CountDownLatch</code> Wait for N threads</li>
+            <li><code>CyclicBarrier</code> N threads wait for each other</li>
+            <li><code>Semaphore</code> Limit concurrent access</li>
+            <li><code>ReentrantLock</code> Explicit lock</li>
+            <li><code>AtomicInteger/Long</code> Lock-free counter</li>
+            <li><code>StampedLock</code> Optimistic read lock</li>
+          </ul>
+        </div>
+
+        <div class="cheat-card">
+          <div class="cheat-title">Spring Boot application.yml Keys</div>
+          <ul class="cheat-items">
+            <li><code>server.port</code> HTTP port</li>
+            <li><code>spring.datasource.*</code> DB config</li>
+            <li><code>spring.jpa.show-sql</code> SQL logging</li>
+            <li><code>spring.redis.*</code> Redis config</li>
+            <li><code>spring.kafka.*</code> Kafka config</li>
+            <li><code>management.endpoints.web.exposure.include</code></li>
+            <li><code>logging.level.com.example=DEBUG</code></li>
+            <li><code>spring.profiles.active</code></li>
+            <li><code>spring.threads.virtual.enabled=true</code> Java 21</li>
+          </ul>
+        </div>
+
+        <div class="cheat-card">
+          <div class="cheat-title">JUnit 5 + Mockito</div>
+          <ul class="cheat-items">
+            <li><code>@ExtendWith(MockitoExtension.class)</code></li>
+            <li><code>@Mock</code> Create mock object</li>
+            <li><code>@InjectMocks</code> Inject mocks into class</li>
+            <li><code>@Spy</code> Partial mock (real methods)</li>
+            <li><code>when(...).thenReturn()</code></li>
+            <li><code>verify(mock).method(args)</code></li>
+            <li><code>@ParameterizedTest @ValueSource</code></li>
+            <li><code>assertThrows(Ex.class, () -> ...)</code></li>
+            <li><code>@SpringBootTest @MockBean</code> Integration test</li>
+            <li><code>@WebMvcTest @MockMvc</code> Controller test</li>
+          </ul>
+        </div>
+
+      </div>
+    </div>
+
+  </div><!-- /container -->
+
+  <!-- Toast -->
+  <div class="toast" id="toast">
+    <i class="fas fa-check-circle"></i>
+    <span id="toastMsg"></span>
+  </div>
+
+<script>
+  const PROGRESS_KEY = 'prabakaranSai_interview_progress';
+  let reviewed = new Set(JSON.parse(localStorage.getItem(PROGRESS_KEY) || '[]'));
+
+  /* ===== TABS ===== */
+  function switchTab(id) {
+    document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('tab-' + id).classList.add('active');
+    event.currentTarget.classList.add('active');
+  }
+
+  /* ===== ACCORDION ===== */
+  function toggle(id) {
+    const item = document.querySelector(`.accordion-item[data-id="${id}"]`);
+    const isOpen = item.classList.toggle('open');
+  }
+
+  function expandAll() {
+    document.querySelectorAll('.accordion-item').forEach(item => item.classList.add('open'));
+  }
+
+  function collapseAll() {
+    document.querySelectorAll('.accordion-item').forEach(item => item.classList.remove('open'));
+  }
+
+  /* ===== PROGRESS ===== */
+  function markReviewed(e, id) {
+    e.stopPropagation();
+    const item = document.querySelector(`.accordion-item[data-id="${id}"]`);
+    const btn  = document.querySelector(`.review-btn[data-id="${id}"]`);
+
+    if (reviewed.has(id)) {
+      reviewed.delete(id);
+      item.classList.remove('reviewed');
+      btn.textContent = 'Mark Reviewed';
+      btn.classList.remove('btn-success');
+      btn.classList.add('btn-secondary');
+    } else {
+      reviewed.add(id);
+      item.classList.add('reviewed');
+      btn.innerHTML = '<i class="fas fa-check"></i> Reviewed';
+      btn.classList.remove('btn-secondary');
+      btn.classList.add('btn-success');
+      showToast('Marked as reviewed!', 'success');
+    }
+    localStorage.setItem(PROGRESS_KEY, JSON.stringify([...reviewed]));
+    updateProgress();
+  }
+
+  function updateProgress() {
+    const total = document.querySelectorAll('.accordion-item').length;
+    const done  = reviewed.size;
+    const pct   = total > 0 ? Math.round((done / total) * 100) : 0;
+    document.getElementById('progressText').textContent = `${done} / ${total} reviewed`;
+    document.getElementById('progressBar').style.width = pct + '%';
+    document.getElementById('progressPct').textContent = pct + '%';
+  }
+
+  function resetProgress() {
+    if (!confirm('Reset all progress?')) return;
+    reviewed.clear();
+    localStorage.removeItem(PROGRESS_KEY);
+    document.querySelectorAll('.accordion-item').forEach(i => i.classList.remove('reviewed'));
+    document.querySelectorAll('.review-btn').forEach(b => {
+      b.textContent = 'Mark Reviewed';
+      b.classList.remove('btn-success');
+      b.classList.add('btn-secondary');
+    });
+    updateProgress();
+    showToast('Progress reset', 'info');
+  }
+
+  /* ===== Toast ===== */
+  function showToast(msg, type = 'info') {
+    const t = document.getElementById('toast');
+    document.getElementById('toastMsg').textContent = msg;
+    t.className = `toast ${type} show`;
+    const icons = { success: 'fa-check-circle', error: 'fa-times-circle', info: 'fa-info-circle' };
+    t.querySelector('i').className = `fas ${icons[type] || 'fa-info-circle'}`;
+    setTimeout(() => t.classList.remove('show'), 2000);
+  }
+
+  /* ===== INIT ===== */
+  function init() {
+    // Restore reviewed state
+    reviewed.forEach(id => {
+      const item = document.querySelector(`.accordion-item[data-id="${id}"]`);
+      const btn  = document.querySelector(`.review-btn[data-id="${id}"]`);
+      if (item) item.classList.add('reviewed');
+      if (btn) {
+        btn.innerHTML = '<i class="fas fa-check"></i> Reviewed';
+        btn.classList.remove('btn-secondary');
+        btn.classList.add('btn-success');
+      }
+    });
+    updateProgress();
+  }
+
+  init();
+</script>
+</body>
+</html>

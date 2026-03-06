@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Notes – prabakaranSai-levelUp</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <style>
+    .notes-layout {
+      display: grid;
+      grid-template-columns: 300px 1fr;
+      gap: 20px;
+      padding-bottom: 48px;
+    }
+    @media (max-width: 900px) {
+      .notes-layout { grid-template-columns: 1fr; }
+    }
+
+    /* Sidebar */
+    .sidebar {
+      position: sticky;
+      top: 80px;
+      height: fit-content;
+    }
+
+    .sidebar-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+    }
+
+    .sidebar-header {
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--border);
+      background: var(--bg-secondary);
+    }
+
+    .sidebar-body { padding: 16px 20px; }
+
+    /* Stats row */
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    .stat-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      padding: 14px;
+      text-align: center;
+    }
+    .stat-card .num {
+      font-size: 24px;
+      font-weight: 800;
+      background: var(--gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .stat-card .lbl {
+      font-size: 11px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-top: 2px;
+    }
+
+    /* Category filter */
+    .cat-filters {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+    .cat-btn {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      color: var(--text-secondary);
+      font-size: 12px;
+      font-weight: 600;
+      padding: 5px 14px;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-family: inherit;
+    }
+    .cat-btn:hover { border-color: var(--purple); color: var(--purple-light); }
+    .cat-btn.active {
+      background: var(--gradient);
+      color: white;
+      border-color: transparent;
+    }
+
+    /* Notes grid */
+    .notes-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 16px;
+      align-content: start;
+    }
+
+    .note-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      transition: all 0.25s;
+      position: relative;
+      overflow: hidden;
+    }
+    .note-card::before {
+      content: '';
+      position: absolute;
+      left: 0; top: 0; bottom: 0;
+      width: 3px;
+    }
+    .note-card[data-cat="General"]::before  { background: var(--purple); }
+    .note-card[data-cat="Java"]::before     { background: var(--orange); }
+    .note-card[data-cat="Spring Boot"]::before { background: var(--green); }
+    .note-card[data-cat="Interview"]::before { background: var(--blue); }
+    .note-card[data-cat="Important"]::before { background: var(--red); }
+
+    .note-card:hover {
+      border-color: var(--border-light);
+      box-shadow: var(--shadow-card);
+      transform: translateY(-2px);
+    }
+
+    .note-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 10px;
+    }
+    .note-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text-primary);
+      line-height: 1.4;
+    }
+    .note-actions { display: flex; gap: 6px; flex-shrink: 0; }
+    .note-action-btn {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      padding: 4px 6px;
+      border-radius: var(--radius-xs);
+      font-size: 13px;
+      transition: all 0.2s;
+    }
+    .note-action-btn:hover { background: var(--bg-hover); color: var(--text-primary); }
+    .note-action-btn.delete:hover { color: var(--red); background: rgba(239,68,68,0.1); }
+    .note-action-btn.pin:hover { color: var(--yellow); }
+    .note-action-btn.pin.active { color: var(--yellow); }
+
+    .note-body {
+      color: var(--text-secondary);
+      font-size: 13px;
+      line-height: 1.7;
+      flex: 1;
+      white-space: pre-wrap;
+      word-break: break-word;
+      max-height: 140px;
+      overflow: hidden;
+      position: relative;
+    }
+    .note-body.expanded { max-height: none; }
+    .note-expand {
+      font-size: 12px;
+      color: var(--purple-light);
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 0;
+      font-family: inherit;
+      margin-top: 4px;
+    }
+
+    .note-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-top: 8px;
+      border-top: 1px solid var(--border);
+    }
+    .note-date { font-size: 11px; color: var(--text-muted); }
+
+    /* Add Note Form */
+    .add-form {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px;
+      margin-bottom: 20px;
+    }
+    .add-form-header {
+      font-size: 16px;
+      font-weight: 700;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .add-form-header i { color: var(--purple); }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+    @media (max-width: 600px) { .form-row { grid-template-columns: 1fr; } }
+
+    /* Formatting toolbar */
+    .fmt-bar {
+      display: flex;
+      gap: 4px;
+      margin-bottom: 8px;
+      flex-wrap: wrap;
+    }
+    .fmt-btn {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-xs);
+      color: var(--text-secondary);
+      cursor: pointer;
+      padding: 5px 10px;
+      font-size: 12px;
+      font-family: inherit;
+      font-weight: 600;
+      transition: all 0.2s;
+    }
+    .fmt-btn:hover { background: var(--bg-hover); color: var(--text-primary); border-color: var(--border-light); }
+
+    /* Pinned section */
+    .pinned-section {
+      margin-bottom: 20px;
+    }
+    .pinned-label {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--yellow);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAVBAR -->
+  <nav class="navbar">
+    <a href="index.html" class="nav-brand">
+      <div class="nav-logo">P</div>
+      <span class="nav-title">prabakaranSai-levelUp</span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="index.html"><i class="fas fa-home"></i> <span>Home</span></a></li>
+      <li><a href="playground.html"><i class="fas fa-code"></i> <span>Playground</span></a></li>
+      <li><a href="notes.html" class="active"><i class="fas fa-sticky-note"></i> <span>Notes</span></a></li>
+      <li><a href="interview.html"><i class="fas fa-brain"></i> <span>Interview Prep</span></a></li>
+    </ul>
+  </nav>
+
+  <div class="container" style="padding-top:24px">
+
+    <!-- Stats Row -->
+    <div class="stats-row">
+      <div class="stat-card">
+        <div class="num" id="totalCount">0</div>
+        <div class="lbl">Total Notes</div>
+      </div>
+      <div class="stat-card">
+        <div class="num" id="pinnedCount">0</div>
+        <div class="lbl">Pinned</div>
+      </div>
+      <div class="stat-card">
+        <div class="num" id="catCount">0</div>
+        <div class="lbl">Categories</div>
+      </div>
+    </div>
+
+    <div class="notes-layout">
+
+      <!-- LEFT SIDEBAR -->
+      <div class="sidebar">
+
+        <!-- Add Note Form -->
+        <div class="add-form">
+          <div class="add-form-header"><i class="fas fa-plus-circle"></i> New Note</div>
+          <div class="form-group">
+            <label class="form-label">Title</label>
+            <input type="text" class="form-input" id="noteTitle" placeholder="Note title..." />
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Category</label>
+              <select class="form-select" id="noteCategory">
+                <option>General</option>
+                <option>Java</option>
+                <option>Spring Boot</option>
+                <option>Interview</option>
+                <option>Important</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Tag</label>
+              <input type="text" class="form-input" id="noteTag" placeholder="e.g. streams" />
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Content</label>
+            <div class="fmt-bar">
+              <button class="fmt-btn" onclick="insertFmt('**', '**')"><b>B</b></button>
+              <button class="fmt-btn" onclick="insertFmt('*', '*')"><i>I</i></button>
+              <button class="fmt-btn" onclick="insertFmt('`', '`')">Code</button>
+              <button class="fmt-btn" onclick="insertFmt('```java\n', '\n```')">Java</button>
+              <button class="fmt-btn" onclick="insertFmt('## ', '')">H2</button>
+              <button class="fmt-btn" onclick="insertFmt('- ', '')">List</button>
+              <button class="fmt-btn" onclick="insertFmt('> ', '')">Quote</button>
+              <button class="fmt-btn" onclick="insertFmt('✅ ', '')">✅</button>
+              <button class="fmt-btn" onclick="insertFmt('⚠️ ', '')">⚠️</button>
+              <button class="fmt-btn" onclick="insertFmt('🔑 ', '')">🔑</button>
+            </div>
+            <textarea class="form-textarea" id="noteContent" rows="6"
+              placeholder="Write your notes here...&#10;&#10;Tip: Use the formatting buttons above or write plain text."></textarea>
+          </div>
+          <button class="btn btn-primary w-full" onclick="saveNote()" id="saveBtn">
+            <i class="fas fa-save"></i> Save Note
+          </button>
+          <button class="btn btn-secondary w-full mt-8" id="cancelEditBtn" style="display:none" onclick="cancelEdit()">
+            <i class="fas fa-times"></i> Cancel Edit
+          </button>
+        </div>
+
+        <!-- Search -->
+        <div class="sidebar-card">
+          <div class="sidebar-header">
+            <span class="section-title" style="margin:0;font-size:14px"><i class="fas fa-filter"></i> Filter & Search</span>
+          </div>
+          <div class="sidebar-body">
+            <div class="search-box mb-16">
+              <i class="fas fa-search"></i>
+              <input type="text" class="form-input" id="searchInput" placeholder="Search notes..." oninput="renderNotes()" />
+            </div>
+            <div class="form-label">Category</div>
+            <div class="cat-filters" id="catFilters">
+              <button class="cat-btn active" data-cat="All" onclick="filterCat('All')">All</button>
+              <button class="cat-btn" data-cat="General" onclick="filterCat('General')">General</button>
+              <button class="cat-btn" data-cat="Java" onclick="filterCat('Java')">Java</button>
+              <button class="cat-btn" data-cat="Spring Boot" onclick="filterCat('Spring Boot')">Spring Boot</button>
+              <button class="cat-btn" data-cat="Interview" onclick="filterCat('Interview')">Interview</button>
+              <button class="cat-btn" data-cat="Important" onclick="filterCat('Important')">Important</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT: NOTES GRID -->
+      <div>
+        <!-- Pinned notes -->
+        <div id="pinnedSection" class="pinned-section" style="display:none">
+          <div class="pinned-label"><i class="fas fa-thumbtack"></i> Pinned Notes</div>
+          <div class="notes-grid" id="pinnedGrid"></div>
+          <div class="divider"></div>
+        </div>
+
+        <!-- All notes -->
+        <div id="notesSection">
+          <div class="notes-grid" id="notesGrid"></div>
+          <div id="emptyState" class="empty-state" style="display:none">
+            <i class="fas fa-book-open"></i>
+            <p>No notes yet. Create your first note!</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div class="toast" id="toast">
+    <i class="fas fa-check-circle"></i>
+    <span id="toastMsg"></span>
+  </div>
+
+<script>
+  const STORAGE_KEY = 'prabakaranSai_notes';
+  let notes = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+  let activeFilter = 'All';
+  let editingId = null;
+
+  /* ===== Seed sample notes ===== */
+  if (notes.length === 0) {
+    notes = [
+      {
+        id: Date.now() + 1,
+        title: 'HashMap Internal Working',
+        content: '🔑 Key Points:\n- Uses Node[] array (buckets)\n- hashCode() → index via hash spreading\n- Collision: Linked List → Red-Black Tree (when size > 8)\n- Load factor default: 0.75\n- Initial capacity: 16\n\n```java\n// Java 8 - treeify when bucket size > 8\nMap<String, Integer> map = new HashMap<>();\nmap.put("key", value);\nmap.getOrDefault("key", 0);\n```\n\n⚠️ Not thread-safe! Use ConcurrentHashMap for thread safety.',
+        category: 'Java',
+        tag: 'collections',
+        pinned: true,
+        createdAt: new Date().toISOString()
+      },
+      {
+        id: Date.now() + 2,
+        title: 'Spring Boot Auto-Configuration',
+        content: '## How it works:\n1. @SpringBootApplication includes @EnableAutoConfiguration\n2. Spring Boot scans spring.factories (or AutoConfiguration.imports)\n3. Each AutoConfig class has @Conditional annotations\n4. Conditions checked: @ConditionalOnClass, @ConditionalOnMissingBean, @ConditionalOnProperty\n\n✅ To debug: spring.autoconfigure.exclude=[] and --debug flag\n\n🔑 Key: Auto-config is ALWAYS overridden by your explicit beans!',
+        category: 'Spring Boot',
+        tag: 'auto-config',
+        pinned: false,
+        createdAt: new Date().toISOString()
+      },
+      {
+        id: Date.now() + 3,
+        title: 'Java 21 Virtual Threads',
+        content: '**Virtual Threads (Project Loom) - Java 21**\n\n- Lightweight threads managed by JVM, not OS\n- Millions of VTs can exist simultaneously\n- Perfect for I/O-bound blocking operations\n- NOT for CPU-intensive tasks\n\n```java\n// Create virtual thread\nThread.ofVirtual().start(() -> ...);\n\n// Executor\nExecutors.newVirtualThreadPerTaskExecutor();\n```\n\n⚠️ Avoid thread locals with VTs (memory waste)\n⚠️ VTs are automatically unmounted during blocking I/O',
+        category: 'Java',
+        tag: 'java21',
+        pinned: false,
+        createdAt: new Date().toISOString()
+      }
+    ];
+    persist();
+  }
+
+  /* ===== Render ===== */
+  function renderNotes() {
+    const search = document.getElementById('searchInput').value.toLowerCase();
+    let filtered = notes.filter(n => {
+      const matchCat = activeFilter === 'All' || n.category === activeFilter;
+      const matchSearch = !search ||
+        n.title.toLowerCase().includes(search) ||
+        n.content.toLowerCase().includes(search) ||
+        (n.tag || '').toLowerCase().includes(search);
+      return matchCat && matchSearch;
+    });
+
+    const pinned = filtered.filter(n => n.pinned).sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+    const regular = filtered.filter(n => !n.pinned).sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+
+    const pinnedSection = document.getElementById('pinnedSection');
+    const pinnedGrid = document.getElementById('pinnedGrid');
+    const notesGrid = document.getElementById('notesGrid');
+    const emptyState = document.getElementById('emptyState');
+
+    if (pinned.length > 0) {
+      pinnedSection.style.display = 'block';
+      pinnedGrid.innerHTML = pinned.map(noteCard).join('');
+    } else {
+      pinnedSection.style.display = 'none';
+    }
+
+    notesGrid.innerHTML = regular.map(noteCard).join('');
+    emptyState.style.display = (pinned.length + regular.length === 0) ? 'block' : 'none';
+
+    updateStats();
+  }
+
+  function noteCard(n) {
+    const dateStr = new Date(n.createdAt).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' });
+    const contentHtml = escHtml(n.content);
+    return `
+      <div class="note-card fade-up" data-cat="${escAttr(n.category)}" data-id="${n.id}">
+        <div class="note-header">
+          <div class="note-title">${escHtml(n.title)}</div>
+          <div class="note-actions">
+            <button class="note-action-btn pin ${n.pinned ? 'active' : ''}" onclick="togglePin(${n.id})" title="${n.pinned ? 'Unpin' : 'Pin'}">
+              <i class="fas fa-thumbtack"></i>
+            </button>
+            <button class="note-action-btn" onclick="editNote(${n.id})" title="Edit">
+              <i class="fas fa-edit"></i>
+            </button>
+            <button class="note-action-btn delete" onclick="deleteNote(${n.id})" title="Delete">
+              <i class="fas fa-trash"></i>
+            </button>
+          </div>
+        </div>
+        <div class="note-body" id="body-${n.id}">${contentHtml}</div>
+        ${n.content.length > 250 ? `<button class="note-expand" onclick="toggleExpand(${n.id})">Show more</button>` : ''}
+        <div class="note-footer">
+          <span class="note-date"><i class="fas fa-calendar-alt" style="margin-right:4px"></i>${dateStr}</span>
+          <div style="display:flex;gap:6px;align-items:center">
+            ${n.tag ? `<span class="badge badge-micro" style="font-size:10px">#${escHtml(n.tag)}</span>` : ''}
+            <span class="badge ${catBadge(n.category)}" style="font-size:10px">${escHtml(n.category)}</span>
+          </div>
+        </div>
+      </div>`;
+  }
+
+  function catBadge(cat) {
+    return { Java: 'badge-java', 'Spring Boot': 'badge-spring', Interview: 'badge-micro', Important: 'badge-hard', General: 'badge-new' }[cat] || 'badge-new';
+  }
+
+  function updateStats() {
+    document.getElementById('totalCount').textContent = notes.length;
+    document.getElementById('pinnedCount').textContent = notes.filter(n => n.pinned).length;
+    const cats = new Set(notes.map(n => n.category));
+    document.getElementById('catCount').textContent = cats.size;
+  }
+
+  /* ===== CRUD ===== */
+  function saveNote() {
+    const title = document.getElementById('noteTitle').value.trim();
+    const content = document.getElementById('noteContent').value.trim();
+    if (!title) { showToast('Title is required!', 'error'); return; }
+    if (!content) { showToast('Content cannot be empty!', 'error'); return; }
+
+    const category = document.getElementById('noteCategory').value;
+    const tag = document.getElementById('noteTag').value.trim();
+
+    if (editingId !== null) {
+      const idx = notes.findIndex(n => n.id === editingId);
+      if (idx !== -1) {
+        notes[idx] = { ...notes[idx], title, content, category, tag, updatedAt: new Date().toISOString() };
+        showToast('Note updated!', 'success');
+      }
+      cancelEdit();
+    } else {
+      notes.unshift({ id: Date.now(), title, content, category, tag, pinned: false, createdAt: new Date().toISOString() });
+      showToast('Note saved!', 'success');
+    }
+
+    clearForm();
+    persist();
+    renderNotes();
+  }
+
+  function editNote(id) {
+    const note = notes.find(n => n.id === id);
+    if (!note) return;
+    editingId = id;
+
+    document.getElementById('noteTitle').value = note.title;
+    document.getElementById('noteContent').value = note.content;
+    document.getElementById('noteCategory').value = note.category;
+    document.getElementById('noteTag').value = note.tag || '';
+
+    document.getElementById('saveBtn').innerHTML = '<i class="fas fa-save"></i> Update Note';
+    document.getElementById('cancelEditBtn').style.display = 'block';
+    document.getElementById('noteTitle').focus();
+    document.getElementById('noteTitle').scrollIntoView({ behavior: 'smooth', block: 'center' });
+  }
+
+  function cancelEdit() {
+    editingId = null;
+    clearForm();
+    document.getElementById('saveBtn').innerHTML = '<i class="fas fa-save"></i> Save Note';
+    document.getElementById('cancelEditBtn').style.display = 'none';
+  }
+
+  function clearForm() {
+    document.getElementById('noteTitle').value = '';
+    document.getElementById('noteContent').value = '';
+    document.getElementById('noteTag').value = '';
+    document.getElementById('noteCategory').value = 'General';
+  }
+
+  function deleteNote(id) {
+    if (!confirm('Delete this note?')) return;
+    notes = notes.filter(n => n.id !== id);
+    persist();
+    renderNotes();
+    showToast('Note deleted', 'error');
+  }
+
+  function togglePin(id) {
+    const idx = notes.findIndex(n => n.id === id);
+    if (idx !== -1) {
+      notes[idx].pinned = !notes[idx].pinned;
+      persist();
+      renderNotes();
+      showToast(notes[idx].pinned ? 'Note pinned!' : 'Note unpinned', 'info');
+    }
+  }
+
+  function toggleExpand(id) {
+    const body = document.getElementById('body-' + id);
+    const btn = body.nextElementSibling;
+    if (body.classList.toggle('expanded')) {
+      btn.textContent = 'Show less';
+    } else {
+      btn.textContent = 'Show more';
+    }
+  }
+
+  function filterCat(cat) {
+    activeFilter = cat;
+    document.querySelectorAll('.cat-btn').forEach(b => {
+      b.classList.toggle('active', b.dataset.cat === cat);
+    });
+    renderNotes();
+  }
+
+  /* ===== Formatting helpers ===== */
+  function insertFmt(before, after) {
+    const ta = document.getElementById('noteContent');
+    const start = ta.selectionStart;
+    const end = ta.selectionEnd;
+    const selected = ta.value.substring(start, end);
+    const replacement = before + selected + after;
+    ta.value = ta.value.substring(0, start) + replacement + ta.value.substring(end);
+    ta.selectionStart = start + before.length;
+    ta.selectionEnd = start + before.length + selected.length;
+    ta.focus();
+  }
+
+  /* ===== Persistence ===== */
+  function persist() { localStorage.setItem(STORAGE_KEY, JSON.stringify(notes)); }
+
+  /* ===== Utilities ===== */
+  function escHtml(str) {
+    return String(str)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
+  }
+  function escAttr(str) { return escHtml(str); }
+
+  function showToast(msg, type = 'info') {
+    const t = document.getElementById('toast');
+    document.getElementById('toastMsg').textContent = msg;
+    t.className = `toast ${type} show`;
+    const icons = { success: 'fa-check-circle', error: 'fa-times-circle', info: 'fa-info-circle' };
+    t.querySelector('i').className = `fas ${icons[type] || 'fa-info-circle'}`;
+    setTimeout(() => t.classList.remove('show'), 2500);
+  }
+
+  /* ===== Keyboard shortcut: Ctrl+Enter to save ===== */
+  document.getElementById('noteContent').addEventListener('keydown', function(e) {
+    if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') saveNote();
+  });
+
+  /* ===== Init ===== */
+  renderNotes();
+</script>
+</body>
+</html>
