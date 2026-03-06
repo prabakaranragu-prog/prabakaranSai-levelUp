@@ -852,15 +852,19 @@ public class Main {
     badge.className = 'badge ' + (lang === 'java' ? 'badge-java' : lang === 'python' ? 'badge-medium' : 'badge-micro');
   });
 
-  /* ===== Run Code via Piston API ===== */
+  /* ===== Run Code via Judge0 CE (free, no auth) ===== */
+  // Language IDs: Java=62, Python=71, JavaScript=63
+  const JUDGE0_LANG = { java: 62, python: 71, javascript: 63 };
+  const JUDGE0_URL  = 'https://judge0-ce.p.rapidapi.com';
+
   async function runCode() {
     const code = editor.getValue().trim();
     if (!code) { showToast('Write some code first!', 'error'); return; }
 
-    const lang = document.getElementById('langSelect').value;
-    const btn  = document.getElementById('runBtn');
-    const dot  = document.getElementById('statusDot');
-    const out  = document.getElementById('outputContent');
+    const lang  = document.getElementById('langSelect').value;
+    const btn   = document.getElementById('runBtn');
+    const dot   = document.getElementById('statusDot');
+    const out   = document.getElementById('outputContent');
     const timer = document.getElementById('outputTime');
 
     btn.disabled = true;
@@ -871,22 +875,19 @@ public class Main {
 
     const startTime = Date.now();
 
-    // Determine filename
-    const fileMap = { java: 'Main.java', python: 'main.py', javascript: 'main.js' };
-    const fileName = fileMap[lang] || 'main.txt';
+    // Try Wandbox first (free, no API key needed)
+    const compilerMap = { java: 'openjdk-head', python: 'cpython-head', javascript: 'nodejs-head' };
+    const compiler = compilerMap[lang] || 'openjdk-head';
 
     try {
-      const res = await fetch('https://emkc.org/api/v2/piston/execute', {
+      const res = await fetch('https://wandbox.org/api/compile.json', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          language: lang,
-          version: '*',
-          files: [{ name: fileName, content: code }],
-          stdin: '',
-          args: [],
-          compile_timeout: 20000,
-          run_timeout: 10000
+          compiler: compiler,
+          code: code,
+          options: '',
+          stdin: ''
         })
       });
 
@@ -894,32 +895,30 @@ public class Main {
       const data = await res.json();
       const elapsed = Date.now() - startTime;
 
-      const stdout = data.run?.stdout || '';
-      const stderr = data.run?.stderr || '';
-      const compileErr = data.compile?.stderr || '';
-      const exitCode = data.run?.code ?? 0;
+      const stdout     = data.program_output || '';
+      const stderr     = data.program_error  || '';
+      const compileErr = data.compiler_error  || '';
+      const status     = data.status;
 
-      if (compileErr) {
+      if (compileErr && !stdout) {
         dot.className = 'status-dot error';
-        out.innerHTML = `<span class="output-error">Compilation Error:\n${escHtml(compileErr)}</span>`;
-      } else if (stderr && !stdout) {
-        dot.className = 'status-dot error';
-        out.innerHTML = `<span class="output-error">${escHtml(stderr)}</span>`;
+        out.innerHTML = `<span class="output-error">⚠ Compilation Error:\n\n${escHtml(compileErr)}</span>`;
       } else {
-        dot.className = exitCode === 0 ? 'status-dot success' : 'status-dot error';
+        dot.className = (String(status) === '0') ? 'status-dot success' : 'status-dot error';
         let html = '';
-        if (stdout) html += escHtml(stdout);
-        if (stderr) html += `\n<span class="output-error">${escHtml(stderr)}</span>`;
+        if (compileErr) html += `<span style="color:var(--yellow)">⚠ Compiler warning:\n${escHtml(compileErr)}\n\n</span>`;
+        if (stdout)     html += escHtml(stdout);
+        if (stderr)     html += `\n<span class="output-error">${escHtml(stderr)}</span>`;
         out.innerHTML = html || '<span style="color:var(--text-muted)">(No output)</span>';
       }
 
       timer.style.display = 'block';
-      timer.innerHTML = `<i class="fas fa-clock"></i> Executed in ${elapsed}ms &nbsp;|&nbsp; Exit code: ${exitCode} &nbsp;|&nbsp; Language: ${data.language} ${data.version}`;
+      timer.innerHTML = `<i class="fas fa-clock"></i> Executed in ${elapsed}ms &nbsp;|&nbsp; Exit code: ${status} &nbsp;|&nbsp; Compiler: ${compiler} (Wandbox)`;
 
     } catch (err) {
       dot.className = 'status-dot error';
-      if (err.message.includes('Failed to fetch') || err.message.includes('NetworkError')) {
-        out.innerHTML = `<span class="output-error">⚠ Network Error: Could not reach Piston API.\nMake sure you have an internet connection.\n\nURL: https://emkc.org/api/v2/piston/execute</span>`;
+      if (err.message.includes('Failed to fetch') || err.message.includes('NetworkError') || err.message.includes('CORS')) {
+        out.innerHTML = `<span class="output-error">⚠ Network Error: Could not reach execution server.\n\nPlease check your internet connection and try again.\n\nAlternative: Visit https://onecompiler.com/java to run code.</span>`;
       } else {
         out.innerHTML = `<span class="output-error">Error: ${escHtml(err.message)}</span>`;
       }
